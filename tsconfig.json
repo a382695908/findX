@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es3",
+        "noImplicitAny": false,
+        "outDir": "debug",
+        "rootDir": ".",
+        "sourceMap": false
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "files": [
+        "libs/modules/egret/egret.d.ts",
+        "src/egret3d.d.ts",
+        "src/Main.ts",
+        "src/Sample_CreateView3D.ts",
+        "src/Sample_CreateBox.ts",
+        "src/Sample_CreateSky.ts"
+    ]
+}
