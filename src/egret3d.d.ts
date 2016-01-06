@@ -2661,7 +2661,7 @@ declare module egret3d {
         * @param inPos 相交点
         * @returns 相交返回true
         */
-        IntersectMeshEx(mesh: Mesh, inPos: Vector3D): boolean;
+        IntersectMeshEx(mesh: Mesh, uv_offset: number, result: PickResult): boolean;
         /**
         * @language zh_CN
         * 检测射线相交模型
@@ -2673,7 +2673,7 @@ declare module egret3d {
         * @param mMat 顶点的世界变换矩阵
         * @returns 相交返回true
         */
-        IntersectMesh(verticesData: Array<number>, indexData: Array<number>, offset: number, faces: number, inPos: Vector3D, mMat: Matrix4_4): boolean;
+        IntersectMesh(verticesData: Array<number>, indexData: Array<number>, offset: number, faces: number, uv_offset: number, mMat: Matrix4_4, result: PickResult): boolean;
         private invViewMat;
         /**
         * @language zh_CN
@@ -2857,6 +2857,9 @@ declare module egret3d {
         static MOUSE_OVER: string;
         static MOUSE_OUT: string;
         static MOUSE_MOVE: string;
+        static TOUCH_MOVE: string;
+        static TOUCH_START: string;
+        static TOUCH_END: string;
         static COMPLETE: string;
         static CHANGE_PROPERTY: string;
         private _currentTarget;
@@ -2935,13 +2938,15 @@ declare module egret3d {
         * @param camera {Camera3D}
         * @param collect {CollectBase}
         */
-        constructor(camera: Camera3D, collect: CollectBase);
-        private onMouseClick(e);
-        private onMouseDown(e);
-        private onMouseUp(e);
-        private onMouseOver(e);
-        private onMouseOut(e);
+        constructor(camera: Camera3D);
+        private onTouchMove(e);
+        private onTouchEnd(e);
+        private onTouchStart(e);
+        private onMouseClick(code);
+        private onMouseDown(code);
+        private onMouseUp(code);
         private onMouseMove(e);
+        update(collect: CollectBase): void;
     }
 }
 declare module egret3d {
@@ -3097,6 +3102,37 @@ declare module egret3d {
          * @language zh_CN
          */
         constructor();
+        /**
+         * @language zh_CN
+         * 上传贴图数据给GPU
+         * @param context3D
+         */
+        upload(context3D: Context3D): void;
+        private buildCheckerboard();
+    }
+}
+declare module egret3d {
+    /**
+     * @language zh_CN
+    * @class egret3d.TxtTexture
+    * @classdesc
+    * 棋盘格纹理
+    */
+    class TxtTexture extends TextureBase {
+        /**
+         * @language zh_CN
+         */
+        static createTxtTexture(txt: string, w: number, h: number, rgb: string, font: string): void;
+        static texture: TxtTexture;
+        private _width;
+        private _height;
+        private _pixelArray;
+        private _txtImgData;
+        genTxtImg(txt: string, w: number, h: number, rgb: string, font: string): ImageData;
+        /**
+         * @language zh_CN
+         */
+        constructor(txt: string, w: number, h: number, rgb: string, font: string);
         /**
          * @language zh_CN
          * 上传贴图数据给GPU
@@ -5065,6 +5101,53 @@ declare module egret3d {
 }
 declare module egret3d {
     /**
+    * @class egret3d.ParticleVertexMethod
+    * @classdesc
+    * 粒子顶点方法
+    */
+    class ParticleVertexMethod extends MethodBase {
+        private index;
+        /**
+         * @language zh_CN
+         */
+        constructor();
+        /**
+         * @language zh_CN
+         * 激活
+         * @param context3D
+         * @param program3D
+         * @param modeltransform
+         * @param camera3D
+         * @param geometry
+         * @param animation
+         *
+         *
+        * -pos            3       12      0
+        * -uv0            2        8      12
+        * -speed          3       12      20
+        * -lifecycle      1       4       32
+         *
+         *
+         *
+         */
+        activate(context3D: Context3D, program3D: IProgram3D, modeltransform: Matrix4_4, camera3D: Camera3D, geometry: GeometryBase, animation: IAnimation): void;
+        private time;
+        private normalMatrix;
+        /**
+         * @language zh_CN
+         * 更新
+         * @param context3D
+         * @param program3D
+         * @param modeltransform
+         * @param camera3D
+         * @param geometry
+         * @param animation
+         */
+        updata(context3D: Context3D, program3D: IProgram3D, modeltransform: Matrix4_4, camera3D: Camera3D, geometry: GeometryBase, animation: IAnimation): void;
+    }
+}
+declare module egret3d {
+    /**
     * @class egret3d.StaticVertexMethod
     * @classdesc
     * 静态顶点方法
@@ -6499,6 +6582,7 @@ declare module egret3d {
          * @param animation
          */
         rendenDepthPass(context3D: Context3D, camera3D: Camera3D, modelMatrix: Matrix4_4, geometry: GeometryBase, animation: IAnimation): void;
+        dispose(): void;
     }
 }
 declare module egret3d {
@@ -6549,9 +6633,10 @@ declare module egret3d {
 }
 declare module egret3d {
     /**
+    * @private
     * @class egret3d.Frustum
     * @classdesc
-    * 摄相机视椎体
+    * 摄像机视椎体,计算出摄像机的可视范围.
     */
     class Frustum {
         box: CubeBoxBound;
@@ -6611,10 +6696,18 @@ declare module egret3d {
     }
 }
 declare module egret3d {
+    enum PickType {
+        BoundPick = 0,
+        PositionPick = 1,
+        UVPick = 2,
+    }
     /**
     * @class egret3d.Object3D
     * @classdesc
-    * 3d空间中的实体对象
+    * 3d空间中的实体对象。
+    * 场景图中的Object3D对象是一个树型结构，对象中包含了变换信息.
+    * 这些变换信息应用于所有的子对象,子对象也有自己的变换信息,最终
+    * 的变换信息要结合父对象的变换信息
     */
     class Object3D extends EventDispatcher {
         static renderListChange: boolean;
@@ -6645,6 +6738,7 @@ declare module egret3d {
         /**
         * @language zh_CN
         * 渲染层级
+        * 渲染时分组进行依次渲染
         */
         layer: number;
         /**
@@ -6661,7 +6755,7 @@ declare module egret3d {
         * @language zh_CN
         * 是否需要视锥体裁剪
         */
-        isCut: boolean;
+        enableCut: boolean;
         /**
         * @language zh_CN
         * 父亲节点
@@ -6674,29 +6768,24 @@ declare module egret3d {
         childs: Array<Object3D>;
         /**
         * @language zh_CN
-        * 动作对象
+        * 动作对象，控制骨骼动画
         */
         animation: IAnimation;
         /**
         * @language zh_CN
-        * 几何对象
+        * 网络信息
         */
         geometry: GeometryBase;
         /**
         * @language zh_CN
-        * 材质
+        * 材质信息
         */
         material: MaterialBase;
         /**
         * @language zh_CN
-        * 碰撞盒子
+        * 对象模型包围盒
         */
         box: CubeBoxBound;
-        /**
-        * @language zh_CN
-        * 是否开启盒子检测
-        */
-        isCheckBox: boolean;
         /**
         * @language zh_CN
         * 鼠标检测数据
@@ -6704,7 +6793,7 @@ declare module egret3d {
         pickerData: PickResult;
         /**
         * @language zh_CN
-        * 是否控制
+        * 是否控制，当摄像机被绑定摄像机动画时，这个值为false.
         */
         isController: boolean;
         /**
@@ -6718,6 +6807,16 @@ declare module egret3d {
         */
         isDisable: boolean;
         private _worldBox;
+        /**
+        * @language zh_CN
+        * 鼠标拣选类型
+        */
+        pickType: PickType;
+        /**
+        * @language zh_CN
+        * 鼠标 事件开关
+        */
+        mousePickEnable: boolean;
         /**
         * @language zh_CN
         * constructor
@@ -7050,10 +7149,11 @@ declare module egret3d {
         /**
         * @language zh_CN
         * 当前对象数据更新
+        * @param camera 当前渲染的摄相机
         * @param time 当前时间
         * @param delay 每帧时间间隔
         */
-        update(time: number, delay: number): void;
+        update(camera: Camera3D, time: number, delay: number): void;
         /**
         * @language zh_CN
         * 返回对象的屏幕坐标
@@ -7061,6 +7161,33 @@ declare module egret3d {
         * @returns 对象的屏幕坐标
         */
         getScreenPosition(camera: Camera3D): Vector3D;
+        dispose(): void;
+    }
+}
+declare module egret3d {
+    /**
+     * @language zh_CN
+     * @class egret3d.Billborad
+     * @classdesc
+     * 公告板渲染对象 始终面朝摄像机的面板
+     */
+    class Billborad extends Object3D {
+        /**
+         * @language zh_CN
+         * constructor
+         * @param material 渲染材质
+         * @param width
+         * @param height
+         */
+        constructor(material: MaterialBase, width?: number, height?: number);
+        /**
+        * @language zh_CN
+        * 数据更新
+        * @param camera 当前渲染的摄相机
+        * @param time 当前时间
+        * @param delay 间隔时间
+        */
+        update(camera: Camera3D, time: number, delay: number): void;
     }
 }
 declare module egret3d {
@@ -7184,7 +7311,9 @@ declare module egret3d {
     /**
     * @class egret3d.Camera3D
     * @classdesc
-    * 相机数据处理，生成3D摄相机
+    * 相机数据处理，生成3D摄相机。
+    * 渲染场景从摄像机视点到缓冲区
+    * 相机分为透视摄像机、正交摄像机、VR摄像机
     */
     class Camera3D extends Entity {
         /**
@@ -7200,7 +7329,7 @@ declare module egret3d {
          */
         /**
          * @language zh_CN
-         * 眼睛矩阵(左，右眼)
+         * 眼睛矩阵(左，右眼) 实现VR时会用到
          */
         eyeMatrix: EyesMatrix;
         /**
@@ -7216,7 +7345,7 @@ declare module egret3d {
          */
         /**
          * @language zh_CN
-         * @相机的视椎体
+         * 相机的视椎体，用来检测是否在当前相机可视范围内
          */
         frustum: Frustum;
         /**
@@ -7511,6 +7640,11 @@ declare module egret3d {
          */
         protected _diffuse: Vector3D;
         /**
+        * @language zh_CN
+        * 背光颜色
+        */
+        protected _halfColor: Vector3D;
+        /**
          * @language en_US
          */
         /**
@@ -7589,14 +7723,14 @@ declare module egret3d {
         /**
          * @language zh_CN
          */
-        private len;
+        protected len: number;
         /**
          * @language en_US
          */
         /**
          * @language zh_CN
          */
-        private _change;
+        protected _change: boolean;
         constructor();
         /**
          * @language zh_CN
@@ -7676,6 +7810,7 @@ declare module egret3d {
         * @param dir 光线的方向
         */
         constructor(dir: Vector3D);
+        halfColor: number;
         /**
          * @language en_US
          * @param value
@@ -8099,6 +8234,7 @@ declare module egret3d {
         * 可渲染对象列表
         */
         renderList: Array<Object3D>;
+        mousePickList: Array<Object3D>;
         protected _nodes: Array<Object3D>;
         protected _num: number;
         protected _rootNode: Object3D;
@@ -8168,7 +8304,8 @@ declare module egret3d {
     /**
     * @class egret3d.EntityCollect
     * @classdesc
-    * Object3D 渲染对象收集器
+    * Object3D 渲染对象收集器,把渲染对象进行可视筛选，
+    * 并且划分渲染层级，依次排序到加入列表.
     */
     class EntityCollect extends CollectBase {
         protected _tags: Array<Tag>;
@@ -8267,6 +8404,12 @@ declare module egret3d {
         protected findTag(object3d: Object3D): Tag;
         protected clearLayerList(): void;
         protected sort(a: Object3D, b: Object3D, camera: Camera3D): number;
+    }
+}
+declare module egret3d {
+    class Scene3D extends Object3D {
+        collect: EntityCollect;
+        constructor();
     }
 }
 declare module egret3d {
@@ -8684,6 +8827,7 @@ declare module egret3d {
         * @param euler 转旋欧拉角
         */
         rotationGeomtry(euler: Vector3D): void;
+        dispose(): void;
     }
 }
 declare module egret3d {
@@ -8953,7 +9097,7 @@ declare module egret3d {
     /**
     * @class egret3d.Mesh
     * @classdesc
-    * 3d模型 生成渲染模型
+    * 3d模型网格 生成渲染模型
     */
     class Mesh extends Object3D {
         /**
@@ -8972,11 +9116,12 @@ declare module egret3d {
         clone(): Mesh;
         /**
         * @language zh_CN
-        * 数据更新
+        * 当前对象数据更新
+        * @param camera 当前渲染的摄相机
         * @param time 当前时间
-        * @param delay 间隔时间
+        * @param delay 每帧时间间隔
         */
-        update(time: number, delay: number): void;
+        update(camera: Camera3D, time: number, delay: number): void;
     }
 }
 declare module egret3d {
@@ -9652,7 +9797,7 @@ declare module egret3d {
     /**
     * @class egret3d.Picker
     * @classdesc
-    * 鼠标拾取
+    * 射线对场景中的实体对像进行检测
     */
     class Picker {
         protected static ray: Ray;
@@ -9664,21 +9809,13 @@ declare module egret3d {
         * @returns 拾取的object列表
         */
         static pickObject3DList(camera: Camera3D, objects: Array<Object3D>): Array<Object3D>;
-        /**
-        * @language zh_CN
-        * 返回鼠标拾取对象模型得到的所有对象
-        * @param camera 当前相机
-        * @param objects 检测的对象列表
-        * @returns 拾取的object列表
-        */
-        static pickObject3DListToMesh(camera: Camera3D, objects: Array<Object3D>): Array<Object3D>;
     }
 }
 declare module egret3d {
     /**
     * @class egret3d.ControllerBase
     * @classdesc
-    * 控制器 基类
+    * 控制器 基类, 抽象控制器的一些数据
     */
     class ControllerBase {
         protected _autoUpdate: boolean;
@@ -9723,7 +9860,11 @@ declare module egret3d {
     /**
     * @class egret3d.LookAtController
     * @classdesc
-    * look at 相机控制器
+    * look at 摄像机控制器 。
+    * 指定摄像机看向的目标对象
+    * 1.按下鼠标左键并移动鼠标可以使摄像机绕着目标进行旋转.
+    * 2.按下键盘的(w s a d) 可以摄像机(上 下 左 右)移动.
+    * 3.滑动鼠标滚轮可以控制摄像机的视距.
     */
     class LookAtController extends ControllerBase {
         protected _lookAtObject: Object3D;
@@ -9803,22 +9944,38 @@ declare module egret3d {
         setEyesLength(length: number): void;
         /**
         * @language zh_CN
+        * 设置相机x轴旋转
+        * @param x
+        */
+        rotationX: number;
+        /**
+        * @language zh_CN
+        * 设置相机y轴旋转
+        * @param y
+        */
+        rotationY: number;
+        /**
+        * @language zh_CN
+        * 设置相机z轴旋转
+        * @param z
+        */
+        rotationZ: number;
+        /**
+        * @language zh_CN
         * 数据更新
         */
         update(): void;
         private keyDown(key);
         private keyUp(key);
-        private onButtonUp(b);
-        private onButtonDown(b);
-        private onButtonLeft(b);
-        private onButtonRight(b);
     }
 }
 declare module egret3d {
     /**
     * @class egret3d.CameraAnimationController
     * @classdesc
-    * 摄像机动画控制器
+    * 摄像机动画控制器。
+    * 每个摄像机动画绑定一个摄像机，控制摄像机的行为
+    * 可以更换绑定的摄像机
     */
     class CameraAnimationController {
         /**
@@ -9896,6 +10053,7 @@ declare module egret3d {
     * @class egret3d.CameraAnimationManager
     * @classdesc
     * 摄像机动画控制器管理
+    * 管理所有摄像机动画
     */
     class CameraAnimationManager {
         private _animation;
@@ -9907,6 +10065,7 @@ declare module egret3d {
         /**
         * @language zh_CN
         * 播放某个动画
+        * 根据动画名字来播放，指定摄像机，并且控制动画是否循环播放
         * @param name 动画名
         * @param camera 相机
         * @param isLoop 是否循环
@@ -9922,135 +10081,202 @@ declare module egret3d {
         private onCallback(loader, name, camera, isLoop);
     }
 }
-declare module egret3d {
-    /**
-    * @class egret3d.CameraControllerBase
-    * @classdesc
-    * 相机控制器基类
-    */
-    class CameraControllerBase {
-        protected _view3d: View3D;
-        protected _target: Object3D;
-        protected _angle: number;
-        protected _distance: number;
-        protected _wide: number;
-        protected _locked: Boolean;
-        protected _cameraMoveHandler: Function;
-        protected _lockTarget: Boolean;
-        protected _lookAtPos: Vector3D;
-        /**
-        * @language zh_CN
-        * constructor
-        * @param  view3d
-        */
-        constructor(view3d: View3D);
-        /**
-        * @language zh_CN
-        *
-        * @param angle
-        * @param distance
-        * @param wide
-        * @param locked
-        */
-        start(angle: number, distance: number, wide: number, locked: Boolean): void;
-        /**
-        * @language zh_CN
-        *
-        * @param timer
-        * @param elapsed
-        */
-        update(timer: number, elapsed: number): void;
-        /**
-        * @language zh_CN
-        *
-        * @param pos
-        */
-        setCameraLookAtPos(pos: Vector3D): void;
-        /**
-        * @language zh_CN
-        *
-        * @retruns Vector3D
-        */
-        getCameraPos(): Vector3D;
-        /**
-        * @language zh_CN
-        *
-        * @retruns Object3D
-        */
-        /**
-        * @language zh_CN
-        *
-        * @param obj
-        */
-        target: Object3D;
-        /**
-        * @language zh_CN
-        *
-        * @retruns Boolean
-        */
-        /**
-        * @language zh_CN
-        *
-        * @param value
-        */
-        lockTarget: Boolean;
-        /**
-        * @language zh_CN
-        *
-        * @retruns Function
-        */
-        /**
-        * @language zh_CN
-        *
-        * @event handler
-        */
-        cameraMoveHandler: Function;
+declare module nid {
+    class MEMORY {
+        static u8Index: number;
+        static u16Index: number;
+        static u32Index: number;
+        static u8: Uint32Array;
+        static u16: Uint32Array;
+        static u32: Uint32Array;
+        static allocateUint8(len: number): void;
+        static allocateUint16(len: number): void;
+        static allocateUint32(len: number): void;
+        static getUint8(): number;
+        static getUint16(): number;
+        static getUint32(): number;
     }
 }
-declare module egret3d {
+declare module nid {
     /**
-    * @class egret3d.FreeCameraControl
-    * @classdesc
-    * 自由摄相机控制器
-    */
-    class FreeCameraControl extends CameraControllerBase {
-        private _moveSpeed;
-        private _moveDetail;
-        private _screenMoveStartDetail;
-        private _screenMoveDelay;
-        private _mouseDown;
-        /**
-        * @language zh_CN
-        * constructor
-        */
-        constructor(view3d: View3D);
-        private initView();
-        /**
-        * @language zh_CN
-        * 初始化
-        * @param angle 角度
-        * @param distance 相机距离
-        * @param wide
-        * @param locked 是否锁定
-        * @param lockRect
-        */
-        start(angle: number, distance: number, wide: number, locked: boolean): void;
-        /**
-        * @language zh_CN
-        * 停止控制
-        */
-        stop(): void;
-        protected onKeyDown(key: number): void;
-        protected onKeyUp(key: number): void;
-        protected mouseMove(): void;
-        protected mouseWheel(): void;
-        /**
-        * @language zh_CN
-        * 数据更新
-        * @param timer 当前时间
-        * @param elapsed 时间间隔
-        */
-        update(timer: number, elapsed: number): void;
+     * LZMA Decoder
+     * @author Nidin Vinayakan | nidinthb@gmail.com
+     */
+    class LzmaDecoder {
+        markerIsMandatory: boolean;
+        rangeDec: RangeDecoder;
+        outWindow: OutWindow;
+        lc: number;
+        pb: number;
+        lp: number;
+        dictSize: number;
+        dictSizeInProperties: number;
+        private litProbs;
+        private posSlotDecoder;
+        private alignDecoder;
+        private posDecoders;
+        private isMatch;
+        private isRep;
+        private isRepG0;
+        private isRepG1;
+        private isRepG2;
+        private isRep0Long;
+        private lenDecoder;
+        private repLenDecoder;
+        private loc1;
+        private loc2;
+        private matchBitI;
+        private matchByteI;
+        private bitI;
+        private symbolI;
+        private prevByteI;
+        private litStateI;
+        constructor();
+        init(): void;
+        create(): void;
+        private createLiterals();
+        private initLiterals();
+        private decodeLiteral(state, rep0);
+        private decodeDistance(len);
+        private initDist();
+        decodeProperties(properties: Uint8Array): void;
+        private updateState_Literal(state);
+        private updateState_ShortRep(state);
+        private updateState_Rep(state);
+        private updateState_Match(state);
+        decode(unpackSizeDefined: boolean, unpackSize: number): number;
+    }
+}
+declare module nid {
+    /**
+     * LZMA Decoder
+     * @author Nidin Vinayakan | nidinthb@gmail.com
+     */
+    class LZMA {
+        static LZMA_DIC_MIN: number;
+        static LZMA_RES_ERROR: number;
+        static LZMA_RES_FINISHED_WITH_MARKER: number;
+        static LZMA_RES_FINISHED_WITHOUT_MARKER: number;
+        static kNumBitModelTotalBits: number;
+        static kNumMoveBits: number;
+        static PROB_INIT_VAL: number;
+        static kNumPosBitsMax: number;
+        static kNumStates: number;
+        static kNumLenToPosStates: number;
+        static kNumAlignBits: number;
+        static kStartPosModelIndex: number;
+        static kEndPosModelIndex: number;
+        static kNumFullDistances: number;
+        static kMatchMinLen: number;
+        decoder: LzmaDecoder;
+        data: Uint8Array;
+        static INIT_PROBS(p: Uint16Array): void;
+        static BitTreeReverseDecode(probs: any, numBits: number, rc: RangeDecoder, offset?: number): number;
+        constructor();
+        decode(data: Uint8Array): Uint8Array;
+    }
+}
+declare module nid {
+    /**
+     * LZMA Decoder
+     * @author Nidin Vinayakan | nidinthb@gmail.com
+     */
+    class OutWindow {
+        totalPos: number;
+        outStream: Uint8Array;
+        private buf;
+        private pos;
+        out_pos: number;
+        private size;
+        private isFull;
+        constructor();
+        create(dictSize: number): void;
+        putByte(b: any): void;
+        getByte(dist: number): number;
+        copyMatch(dist: any, len: any): void;
+        checkDistance(dist: any): boolean;
+        isEmpty(): boolean;
+    }
+}
+declare module nid {
+    /**
+     * LZMA Decoder
+     * @author Nidin Vinayakan | nidinthb@gmail.com
+     */
+    class RangeDecoder {
+        static kTopValue: number;
+        inStream: Uint8Array;
+        corrupted: boolean;
+        in_pos: number;
+        private range;
+        private code;
+        private rangeI;
+        private codeI;
+        private loc1;
+        private loc2;
+        private U32;
+        private U16;
+        constructor();
+        isFinishedOK(): boolean;
+        init(): void;
+        normalize(): void;
+        decodeDirectBits(numBits: number): number;
+        decodeBit(prob: Uint16Array, index: number): number;
+    }
+}
+declare module nid {
+    /**
+     * LZMA Decoder
+     * @author Nidin Vinayakan | nidinthb@gmail.com
+     */
+    class LenDecoder {
+        private choice;
+        private lowCoder;
+        private midCoder;
+        private highCoder;
+        constructor();
+        init(): void;
+        decode(rc: RangeDecoder, posState: number): number;
+    }
+}
+declare module nid {
+    /**
+     * LZMA Decoder
+     * @author Nidin Vinayakan | nidinthb@gmail.com
+     */
+    class BitTreeDecoder {
+        probs: Uint16Array;
+        private numBits;
+        constructor(numBits: any);
+        init(): void;
+        decode(rc: RangeDecoder): number;
+        reverseDecode(rc: RangeDecoder): number;
+        static constructArray(numBits: number, len: number): Array<BitTreeDecoder>;
+    }
+}
+declare module nid {
+    class LZMAHelper {
+        static decoder: LZMA;
+        static decoderAsync: Worker;
+        static callback: Function;
+        static ENCODE: number;
+        static DECODE: number;
+        static init(): void;
+        static encode(data: ArrayBuffer): ArrayBuffer;
+        static decode(data: ArrayBuffer): ArrayBuffer;
+        static encodeAsync(data: ArrayBuffer, _callback: Function): void;
+        static decodeAsync(data: ArrayBuffer, _callback: Function): void;
+    }
+}
+declare module nid {
+    class LZMAWorker {
+        static ENCODE: number;
+        static DECODE: number;
+        private decoder;
+        private command;
+        private time;
+        constructor();
+        private decode(data);
     }
 }
 declare class DeviceUtil {
@@ -10556,7 +10782,7 @@ declare module egret3d {
     /**
      * @class egret3d.WriframeMesh
      * @classdesc
-     * 模型线框网格 以线框形式渲染模型
+     * 模型线框网格,以线框形式渲染模型
      */
     class WireframeMesh extends WireframeBase {
         /**
@@ -10564,7 +10790,12 @@ declare module egret3d {
         * constructor
         */
         constructor();
-        creatByMesh(mesh: Mesh): void;
+        /**
+        * @language zh_CN
+        * 根据mesh创建一个线框
+        * @param mesh
+        */
+        createByMesh(mesh: Mesh): void;
         /**
         * @language zh_CN
         * 根据geometry创建一个线框
@@ -10999,10 +11230,9 @@ declare module egret3d {
      * 渲染视图
      */
     class View3D {
-        protected _root: Object3D;
         protected _context3D: Context3D;
         protected _camera: Camera3D;
-        protected _collect: EntityCollect;
+        protected _scene: Scene3D;
         protected _render: RenderBase;
         protected _shadowRender: ShadowRender;
         protected _width: number;
@@ -11027,6 +11257,8 @@ declare module egret3d {
         protected _isDeferred: boolean;
         protected _sourceFrameBuffer: FrameBuffer;
         protected _resizeFuncs: Array<Function>;
+        protected _wireframeList: Array<WireframeBase>;
+        protected _hudList: Array<HUD>;
         private _mouseEventManager;
         /**
         * @language zh_CN
@@ -11035,8 +11267,17 @@ declare module egret3d {
         * @returns 根节点
         */
         root: Object3D;
-        protected _wireframeList: Array<WireframeBase>;
-        protected _hudList: Array<HUD>;
+        /**
+        * @language zh_CN
+        * @param viewPort
+        * @readOnly
+        * @returns Scene3D
+        */
+        /**
+        * @language zh_CN
+        * @param Scene3D
+        */
+        scene: Scene3D;
         /**
         * @language zh_CN
         * constructor
@@ -11127,13 +11368,7 @@ declare module egret3d {
         /**
         * @language zh_CN
         * xxxxxxxx
-        * @returns xxx
-        */
-        collect: CollectBase;
-        /**
-        * @language zh_CN
-        * xxxxxxxx
-        * @returns xxx
+        * @returns Camera3D
         */
         camera3D: Camera3D;
         /**

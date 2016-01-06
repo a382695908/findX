@@ -7,6 +7,8 @@
     protected _width  : number = 600;
     protected _height : number = 600;
     protected _depth  : number = 600;
+    private  _cvs: HTMLCanvasElement = null;
+    private _url: string = "";
 
     public constructor() {
         super();
@@ -25,15 +27,24 @@
         var loader: egret3d.TextureLoader = <egret3d.TextureLoader>e.data; 
 
         var lightGroup: egret3d.LightGroup = new egret3d.LightGroup();
-        var directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(80, 80, 80));
+        var directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
         directLight.diffuse = 0xaaaaaa;
         lightGroup.addDirectLight(directLight);
 
-        for (var idx = 0; idx < this._boxCnt; ++idx){
+        var rnd: number = Math.floor( Math.random() * this._boxCnt );
+
+        for (var idx:number = 0; idx < this._boxCnt; ++idx){
             var box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             var bi = {"box" : box };
-            bi['box'].isCheckBox = true;
-            bi['box'].material.diffuseTexture = loader.texture;
+
+            if ( idx == rnd ){
+                egret3d.TxtTexture.createTxtTexture("夭", 64, 64, '#00FF00', '60px 楷体');
+            }
+            else{
+                egret3d.TxtTexture.createTxtTexture("天", 64, 64, '#FF0000', '60px 楷体');
+            }
+
+            bi['box'].material.diffuseTexture = egret3d.TxtTexture.texture;
 
             bi['moveX']     = Math.random() * this._mspeed + 1;
             bi['moveY']     = Math.random() * this._mspeed + 1;
@@ -57,7 +68,6 @@
 
             this._boxInfo[idx] = bi;
         }
-
 
         this._cameraCtl.setEyesLength(3000);
     }

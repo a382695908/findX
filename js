@@ -88,7 +88,6 @@ var egret3d;
                 }
             }
             egret3d.CheckerboardTexture.texture.upload(Egret3DDrive.context3D);
-            //TxtTexture.texture.upload(Egret3DDrive.context3D);
             console.log("requst GPU Config", Egret3DDrive.context3D);
             egret3d.ShaderSystemTool.regist(call);
         };
@@ -4804,43 +4803,33 @@ var egret3d;
         /**
          * @language zh_CN
          */
-        function TxtTexture(txt, w, h, rgb, font) {
+        function TxtTexture(txt, w, h) {
             _super.call(this);
             this._width = 32;
             this._height = 32;
             this._width = w;
             this._height = h;
-            this.genTxtImg(txt, w, h, rgb, font);
+            this._txtImgData = this.genTxtImg(txt, w, h);
             this.buildCheckerboard();
             this.mimapData = new Array();
             this.mimapData.push(new egret3d.MipmapData(this._pixelArray, this._width, this._height));
         }
-        /**
-         * @language zh_CN
-         */
-        TxtTexture.createTxtTexture = function (txt, w, h, rgb, font) {
-            TxtTexture.texture = new TxtTexture(txt, w, h, rgb, font);
-            egret3d.TxtTexture.texture.upload(egret3d.Egret3DDrive.context3D);
-        };
-        TxtTexture.prototype.genTxtImg = function (txt, w, h, rgb, font) {
+        TxtTexture.prototype.genTxtImg = function (txt, w, h) {
             var cvs = document.createElement("canvas");
             var ctx = cvs.getContext("2d");
             cvs.width = w;
             cvs.height = h;
-            cvs = document.createElement("canvas");
-            ctx = cvs.getContext("2d");
-            cvs.width = w;
-            cvs.height = h;
             ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, w, h);
-            ctx.fillStyle = rgb;
-            ctx.font = font;
+            ctx.font = 60 + 'px "Microsoft Yahei" bold';
+            ctx.fillStyle = 'black';
             ctx.textAlign = 'center';
             ctx.lineWidth = 3;
+            ctx.strokeStyle = 'black';
             ctx.textBaseline = 'middle';
             ctx.fillText(txt, w / 2, h / 2);
-            this._txtImgData = ctx.getImageData(0, 0, w, h);
-            return this._txtImgData;
+            ctx.strokeText(txt, w / 2, h / 2);
+            return ctx.getImageData(0, 0, w, h);
         };
         /**
          * @language zh_CN
@@ -4861,17 +4850,23 @@ var egret3d;
         TxtTexture.prototype.buildCheckerboard = function () {
             if (!this._pixelArray && this._txtImgData) {
                 this._pixelArray = new Uint8Array(this._width * this._height * 4);
+                var colors = [egret3d.Color.white(), egret3d.Color.black()];
+                var colorIndex = 0;
+                var blockSize = 4;
                 for (var y = 0; y < this._height; y++) {
                     for (var x = 0; x < this._width; x++) {
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData.data[(y * this._width + x) * 4 + 0];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData.data[(y * this._width + x) * 4 + 1];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData.data[(y * this._width + x) * 4 + 2];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = this._txtImgData.data[(y * this._width + x) * 4 + 3];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData[(y * (this._width * 4) + x * 4) + 0];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData[(y * (this._width * 4) + x * 4) + 1];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData[(y * (this._width * 4) + x * 4) + 2];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = 255; //this._txtImgData[(y * (this._width * 4) + x * 4) + 3];
                     }
                 }
             }
         };
-        TxtTexture.texture = null;
+        /**
+         * @language zh_CN
+         */
+        TxtTexture.texture = new TxtTexture("A", 64, 64);
         return TxtTexture;
     })(egret3d.TextureBase);
     egret3d.TxtTexture = TxtTexture;
