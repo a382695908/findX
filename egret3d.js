@@ -4804,13 +4804,14 @@ var egret3d;
         /**
          * @language zh_CN
          */
-        function TxtTexture(txt, w, h, rgb, font) {
+        function TxtTexture(w, h, txt, font, rgba, bg_rgba, frame_rgba) {
             _super.call(this);
             this._width = 32;
             this._height = 32;
             this._width = w;
             this._height = h;
-            this.genTxtImg(txt, w, h, rgb, font);
+            this._txt = txt;
+            this.genTxtImg(this._width, this._height, this._txt, font, rgba, bg_rgba, frame_rgba);
             this.buildCheckerboard();
             this.mimapData = new Array();
             this.mimapData.push(new egret3d.MipmapData(this._pixelArray, this._width, this._height));
@@ -4818,11 +4819,11 @@ var egret3d;
         /**
          * @language zh_CN
          */
-        TxtTexture.createTxtTexture = function (txt, w, h, rgb, font) {
-            TxtTexture.texture = new TxtTexture(txt, w, h, rgb, font);
+        TxtTexture.createTxtTexture = function (w, h, txt, font, rgba, bg_rgba, frame_rgba) {
+            TxtTexture.texture = new TxtTexture(w, h, txt, font, rgba, bg_rgba, frame_rgba);
             egret3d.TxtTexture.texture.upload(egret3d.Egret3DDrive.context3D);
         };
-        TxtTexture.prototype.genTxtImg = function (txt, w, h, rgb, font) {
+        TxtTexture.prototype.genTxtImg = function (w, h, txt, font, rgba, bg_rgba, frame_rgba) {
             var cvs = document.createElement("canvas");
             var ctx = cvs.getContext("2d");
             cvs.width = w;
@@ -4831,9 +4832,11 @@ var egret3d;
             ctx = cvs.getContext("2d");
             cvs.width = w;
             cvs.height = h;
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = bg_rgba;
             ctx.fillRect(0, 0, w, h);
-            ctx.fillStyle = rgb;
+            ctx.fillStyle = frame_rgba;
+            ctx.strokeRect(0, 0, w, h);
+            ctx.fillStyle = rgba;
             ctx.font = font;
             ctx.textAlign = 'center';
             ctx.lineWidth = 3;

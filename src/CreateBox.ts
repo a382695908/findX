@@ -38,10 +38,10 @@
             var bi = {"box" : box };
 
             if ( idx == rnd ){
-                egret3d.TxtTexture.createTxtTexture("夭", 64, 64, '#00FF00', '60px 楷体');
+                egret3d.TxtTexture.createTxtTexture(64, 64, "夭", '60px 楷体', 'rgba(255, 0, 0, 1)', 'rgba(200, 200, 200, 1)', 'rgba(255, 0, 0, 1)');
             }
             else{
-                egret3d.TxtTexture.createTxtTexture("天", 64, 64, '#FF0000', '60px 楷体');
+                egret3d.TxtTexture.createTxtTexture(64, 64, "天", '60px 楷体', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(0, 0, 255, 1)');
             }
 
             bi['box'].material.diffuseTexture = egret3d.TxtTexture.texture;

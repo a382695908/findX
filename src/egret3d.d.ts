@@ -3122,17 +3122,18 @@ declare module egret3d {
         /**
          * @language zh_CN
          */
-        static createTxtTexture(txt: string, w: number, h: number, rgb: string, font: string): void;
+        static createTxtTexture(w: number, h: number, txt: string, font: string, rgba: string, bg_rgba: string, frame_rgba: string): void;
         static texture: TxtTexture;
         private _width;
         private _height;
         private _pixelArray;
+        private _txt;
         private _txtImgData;
-        genTxtImg(txt: string, w: number, h: number, rgb: string, font: string): ImageData;
+        genTxtImg(w: number, h: number, txt: string, font: string, rgba: string, bg_rgba: string, frame_rgba: string): ImageData;
         /**
          * @language zh_CN
          */
-        constructor(txt: string, w: number, h: number, rgb: string, font: string);
+        constructor(w: number, h: number, txt: string, font: string, rgba: string, bg_rgba: string, frame_rgba: string);
         /**
          * @language zh_CN
          * 上传贴图数据给GPU
