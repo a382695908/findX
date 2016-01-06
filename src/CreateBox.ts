@@ -15,11 +15,12 @@
     }
 
     protected onView3DInitComplete(): void {
-        super.onView3DInitComplete();
 
         var textureLoad: egret3d.TextureLoader = new egret3d.TextureLoader("resource/chars/chars.jpg");
         textureLoad.addEventListener(egret3d.Event3D.EVENT_LOAD_COMPLETE,(e: egret3d.Event3D) => this.textureComplete(e));
         textureLoad.load();
+
+        super.onView3DInitComplete();
     }
 
 
