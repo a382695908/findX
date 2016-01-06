@@ -1,4 +1,4 @@
-﻿class Sample_CreateView3D {
+﻿class CreateView3D {
 
     protected _time: number = 0;
     protected _delay: number = 0;
@@ -15,20 +15,11 @@
     }
 
     protected onInit3D(): void {
-        //创建View3D对象;
         this._view3D = new egret3d.View3D(this._viewPort);
-
-        //创建像机控制器;
         this._cameraCtl = new egret3d.LookAtController(this._view3D.camera3D, new egret3d.Object3D());
-
-        //设置像机视野距离;
         this._cameraCtl.setEyesLength(1000);
-
-        //View3D初始化完成;
         this.onView3DInitComplete();
-
         this._time = new Date().getTime();
-
         requestAnimationFrame(() => this.onUpdate());
     }
 

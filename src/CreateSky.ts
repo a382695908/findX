@@ -1,4 +1,4 @@
-﻿class Sample_CreateSky extends Sample_CreateView3D {
+﻿class CreateSky extends CreateView3D {
     protected _boxTexture : egret3d.SkyTexture;
     public constructor() {
         super();

@@ -1,4 +1,4 @@
-﻿class Sample_CreateBox extends Sample_CreateSky{
+﻿class CreateBox extends CreateSky{
     protected _boxInfo : any = {};
     protected _boxCnt : number = 12;
     protected _mspeed : number = 10;
@@ -13,6 +13,8 @@
     }
 
     protected onView3DInitComplete(): void {
+        super.onView3DInitComplete();
+
         var textureLoad: egret3d.TextureLoader = new egret3d.TextureLoader("resource/chars/chars.jpg");
         textureLoad.addEventListener(egret3d.Event3D.EVENT_LOAD_COMPLETE,(e: egret3d.Event3D) => this.textureComplete(e));
         textureLoad.load();
@@ -58,8 +60,6 @@
 
 
         this._cameraCtl.setEyesLength(3000);
-
-        super.onView3DInitComplete();
     }
 
     protected onUpdate(): void {
