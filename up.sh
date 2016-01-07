@@ -10,6 +10,6 @@
 ########################################################################
 cd `dirname $0`
 
-cp /home/aceway/workspace/study/egret-3d/Sample/egret3d.js ./
-cp /home/aceway/workspace/study/egret-3d/Sample/egret3d.js ./src/
-cp /home/aceway/workspace/study/egret-3d/Sample/egret3d.d.ts ./src/
+cp /home/aceway/workspace/git/github/egret-3d/Sample/egret3d.js ./
+cp /home/aceway/workspace/git/github/egret-3d/Sample/egret3d.js ./src/
+cp /home/aceway/workspace/git/github/egret-3d/Sample/egret3d.d.ts ./src/

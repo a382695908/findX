@@ -88,7 +88,6 @@ var egret3d;
                 }
             }
             egret3d.CheckerboardTexture.texture.upload(Egret3DDrive.context3D);
-            //TxtTexture.texture.upload(Egret3DDrive.context3D);
             console.log("requst GPU Config", Egret3DDrive.context3D);
             egret3d.ShaderSystemTool.regist(call);
         };
@@ -3893,8 +3892,8 @@ var egret3d;
         * @param inPos 相交点
         * @returns 相交返回true
         */
-        Ray.prototype.IntersectMeshEx = function (mesh, uv_offset, result) {
-            return this.IntersectMesh(mesh.geometry.verticesData, mesh.geometry.indexData, mesh.geometry.vertexAttLength, mesh.geometry.indexData.length / 3, uv_offset, mesh.modelMatrix, result);
+        Ray.prototype.IntersectMeshEx = function (mesh, inPos) {
+            return this.IntersectMesh(mesh.geometry.verticesData, mesh.geometry.indexData, mesh.geometry.vertexAttLength, mesh.geometry.indexData.length / 3, inPos, mesh.modelMatrix);
         };
         /**
         * @language zh_CN
@@ -3907,15 +3906,7 @@ var egret3d;
         * @param mMat 顶点的世界变换矩阵
         * @returns 相交返回true
         */
-        Ray.prototype.IntersectMesh = function (verticesData, indexData, offset, faces, uv_offset, mMat, result) {
-            var modletriangle = new Array();
-            modletriangle.push(new egret3d.Vector3D());
-            modletriangle.push(new egret3d.Vector3D());
-            modletriangle.push(new egret3d.Vector3D());
-            var uvarray = new Array();
-            uvarray.push(new egret3d.Vector3D());
-            uvarray.push(new egret3d.Vector3D());
-            uvarray.push(new egret3d.Vector3D());
+        Ray.prototype.IntersectMesh = function (verticesData, indexData, offset, faces, inPos, mMat) {
             var triangle = new Array();
             var v0 = new egret3d.Vector3D();
             var v1 = new egret3d.Vector3D();
@@ -3923,12 +3914,6 @@ var egret3d;
             triangle.push(v0);
             triangle.push(v1);
             triangle.push(v2);
-            var pos = new egret3d.Vector3D();
-            var uv = new egret3d.Point();
-            var ret = new Array();
-            ret.push(0.0);
-            ret.push(0.0);
-            ret.push(0.0);
             var face = -1;
             var t = Number.MAX_VALUE;
             var u = 0;
@@ -3936,12 +3921,16 @@ var egret3d;
             for (var i = 0; i < faces; ++i) {
                 for (var j = 0; j < 3; ++j) {
                     var index = indexData[3 * i + j];
-                    pos.setTo(verticesData[offset * index + 0], verticesData[offset * index + 1], verticesData[offset * index + 2]);
-                    pos.copyFrom(mMat.transformVector(pos));
+                    var pos = new egret3d.Vector3D(verticesData[offset * index + 0], verticesData[offset * index + 1], verticesData[offset * index + 2]);
+                    pos = mMat.transformVector(pos);
                     triangle[j].x = pos.x;
                     triangle[j].y = pos.y;
                     triangle[j].z = pos.z;
                 }
+                var ret = new Array();
+                ret.push(0.0);
+                ret.push(0.0);
+                ret.push(0.0);
                 if (this.IntersectTriangle(v0, v1, v2, ret)) {
                     if (ret[0] < t) {
                         face = i;
@@ -3954,15 +3943,8 @@ var egret3d;
             if (face < faces && face >= 0) {
                 for (var i = 0; i < 3; ++i) {
                     var index = indexData[3 * face + i];
-                    pos.setTo(verticesData[offset * index + 0], verticesData[offset * index + 1], verticesData[offset * index + 2]);
-                    modletriangle[i].copyFrom(pos);
-                    if (uv_offset > 0) {
-                        uv.x = verticesData[offset * index + 0 + uv_offset];
-                        uv.y = verticesData[offset * index + 1 + uv_offset];
-                        uvarray[i].x = uv.x;
-                        uvarray[i].y = uv.y;
-                    }
-                    pos.copyFrom(mMat.transformVector(pos));
+                    var pos = new egret3d.Vector3D(verticesData[offset * index + 0], verticesData[offset * index + 1], verticesData[offset * index + 2]);
+                    pos = mMat.transformVector(pos);
                     triangle[i].x = pos.x;
                     triangle[i].y = pos.y;
                     triangle[i].z = pos.z;
@@ -3971,19 +3953,7 @@ var egret3d;
                 tmp0.scaleBy(u);
                 var tmp1 = v2.subtract(v0);
                 tmp1.scaleBy(v);
-                result.globalPosition.copyFrom(v0.add(tmp0.add(tmp1)));
-                tmp0 = modletriangle[1].subtract(modletriangle[0]);
-                tmp0.scaleBy(u);
-                tmp1 = modletriangle[2].subtract(modletriangle[0]);
-                tmp1.scaleBy(v);
-                result.localPosition.copyFrom(modletriangle[0].add(tmp0.add(tmp1)));
-                if (uv_offset > 0) {
-                    tmp0 = uvarray[1].subtract(uvarray[0]);
-                    tmp0.scaleBy(u);
-                    tmp1 = uvarray[2].subtract(uvarray[0]);
-                    tmp1.scaleBy(v);
-                    result.uv.copyFrom(uvarray[0].add(tmp0.add(tmp1)));
-                }
+                inPos.copyFrom(v0.add(tmp0.add(tmp1)));
                 return true;
             }
             return false;
@@ -4401,9 +4371,6 @@ var egret3d;
         Event3D.MOUSE_OVER = "onMouseOver";
         Event3D.MOUSE_OUT = "onMouseOut";
         Event3D.MOUSE_MOVE = "onMouseMove";
-        Event3D.TOUCH_MOVE = "onTouchMove";
-        Event3D.TOUCH_START = "onTouchStart";
-        Event3D.TOUCH_END = "onTouchEnd";
         Event3D.COMPLETE = "complete";
         Event3D.CHANGE_PROPERTY = "changeProperty";
         return Event3D;
@@ -4425,89 +4392,80 @@ var egret3d;
         * @param camera {Camera3D}
         * @param collect {CollectBase}
         */
-        function Mouse3DManager(camera) {
+        function Mouse3DManager(camera, collect) {
             var _this = this;
             this._camera = camera;
-            egret3d.Input.instance.addListenerKeyClick(function (code) { return _this.onMouseClick(code); });
-            egret3d.Input.instance.addListenerKeyDown(function (code) { return _this.onMouseDown(code); });
-            egret3d.Input.instance.addListenerKeyUp(function (code) { return _this.onMouseUp(code); });
+            this._collect = collect;
+            egret3d.Input.instance.addListenerKeyClick(function (e) { return _this.onMouseClick(e); });
+            egret3d.Input.instance.addListenerKeyDown(function (e) { return _this.onMouseDown(e); });
+            egret3d.Input.instance.addListenerKeyUp(function (e) { return _this.onMouseUp(e); });
             egret3d.Input.instance.addListenerMouseMove(function (e) { return _this.onMouseMove(e); });
-            egret3d.Input.instance.addTouchStartCallback(function (e) { return _this.onTouchMove(e); });
-            egret3d.Input.instance.addTouchEndCallback(function (e) { return _this.onTouchEnd(e); });
-            egret3d.Input.instance.addTouchMoveCallback(function (e) { return _this.onTouchStart(e); });
         }
-        Mouse3DManager.prototype.onTouchMove = function (e) {
-            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.mousePickList);
+        Mouse3DManager.prototype.onMouseClick = function (e) {
+            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.renderList);
             var event;
             for (var i = 0; i < ret.length; i++) {
-                event = new egret3d.Event3D(egret3d.Event3D.TOUCH_MOVE);
-                event.currentTarget = ret[i];
-                event.data = e;
-                ret[i].dispatchEvent(event);
+                if (ret[i].mouseEnable) {
+                    event = new egret3d.Event3D(egret3d.Event3D.MOUSE_CLICK);
+                    event.currentTarget = ret[i];
+                    ret[i].dispatchEvent(event);
+                }
             }
         };
-        Mouse3DManager.prototype.onTouchEnd = function (e) {
-            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.mousePickList);
+        Mouse3DManager.prototype.onMouseDown = function (e) {
+            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.renderList);
             var event;
             for (var i = 0; i < ret.length; i++) {
-                event = new egret3d.Event3D(egret3d.Event3D.TOUCH_END);
-                event.currentTarget = ret[i];
-                event.data = e;
-                ret[i].dispatchEvent(event);
+                if (ret[i].mouseEnable) {
+                    event = new egret3d.Event3D(egret3d.Event3D.MOUSE_DOWN);
+                    event.currentTarget = ret[i];
+                    ret[i].dispatchEvent(event);
+                }
             }
         };
-        Mouse3DManager.prototype.onTouchStart = function (e) {
-            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.mousePickList);
+        Mouse3DManager.prototype.onMouseUp = function (e) {
+            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.renderList);
             var event;
             for (var i = 0; i < ret.length; i++) {
-                event = new egret3d.Event3D(egret3d.Event3D.TOUCH_START);
-                event.currentTarget = ret[i];
-                event.data = e;
-                ret[i].dispatchEvent(event);
+                if (ret[i].mouseEnable) {
+                    event = new egret3d.Event3D(egret3d.Event3D.MOUSE_UP);
+                    event.currentTarget = ret[i];
+                    ret[i].dispatchEvent(event);
+                }
             }
         };
-        Mouse3DManager.prototype.onMouseClick = function (code) {
-            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.mousePickList);
+        Mouse3DManager.prototype.onMouseOver = function (e) {
+            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.renderList);
             var event;
             for (var i = 0; i < ret.length; i++) {
-                event = new egret3d.Event3D(egret3d.Event3D.MOUSE_CLICK);
-                event.data = code;
-                event.currentTarget = ret[i];
-                ret[i].dispatchEvent(event);
+                if (ret[i].mouseEnable) {
+                    event = new egret3d.Event3D(egret3d.Event3D.MOUSE_OVER);
+                    event.currentTarget = ret[i];
+                    ret[i].dispatchEvent(event);
+                }
             }
         };
-        Mouse3DManager.prototype.onMouseDown = function (code) {
-            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.mousePickList);
+        Mouse3DManager.prototype.onMouseOut = function (e) {
+            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.renderList);
             var event;
             for (var i = 0; i < ret.length; i++) {
-                event = new egret3d.Event3D(egret3d.Event3D.MOUSE_DOWN);
-                event.currentTarget = ret[i];
-                event.data = code;
-                ret[i].dispatchEvent(event);
-            }
-        };
-        Mouse3DManager.prototype.onMouseUp = function (code) {
-            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.mousePickList);
-            var event;
-            for (var i = 0; i < ret.length; i++) {
-                event = new egret3d.Event3D(egret3d.Event3D.MOUSE_UP);
-                event.currentTarget = ret[i];
-                event.data = code;
-                ret[i].dispatchEvent(event);
+                if (ret[i].mouseEnable) {
+                    event = new egret3d.Event3D(egret3d.Event3D.MOUSE_OUT);
+                    event.currentTarget = ret[i];
+                    ret[i].dispatchEvent(event);
+                }
             }
         };
         Mouse3DManager.prototype.onMouseMove = function (e) {
-            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.mousePickList);
+            var ret = egret3d.Picker.pickObject3DList(this._camera, this._collect.renderList);
             var event;
             for (var i = 0; i < ret.length; i++) {
-                event = new egret3d.Event3D(egret3d.Event3D.MOUSE_MOVE);
-                event.currentTarget = ret[i];
-                event.data = e;
-                ret[i].dispatchEvent(event);
+                if (ret[i].mouseEnable) {
+                    event = new egret3d.Event3D(egret3d.Event3D.MOUSE_MOVE);
+                    event.currentTarget = ret[i];
+                    ret[i].dispatchEvent(event);
+                }
             }
-        };
-        Mouse3DManager.prototype.update = function (collect) {
-            this._collect = collect;
         };
         Mouse3DManager.left_mouse_over = "left_mouse_over";
         Mouse3DManager.left_mouse_down = "left_mouse_down";
@@ -4790,94 +4748,6 @@ var egret3d;
         return CheckerboardTexture;
     })(egret3d.TextureBase);
     egret3d.CheckerboardTexture = CheckerboardTexture;
-})(egret3d || (egret3d = {}));
-var egret3d;
-(function (egret3d) {
-    /**
-     * @language zh_CN
-    * @class egret3d.TxtTexture
-    * @classdesc
-    * 棋盘格纹理
-    */
-    var TxtTexture = (function (_super) {
-        __extends(TxtTexture, _super);
-        /**
-         * @language zh_CN
-         */
-        function TxtTexture(w, h, txt, font, rgba, bg_rgba, frame_rgba) {
-            _super.call(this);
-            this._width = 32;
-            this._height = 32;
-            this._width = w;
-            this._height = h;
-            this._txt = txt;
-            this.genTxtImg(this._width, this._height, this._txt, font, rgba, bg_rgba, frame_rgba);
-            this.buildCheckerboard();
-            this.mimapData = new Array();
-            this.mimapData.push(new egret3d.MipmapData(this._pixelArray, this._width, this._height));
-        }
-        /**
-         * @language zh_CN
-         */
-        TxtTexture.createTxtTexture = function (w, h, txt, font, rgba, bg_rgba, frame_rgba) {
-            TxtTexture.texture = new TxtTexture(w, h, txt, font, rgba, bg_rgba, frame_rgba);
-            egret3d.TxtTexture.texture.upload(egret3d.Egret3DDrive.context3D);
-        };
-        TxtTexture.prototype.genTxtImg = function (w, h, txt, font, rgba, bg_rgba, frame_rgba) {
-            var cvs = document.createElement("canvas");
-            var ctx = cvs.getContext("2d");
-            cvs.width = w;
-            cvs.height = h;
-            cvs = document.createElement("canvas");
-            ctx = cvs.getContext("2d");
-            cvs.width = w;
-            cvs.height = h;
-            ctx.fillStyle = bg_rgba;
-            ctx.fillRect(0, 0, w, h);
-            ctx.fillStyle = frame_rgba;
-            ctx.strokeRect(0, 0, w, h);
-            ctx.fillStyle = rgba;
-            ctx.font = font;
-            ctx.textAlign = 'center';
-            ctx.lineWidth = 3;
-            ctx.textBaseline = 'middle';
-            ctx.fillText(txt, w / 2, h / 2);
-            this._txtImgData = ctx.getImageData(0, 0, w, h);
-            return this._txtImgData;
-        };
-        /**
-         * @language zh_CN
-         * 上传贴图数据给GPU
-         * @param context3D
-         */
-        TxtTexture.prototype.upload = function (context3D) {
-            if (!this.texture) {
-                this.texture = context3D.creatTexture2D();
-                this.texture.gpu_border = 0;
-                this.texture.gpu_internalformat = egret3d.InternalFormat.PixelArray;
-                this.texture.gpu_colorformat = egret3d.Egret3DDrive.ColorFormat_RGBA8888;
-                this.texture.mipmapDatas = this.mimapData;
-                this.useMipmap = false;
-                context3D.upLoadTextureData(0, this.texture);
-            }
-        };
-        TxtTexture.prototype.buildCheckerboard = function () {
-            if (!this._pixelArray && this._txtImgData) {
-                this._pixelArray = new Uint8Array(this._width * this._height * 4);
-                for (var y = 0; y < this._height; y++) {
-                    for (var x = 0; x < this._width; x++) {
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData.data[(y * this._width + x) * 4 + 0];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData.data[(y * this._width + x) * 4 + 1];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData.data[(y * this._width + x) * 4 + 2];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = this._txtImgData.data[(y * this._width + x) * 4 + 3];
-                    }
-                }
-            }
-        };
-        TxtTexture.texture = null;
-        return TxtTexture;
-    })(egret3d.TextureBase);
-    egret3d.TxtTexture = TxtTexture;
 })(egret3d || (egret3d = {}));
 var egret3d;
 (function (egret3d) {
@@ -7730,7 +7600,7 @@ var egret3d;
             * @language zh_CN
             *
             */
-            this.ambientColor = 0x0;
+            this.ambientColor = 0x666666;
             //public ambientColor: number = 0x00235c;
             /**
             * @language zh_CN
@@ -8026,7 +7896,7 @@ var egret3d;
                     baseMethod.acceptShadow = this.materialData.acceptShadow;
                     break;
                 case egret3d.GeometryType.Particle:
-                    baseMethod = new egret3d.ParticleVertexMethod();
+                    baseMethod = new ParticleVertexMethod();
                     this.useage.vsMethodList.push(baseMethod);
                     this.addShader(baseMethod.vertexMethodName);
                     this.addEnd("particle_vertexEnd");
@@ -8138,101 +8008,6 @@ var egret3d;
 var egret3d;
 (function (egret3d) {
     /**
-    * @class egret3d.ParticleVertexMethod
-    * @classdesc
-    * 粒子顶点方法
-    */
-    var ParticleVertexMethod = (function (_super) {
-        __extends(ParticleVertexMethod, _super);
-        /**
-         * @language zh_CN
-         */
-        function ParticleVertexMethod() {
-            _super.call(this);
-            this.index = 0;
-            this.time = 0;
-            this.normalMatrix = new egret3d.Matrix4_4();
-            this.vsMethodName = "particle_vertex";
-        }
-        /**
-         * @language zh_CN
-         * 激活
-         * @param context3D
-         * @param program3D
-         * @param modeltransform
-         * @param camera3D
-         * @param geometry
-         * @param animation
-         *
-         *
-        * -pos            3       12      0
-        * -uv0            2        8      12
-        * -speed          3       12      20
-        * -lifecycle      1       4       32
-         *
-         *
-         *
-         */
-        ParticleVertexMethod.prototype.activate = function (context3D, program3D, modeltransform, camera3D, geometry, animation) {
-            // 绑定同时包含顶点位置和颜色信息的缓冲
-            geometry.sharedVertexBuffer = context3D.creatVertexBuffer(geometry.verticesData);
-            geometry.numberOfVertices = animation.animaNodeCollection.numberOfVertices;
-            geometry.vertexSizeInBytes = animation.animaNodeCollection.vertexSizeInBytes;
-            geometry.sharedIndexBuffer = context3D.creatIndexBuffer(geometry.indexData);
-            context3D.bindVertexBuffer(geometry.sharedVertexBuffer);
-            //pos
-            //offset
-            //uv
-            this.usage.attribute_position.uniformIndex = context3D.getShaderAttribLocation(program3D, this.usage.attribute_position.name);
-            this.usage.attribute_offset.uniformIndex = context3D.getShaderAttribLocation(program3D, this.usage.attribute_offset.name);
-            this.usage.attribute_uv0.uniformIndex = context3D.getShaderAttribLocation(program3D, this.usage.attribute_uv0.name);
-            for (this.index = 0; this.index < animation.animaNodeCollection.nodes.length; this.index++) {
-                if (animation.animaNodeCollection.nodes[this.index].usageAttributeLen > 0)
-                    animation.animaNodeCollection.nodes[this.index].uniformIndex = context3D.getShaderAttribLocation(program3D, animation.animaNodeCollection.nodes[this.index].usageAttribute);
-            }
-            this.usage.uniform_ModelMatrix.uniformIndex = context3D.getUniformLocation(program3D, this.usage.uniform_ModelMatrix.name);
-            this.usage.uniform_ProjectionMatrix.uniformIndex = context3D.getUniformLocation(program3D, this.usage.uniform_ProjectionMatrix.name);
-            //this.usage.uniform_normalMatrix.uniformIndex = context3D.getUniformLocation(program3D, this.usage.uniform_normalMatrix.name);
-            this.usage.uniform_eyepos.uniformIndex = context3D.getUniformLocation(program3D, this.usage.uniform_eyepos.name);
-            this.usage.uniform_time.uniformIndex = context3D.getUniformLocation(program3D, this.usage.uniform_time.name);
-            this.usage.uniform_cameraMatrix.uniformIndex = context3D.getUniformLocation(program3D, this.usage.uniform_cameraMatrix.name);
-        };
-        /**
-         * @language zh_CN
-         * 更新
-         * @param context3D
-         * @param program3D
-         * @param modeltransform
-         * @param camera3D
-         * @param geometry
-         * @param animation
-         */
-        ParticleVertexMethod.prototype.updata = function (context3D, program3D, modeltransform, camera3D, geometry, animation) {
-            // 绑定同时包含顶点位置和颜色信息的缓冲
-            context3D.bindVertexBuffer(geometry.sharedVertexBuffer);
-            context3D.vertexAttribPointer(program3D, this.usage.attribute_position.uniformIndex, 4, egret3d.Egret3DDrive.FLOAT, false, geometry.vertexSizeInBytes, 0);
-            context3D.vertexAttribPointer(program3D, this.usage.attribute_offset.uniformIndex, 3, egret3d.Egret3DDrive.FLOAT, false, geometry.vertexSizeInBytes, 16);
-            context3D.vertexAttribPointer(program3D, this.usage.attribute_uv0.uniformIndex, 2, egret3d.Egret3DDrive.FLOAT, false, geometry.vertexSizeInBytes, 28);
-            var node;
-            for (this.index = 0; this.index < animation.animaNodeCollection.nodes.length; this.index++) {
-                if (animation.animaNodeCollection.nodes[this.index].usageAttributeLen > 0) {
-                    node = animation.animaNodeCollection.nodes[this.index];
-                    context3D.vertexAttribPointer(program3D, node.uniformIndex, node.usageAttributeLen, egret3d.Egret3DDrive.FLOAT, false, geometry.vertexSizeInBytes, node.offsetBytes);
-                }
-            }
-            context3D.uniformMatrix4fv(this.usage.uniform_ModelMatrix.uniformIndex, false, modeltransform.rawData);
-            context3D.uniformMatrix4fv(this.usage.uniform_ProjectionMatrix.uniformIndex, false, camera3D.viewProjectionMatrix.rawData);
-            context3D.uniformMatrix4fv(this.usage.uniform_cameraMatrix.uniformIndex, false, camera3D.modelMatrix.rawData);
-            context3D.uniform3f(this.usage.uniform_eyepos.uniformIndex, camera3D.x, camera3D.y, camera3D.z);
-            context3D.uniform1f(this.usage.uniform_time.uniformIndex, animation.time);
-        };
-        return ParticleVertexMethod;
-    })(egret3d.MethodBase);
-    egret3d.ParticleVertexMethod = ParticleVertexMethod;
-})(egret3d || (egret3d = {}));
-var egret3d;
-(function (egret3d) {
-    /**
     * @class egret3d.StaticVertexMethod
     * @classdesc
     * 静态顶点方法
@@ -8311,7 +8086,7 @@ var egret3d;
             this.normalMatrix.copyFrom(modeltransform);
             this.normalMatrix.invert();
             this.normalMatrix.transpose();
-            //this.normalMatrix.appendScale(1,1,1);
+            this.normalMatrix.appendScale(1, 1, 1);
             context3D.uniformMatrix4fv(this.usage.uniform_ModelMatrix.uniformIndex, false, modeltransform.rawData);
             context3D.uniformMatrix4fv(this.usage.uniform_ProjectionMatrix.uniformIndex, false, camera3D.viewProjectionMatrix.rawData);
             context3D.uniformMatrix4fv(this.usage.uniform_normalMatrix.uniformIndex, false, this.normalMatrix.rawData);
@@ -9770,7 +9545,7 @@ var egret3d;
                 context3D.setTexture2DAt(sampler2D.activeTextureIndex, sampler2D.uniformIndex, sampler2D.index, sampler2D.texture.texture);
                 if (this.materialData.materialDataNeedChange) {
                     var min_filter = this.materialData.smooth ? context3D.gl.LINEAR_MIPMAP_LINEAR : context3D.gl.LINEAR;
-                    var mag_filter = this.materialData.smooth ? context3D.gl.LINEAR : context3D.gl.LINEAR;
+                    var mag_filter = this.materialData.smooth ? context3D.gl.LINEAR_MIPMAP_LINEAR : context3D.gl.LINEAR;
                     var wrap_u_filter = this.materialData.repeat ? context3D.gl.REPEAT : context3D.gl.CLAMP_TO_EDGE;
                     var wrap_v_filter = this.materialData.repeat ? context3D.gl.REPEAT : context3D.gl.CLAMP_TO_EDGE;
                     context3D.setTexture2DSamplerState(min_filter, mag_filter, wrap_u_filter, wrap_v_filter);
@@ -10999,8 +10774,6 @@ var egret3d;
             //    this.activateDepthPass(context3D, camera3D, modelMatrix, geometry, animation);
             //}
         };
-        MaterialBase.prototype.dispose = function () {
-        };
         return MaterialBase;
     })();
     egret3d.MaterialBase = MaterialBase;
@@ -11093,10 +10866,9 @@ var egret3d;
 var egret3d;
 (function (egret3d) {
     /**
-    * @private
     * @class egret3d.Frustum
     * @classdesc
-    * 摄像机视椎体,计算出摄像机的可视范围.
+    * 摄相机视椎体
     */
     var Frustum = (function () {
         /**
@@ -11289,20 +11061,10 @@ var egret3d;
 })(egret3d || (egret3d = {}));
 var egret3d;
 (function (egret3d) {
-    (function (PickType) {
-        PickType[PickType["BoundPick"] = 0] = "BoundPick";
-        PickType[PickType["PositionPick"] = 1] = "PositionPick";
-        PickType[PickType["UVPick"] = 2] = "UVPick";
-    })(egret3d.PickType || (egret3d.PickType = {}));
-    var PickType = egret3d.PickType;
-    ;
     /**
     * @class egret3d.Object3D
     * @classdesc
-    * 3d空间中的实体对象。
-    * 场景图中的Object3D对象是一个树型结构，对象中包含了变换信息.
-    * 这些变换信息应用于所有的子对象,子对象也有自己的变换信息,最终
-    * 的变换信息要结合父对象的变换信息
+    * 3d空间中的实体对象
     */
     var Object3D = (function (_super) {
         __extends(Object3D, _super);
@@ -11328,7 +11090,6 @@ var egret3d;
             /**
             * @language zh_CN
             * 渲染层级
-            * 渲染时分组进行依次渲染
             */
             this.layer = 0x00000000;
             /**
@@ -11340,7 +11101,7 @@ var egret3d;
             * @language zh_CN
             * 是否需要视锥体裁剪
             */
-            this.enableCut = true;
+            this.isCut = true;
             /**
             * @language zh_CN
             * 父亲节点
@@ -11353,24 +11114,29 @@ var egret3d;
             this.childs = new Array();
             /**
             * @language zh_CN
-            * 动作对象，控制骨骼动画
+            * 动作对象
             */
             this.animation = null;
             /**
             * @language zh_CN
-            * 网络信息
+            * 几何对象
             */
             this.geometry = null;
             /**
             * @language zh_CN
-            * 材质信息
+            * 材质
             */
             this.material = null;
             /**
             * @language zh_CN
-            * 对象模型包围盒
+            * 碰撞盒子
             */
             this.box = new egret3d.CubeBoxBound();
+            /**
+            * @language zh_CN
+            * 是否开启盒子检测
+            */
+            this.isCheckBox = true;
             /**
             * @language zh_CN
             * 鼠标检测数据
@@ -11378,7 +11144,7 @@ var egret3d;
             this.pickerData = new egret3d.PickResult();
             /**
             * @language zh_CN
-            * 是否控制，当摄像机被绑定摄像机动画时，这个值为false.
+            * 是否控制
             */
             this.isController = true;
             /**
@@ -11392,16 +11158,6 @@ var egret3d;
             */
             this.isDisable = false;
             this._worldBox = new egret3d.CubeBoxBound();
-            /**
-            * @language zh_CN
-            * 鼠标拣选类型
-            */
-            this.pickType = PickType.BoundPick;
-            /**
-            * @language zh_CN
-            * 鼠标 事件开关
-            */
-            this.mousePickEnable = false;
             this.id = ++Object3D.s_id;
         }
         Object.defineProperty(Object3D.prototype, "position", {
@@ -12087,11 +11843,10 @@ var egret3d;
         /**
         * @language zh_CN
         * 当前对象数据更新
-        * @param camera 当前渲染的摄相机
         * @param time 当前时间
         * @param delay 每帧时间间隔
         */
-        Object3D.prototype.update = function (camera, time, delay) {
+        Object3D.prototype.update = function (time, delay) {
         };
         /**
         * @language zh_CN
@@ -12104,66 +11859,11 @@ var egret3d;
             this._mat.append(this.modelMatrix);
             return this._mat.transformVector(this.globalPosition);
         };
-        Object3D.prototype.dispose = function () {
-            if (this.parent)
-                this.parent.removeChild(this);
-            if (this.geometry) {
-                this.geometry.dispose();
-                this.geometry = null;
-            }
-            if (this.material) {
-                this.material.dispose();
-                this.material = null;
-            }
-            for (var i = 0; i < this.childs.length; i++) {
-                this.childs[i].dispose();
-            }
-        };
         Object3D.renderListChange = true;
         Object3D.s_id = 0;
         return Object3D;
     })(egret3d.EventDispatcher);
     egret3d.Object3D = Object3D;
-})(egret3d || (egret3d = {}));
-var egret3d;
-(function (egret3d) {
-    /**
-     * @language zh_CN
-     * @class egret3d.Billborad
-     * @classdesc
-     * 公告板渲染对象 始终面朝摄像机的面板
-     */
-    var Billborad = (function (_super) {
-        __extends(Billborad, _super);
-        /**
-         * @language zh_CN
-         * constructor
-         * @param material 渲染材质
-         * @param width
-         * @param height
-         */
-        function Billborad(material, width, height) {
-            if (width === void 0) { width = 100; }
-            if (height === void 0) { height = 100; }
-            _super.call(this);
-            this.material = material;
-            this.geometry = new egret3d.PlaneGeometry(width, height);
-        }
-        /**
-        * @language zh_CN
-        * 数据更新
-        * @param camera 当前渲染的摄相机
-        * @param time 当前时间
-        * @param delay 间隔时间
-        */
-        Billborad.prototype.update = function (camera, time, delay) {
-            this.rotationX = camera.rotationX - 90;
-            this.rotationY = camera.rotationY;
-            this.rotationZ = camera.rotationZ;
-        };
-        return Billborad;
-    })(egret3d.Object3D);
-    egret3d.Billborad = Billborad;
 })(egret3d || (egret3d = {}));
 var egret3d;
 (function (egret3d) {
@@ -12426,9 +12126,7 @@ var egret3d;
     /**
     * @class egret3d.Camera3D
     * @classdesc
-    * 相机数据处理，生成3D摄相机。
-    * 渲染场景从摄像机视点到缓冲区
-    * 相机分为透视摄像机、正交摄像机、VR摄像机
+    * 相机数据处理，生成3D摄相机
     */
     var Camera3D = (function (_super) {
         __extends(Camera3D, _super);
@@ -12457,7 +12155,7 @@ var egret3d;
              */
             /**
              * @language zh_CN
-             * 相机的视椎体，用来检测是否在当前相机可视范围内
+             * @相机的视椎体
              */
             this.frustum = new egret3d.Frustum();
             /**
@@ -12927,11 +12625,6 @@ var egret3d;
              */
             this._diffuse = new egret3d.Vector3D(1.0, 1.0, 1.0);
             /**
-            * @language zh_CN
-            * 背光颜色
-            */
-            this._halfColor = new egret3d.Vector3D(1.0, 1.0, 1.0);
-            /**
              * @language en_US
              */
             /**
@@ -13160,17 +12853,6 @@ var egret3d;
             this._rot.y = dir.y;
             this._rot.z = dir.z;
         }
-        Object.defineProperty(DirectLight.prototype, "halfColor", {
-            set: function (color) {
-                this._halfColor.w = (color >> 24 & 0xff) / 255;
-                this._halfColor.x = (color >> 16 & 0xff) / 255;
-                this._halfColor.y = (color >> 8 & 0xff) / 255;
-                this._halfColor.z = (color & 0xff) / 255;
-                this._change = false;
-            },
-            enumerable: true,
-            configurable: true
-        });
         Object.defineProperty(DirectLight.prototype, "castShadow", {
             /**
              * @language en_US
@@ -13205,12 +12887,9 @@ var egret3d;
             lightData[index * DirectLight.stride + 3] = this._diffuse.x;
             lightData[index * DirectLight.stride + 4] = this._diffuse.y;
             lightData[index * DirectLight.stride + 5] = this._diffuse.z;
-            lightData[index * DirectLight.stride + 6] = this._halfColor.x;
-            lightData[index * DirectLight.stride + 7] = this._halfColor.y;
-            lightData[index * DirectLight.stride + 8] = this._halfColor.z;
-            lightData[index * DirectLight.stride + 9] = this._intensity;
+            lightData[index * DirectLight.stride + 6] = this._intensity;
         };
-        DirectLight.stride = 10;
+        DirectLight.stride = 7;
         return DirectLight;
     })(egret3d.LightBase);
     egret3d.DirectLight = DirectLight;
@@ -13560,7 +13239,7 @@ var egret3d;
             this._numEntity = this._renderList.length;
             ///context3D.gl.clear(context3D.gl.COLOR_BUFFER_BIT | context3D.gl.DEPTH_BUFFER_BIT);
             for (this._renderIndex = 0; this._renderIndex < this._numEntity; this._renderIndex++) {
-                this._renderList[this._renderIndex].update(camera, time, delay);
+                this._renderList[this._renderIndex].update(time, delay);
                 if (!this._renderList[this._renderIndex].isVisible) {
                     continue;
                 }
@@ -13608,7 +13287,7 @@ var egret3d;
             this._renderList = collect.renderList;
             this._numEntity = this._renderList.length;
             for (this._renderIndex = 0; this._renderIndex < this._numEntity; this._renderIndex++) {
-                this._renderList[this._renderIndex].update(camera, time, delay);
+                this._renderList[this._renderIndex].update(time, delay);
                 if (!this._renderList[this._renderIndex].isVisible) {
                     continue;
                 }
@@ -13649,7 +13328,7 @@ var egret3d;
             this._renderList = collect.renderList;
             this._numEntity = this._renderList.length;
             for (this._renderIndex = 0; this._renderIndex < this._numEntity; this._renderIndex++) {
-                this._renderList[this._renderIndex].update(camera, time, delay);
+                this._renderList[this._renderIndex].update(time, delay);
                 if (!this._renderList[this._renderIndex].isVisible) {
                     continue;
                 }
@@ -13691,7 +13370,7 @@ var egret3d;
             this._renderList = collect.renderList;
             this._numEntity = this._renderList.length;
             for (this._renderIndex = 0; this._renderIndex < this._numEntity; this._renderIndex++) {
-                this._renderList[this._renderIndex].update(camera, time, delay);
+                this._renderList[this._renderIndex].update(time, delay);
                 if (!this._renderList[this._renderIndex].isVisible) {
                     continue;
                 }
@@ -13743,7 +13422,7 @@ var egret3d;
                 this._numEntity = this._renderList.length;
                 for (this._renderIndex = 0; this._renderIndex < this._numEntity; this._renderIndex++) {
                     if (this._renderList[this._renderIndex].material.castShadow) {
-                        this._renderList[this._renderIndex].update(camera, time, delay);
+                        this._renderList[this._renderIndex].update(time, delay);
                         if (!this._renderList[this._renderIndex].isVisible) {
                             continue;
                         }
@@ -13839,7 +13518,6 @@ var egret3d;
             this._num = 0;
             this._objDict = {};
             this.renderList = new Array();
-            this.mousePickList = new Array();
             this._nodes = new Array();
             this._rootNode = root;
         }
@@ -13923,8 +13601,7 @@ var egret3d;
     /**
     * @class egret3d.EntityCollect
     * @classdesc
-    * Object3D 渲染对象收集器,把渲染对象进行可视筛选，
-    * 并且划分渲染层级，依次排序到加入列表.
+    * Object3D 渲染对象收集器
     */
     var EntityCollect = (function (_super) {
         __extends(EntityCollect, _super);
@@ -14129,13 +13806,10 @@ var egret3d;
         EntityCollect.prototype.addRenderList = function (object3d, camera) {
             if (!object3d.material)
                 return;
-            if (object3d.enableCut) {
+            if (object3d.isCut) {
                 if (!camera.isVisibleToCamera(object3d)) {
                     return;
                 }
-            }
-            if (object3d.mousePickEnable) {
-                this.mousePickList.push(object3d);
             }
             var layer = this.findLayer(object3d);
             var tag = this.findTag(object3d);
@@ -14154,10 +13828,9 @@ var egret3d;
         EntityCollect.prototype.update = function (camera) {
             var _this = this;
             _super.prototype.update.call(this, camera);
-            this.renderList.length = 0;
-            this.mousePickList.length = 0;
             this.clearLayerList();
             this.applyRender(this._rootNode, camera);
+            this.renderList.length = 0;
             for (var i = 0; i < this._tags.length; ++i) {
                 this._tags[i].clearDepth = true;
                 for (var j = 0; j < this._tags[i].layers.length; ++j) {
@@ -14210,18 +13883,6 @@ var egret3d;
         return EntityCollect;
     })(egret3d.CollectBase);
     egret3d.EntityCollect = EntityCollect;
-})(egret3d || (egret3d = {}));
-var egret3d;
-(function (egret3d) {
-    var Scene3D = (function (_super) {
-        __extends(Scene3D, _super);
-        function Scene3D() {
-            _super.call(this);
-            this.collect = new egret3d.EntityCollect(this);
-        }
-        return Scene3D;
-    })(egret3d.Object3D);
-    egret3d.Scene3D = Scene3D;
 })(egret3d || (egret3d = {}));
 var egret3d;
 (function (egret3d) {
@@ -15056,8 +14717,6 @@ var egret3d;
                 this.verticesData[this.vertexAttLength * i + 2] = pos.z;
             }
         };
-        GeometryBase.prototype.dispose = function () {
-        };
         return GeometryBase;
     })();
     egret3d.GeometryBase = GeometryBase;
@@ -15768,7 +15427,7 @@ var egret3d;
     /**
     * @class egret3d.Mesh
     * @classdesc
-    * 3d模型网格 生成渲染模型
+    * 3d模型 生成渲染模型
     */
     var Mesh = (function (_super) {
         __extends(Mesh, _super);
@@ -15797,12 +15456,11 @@ var egret3d;
         };
         /**
         * @language zh_CN
-        * 当前对象数据更新
-        * @param camera 当前渲染的摄相机
+        * 数据更新
         * @param time 当前时间
-        * @param delay 每帧时间间隔
+        * @param delay 间隔时间
         */
-        Mesh.prototype.update = function (camera, time, delay) {
+        Mesh.prototype.update = function (time, delay) {
             if (this.isDisable)
                 return;
             if (this.animation) {
@@ -15908,6 +15566,7 @@ var egret3d;
         };
         TextureLoader.prototype.onEMFileLoadComplete = function (textureLoader) {
             this._texture = textureLoader.data;
+			this._texture.upload(egret3d.Egret3DDrive.context3D);	
             this.dispatchEvent(new egret3d.Event3D(egret3d.Event3D.EVENT_LOAD_COMPLETE, this));
         };
         return TextureLoader;
@@ -18099,7 +17758,7 @@ var egret3d;
     /**
     * @class egret3d.Picker
     * @classdesc
-    * 射线对场景中的实体对像进行检测
+    * 鼠标拾取
     */
     var Picker = (function () {
         function Picker() {
@@ -18118,27 +17777,38 @@ var egret3d;
             for (var i = 0; i < objects.length; ++i) {
                 var mesh = objects[i];
                 var inPos = new egret3d.Vector3D();
-                switch (mesh.pickType) {
-                    case egret3d.PickType.BoundPick:
-                        if (mesh.box != null) {
-                            if (ray.IntersectMesh(mesh.box.vexData, mesh.box.indexData, 3, mesh.box.indexData.length / 3, 0, mesh.modelMatrix, mesh.pickerData)) {
-                                var target = new egret3d.PickResult();
-                                ret.push(objects[i]);
-                            }
-                        }
-                        break;
-                    case egret3d.PickType.PositionPick:
-                        if (ray.IntersectMeshEx(mesh, 13, mesh.pickerData)) {
+                if (mesh.isCheckBox) {
+                    if (mesh.box != null) {
+                        if (ray.IntersectMesh(mesh.box.vexData, mesh.box.indexData, 3, mesh.box.indexData.length / 3, inPos, mesh.modelMatrix)) {
                             var target = new egret3d.PickResult();
+                            objects[i].pickerData.globalPosition.copyFrom(inPos);
                             ret.push(objects[i]);
                         }
-                        break;
-                    case egret3d.PickType.UVPick:
-                        if (ray.IntersectMeshEx(mesh, 13, mesh.pickerData)) {
-                            var target = new egret3d.PickResult();
-                            ret.push(objects[i]);
-                        }
-                        break;
+                    }
+                }
+            }
+            return ret;
+        };
+        /**
+        * @language zh_CN
+        * 返回鼠标拾取对象模型得到的所有对象
+        * @param camera 当前相机
+        * @param objects 检测的对象列表
+        * @returns 拾取的object列表
+        */
+        Picker.pickObject3DListToMesh = function (camera, objects) {
+            var ret = new Array();
+            var ray = this.ray;
+            ray.CalculateAndTransformRay(egret3d.Egret3DDrive.canvasRectangle.width, egret3d.Egret3DDrive.canvasRectangle.height, camera.modelMatrix, camera.projectMatrix, egret3d.Input.instance.mouseX, egret3d.Input.instance.mouseY);
+            for (var i = 0; i < objects.length; ++i) {
+                var mesh = objects[i];
+                var inPos = new egret3d.Vector3D();
+                if (ray.IntersectMesh(mesh.geometry.verticesData, mesh.geometry.indexData, mesh.geometry.vertexAttLength, mesh.geometry.indexData.length / 3, inPos, mesh.modelMatrix)) {
+                    var target = new egret3d.PickResult();
+                    objects[i].pickerData.globalPosition.copyFrom(inPos);
+                    ///target.target = mesh;
+                    ///target.intPos.copyFrom(inPos);
+                    ret.push(objects[i]);
                 }
             }
             return ret;
@@ -18153,7 +17823,7 @@ var egret3d;
     /**
     * @class egret3d.ControllerBase
     * @classdesc
-    * 控制器 基类, 抽象控制器的一些数据
+    * 控制器 基类
     */
     var ControllerBase = (function () {
         /**
@@ -18235,11 +17905,7 @@ var egret3d;
     /**
     * @class egret3d.LookAtController
     * @classdesc
-    * look at 摄像机控制器 。
-    * 指定摄像机看向的目标对象
-    * 1.按下鼠标左键并移动鼠标可以使摄像机绕着目标进行旋转.
-    * 2.按下键盘的(w s a d) 可以摄像机(上 下 左 右)移动.
-    * 3.滑动鼠标滚轮可以控制摄像机的视距.
+    * look at 相机控制器
     */
     var LookAtController = (function (_super) {
         __extends(LookAtController, _super);
@@ -18446,42 +18112,6 @@ var egret3d;
                 this._eyesLength = 1;
             }
         };
-        Object.defineProperty(LookAtController.prototype, "rotationX", {
-            /**
-            * @language zh_CN
-            * 设置相机x轴旋转
-            * @param x
-            */
-            set: function (x) {
-                this._rotaAngle.x = x;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(LookAtController.prototype, "rotationY", {
-            /**
-            * @language zh_CN
-            * 设置相机y轴旋转
-            * @param y
-            */
-            set: function (y) {
-                this._rotaAngle.y = y;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(LookAtController.prototype, "rotationZ", {
-            /**
-            * @language zh_CN
-            * 设置相机z轴旋转
-            * @param z
-            */
-            set: function (z) {
-                this._rotaAngle.z = z;
-            },
-            enumerable: true,
-            configurable: true
-        });
         /**
         * @language zh_CN
         * 数据更新
@@ -18529,16 +18159,41 @@ var egret3d;
                     this._tempVec.copyFrom(this._lookAtObject.position.add(this._tempVec));
                     this._lookAtObject.position = this._tempVec;
                 }
+                if (this._rotaAngle.x >= 0 && this._rotaAngle.x <= 90) {
+                    this._xAngle = 0;
+                }
+                if (this._rotaAngle.x >= 180 && this._rotaAngle.x <= 270) {
+                    this._xAngle = 180;
+                }
+                if (this._rotaAngle.x > 90 && this._rotaAngle.x < 180) {
+                    this._xAngle = 180;
+                }
+                if (this._rotaAngle.x > 270 && this._rotaAngle.x < 360) {
+                    this._xAngle = 0;
+                }
+                if (this._rotaAngle.x <= 0 && this._rotaAngle.x >= -90) {
+                    this._xAngle = 0;
+                }
+                if (this._rotaAngle.x <= -180 && this._rotaAngle.x >= -270) {
+                    this._xAngle = 180;
+                }
+                if (this._rotaAngle.x < -90 && this._rotaAngle.x > -180) {
+                    this._xAngle = 180;
+                }
+                if (this._rotaAngle.x < -270 && this._rotaAngle.x > -360) {
+                    this._xAngle = 0;
+                }
                 this._quaRot.fromEulerAngles(this._rotaAngle.x, this._rotaAngle.y, 0);
                 this._rotaEyesLine.copyFrom(this._quaRot.rotatePoint(this._eyesLine));
                 this._tempVec.copyFrom(this._rotaEyesLine);
                 this._tempVec.scaleBy(this._eyesLength);
                 this._eyesPos.copyFrom(this._lookAtPosition.subtract(this._tempVec));
+                ///this._lookAtObject.position = this._eyesPos.add(this._tempVec);
                 if (this._lookAtObject) {
                     this._lookAtPosition.copyFrom(this._lookAtObject.position.add(this.lookAtOffset));
                 }
                 this._rotaEyesLine.normalize();
-                this._quaRot.fromEulerAngles(this._rotaAngle.x, this._rotaAngle.y, this._rotaAngle.z);
+                this._quaRot.fromEulerAngles(this._xAngle, 0, this._rotaAngle.z);
                 this._tempVec.copyFrom(this._up);
                 this._tempVec.copyFrom(this._quaRot.rotatePoint(this._tempVec));
                 this._tempVec.normalize();
@@ -18593,6 +18248,18 @@ var egret3d;
                     break;
             }
         };
+        LookAtController.prototype.onButtonUp = function (b) {
+            this._keyArray[0] = b;
+        };
+        LookAtController.prototype.onButtonDown = function (b) {
+            this._keyArray[2] = b;
+        };
+        LookAtController.prototype.onButtonLeft = function (b) {
+            this._keyArray[1] = b;
+        };
+        LookAtController.prototype.onButtonRight = function (b) {
+            this._keyArray[3] = b;
+        };
         return LookAtController;
     })(egret3d.ControllerBase);
     egret3d.LookAtController = LookAtController;
@@ -18602,9 +18269,7 @@ var egret3d;
     /**
     * @class egret3d.CameraAnimationController
     * @classdesc
-    * 摄像机动画控制器。
-    * 每个摄像机动画绑定一个摄像机，控制摄像机的行为
-    * 可以更换绑定的摄像机
+    * 摄像机动画控制器
     */
     var CameraAnimationController = (function () {
         /**
@@ -18709,7 +18374,6 @@ var egret3d;
     * @class egret3d.CameraAnimationManager
     * @classdesc
     * 摄像机动画控制器管理
-    * 管理所有摄像机动画
     */
     var CameraAnimationManager = (function () {
         /**
@@ -18722,7 +18386,6 @@ var egret3d;
         /**
         * @language zh_CN
         * 播放某个动画
-        * 根据动画名字来播放，指定摄像机，并且控制动画是否循环播放
         * @param name 动画名
         * @param camera 相机
         * @param isLoop 是否循环
@@ -18759,669 +18422,244 @@ var egret3d;
     })();
     egret3d.CameraAnimationManager = CameraAnimationManager;
 })(egret3d || (egret3d = {}));
-var nid;
-(function (nid) {
-    var MEMORY = (function () {
-        function MEMORY() {
-        }
-        MEMORY.allocateUint8 = function (len) {
-            MEMORY.u8 = new Uint8Array(len);
-        };
-        MEMORY.allocateUint16 = function (len) {
-            MEMORY.u16 = new Uint16Array(len);
-        };
-        MEMORY.allocateUint32 = function (len) {
-            MEMORY.u32 = new Uint32Array(len);
-        };
-        MEMORY.getUint8 = function () {
-            if (!MEMORY.u8) {
-                MEMORY.allocateUint8(10);
-            }
-            return MEMORY.u8Index++;
-        };
-        MEMORY.getUint16 = function () {
-            if (!MEMORY.u16) {
-                MEMORY.allocateUint16(24);
-            }
-            return MEMORY.u16Index++;
-        };
-        MEMORY.getUint32 = function () {
-            if (!MEMORY.u32) {
-                MEMORY.allocateUint32(10);
-            }
-            return MEMORY.u32Index++;
-        };
-        MEMORY.u8Index = 0;
-        MEMORY.u16Index = 0;
-        MEMORY.u32Index = 0;
-        return MEMORY;
-    })();
-    nid.MEMORY = MEMORY;
-})(nid || (nid = {}));
-///<reference path="LZMA.d.ts" />
-var nid;
-(function (nid) {
+var egret3d;
+(function (egret3d) {
     /**
-     * LZMA Decoder
-     * @author Nidin Vinayakan | nidinthb@gmail.com
-     */
-    //import MEMORY = nid.MEMORY;
-    var LzmaDecoder = (function () {
-        function LzmaDecoder() {
-            this.posSlotDecoder = nid.BitTreeDecoder.constructArray(6, nid.LZMA.kNumLenToPosStates); //6
-            this.alignDecoder = new nid.BitTreeDecoder(nid.LZMA.kNumAlignBits);
-            this.posDecoders = new Uint16Array(1 + nid.LZMA.kNumFullDistances - nid.LZMA.kEndPosModelIndex);
-            this.isMatch = new Uint16Array(nid.LZMA.kNumStates << nid.LZMA.kNumPosBitsMax);
-            this.isRep = new Uint16Array(nid.LZMA.kNumStates);
-            this.isRepG0 = new Uint16Array(nid.LZMA.kNumStates);
-            this.isRepG1 = new Uint16Array(nid.LZMA.kNumStates);
-            this.isRepG2 = new Uint16Array(nid.LZMA.kNumStates);
-            this.isRep0Long = new Uint16Array(nid.LZMA.kNumStates << nid.LZMA.kNumPosBitsMax);
-            this.lenDecoder = new nid.LenDecoder();
-            this.repLenDecoder = new nid.LenDecoder();
-            this.rangeDec = new nid.RangeDecoder();
-            this.outWindow = new nid.OutWindow();
+    * @class egret3d.CameraControllerBase
+    * @classdesc
+    * 相机控制器基类
+    */
+    var CameraControllerBase = (function () {
+        /**
+        * @language zh_CN
+        * constructor
+        * @param  view3d
+        */
+        function CameraControllerBase(view3d) {
+            this._lookAtPos = new egret3d.Vector3D;
+            this._view3d = view3d;
+            this._target = null;
+            this._angle = 0;
+            this._distance = 0;
+            this._wide = 0;
+            this._locked = false;
+            this._cameraMoveHandler = null;
+            this._lockTarget = false;
+            ///_cameraAnim = new CameraAnim();
         }
-        LzmaDecoder.prototype.init = function () {
-            this.loc1 = nid.MEMORY.getUint32() | 0;
-            this.loc2 = nid.MEMORY.getUint32() | 0;
-            this.matchBitI = nid.MEMORY.getUint16() | 0;
-            this.matchByteI = nid.MEMORY.getUint16() | 0;
-            this.bitI = nid.MEMORY.getUint16() | 0;
-            this.symbolI = nid.MEMORY.getUint16() | 0;
-            this.prevByteI = nid.MEMORY.getUint16() | 0;
-            this.litStateI = nid.MEMORY.getUint16() | 0;
-            this.initLiterals();
-            this.initDist();
-            nid.LZMA.INIT_PROBS(this.isMatch);
-            nid.LZMA.INIT_PROBS(this.isRep);
-            nid.LZMA.INIT_PROBS(this.isRepG0);
-            nid.LZMA.INIT_PROBS(this.isRepG1);
-            nid.LZMA.INIT_PROBS(this.isRepG2);
-            nid.LZMA.INIT_PROBS(this.isRep0Long);
-            this.lenDecoder.init();
-            this.repLenDecoder.init();
+        /**
+        * @language zh_CN
+        *
+        * @param angle
+        * @param distance
+        * @param wide
+        * @param locked
+        */
+        CameraControllerBase.prototype.start = function (angle, distance, wide, locked) {
+            this._angle = angle;
+            this._distance = distance;
+            this._wide = wide;
+            this._locked = locked;
+            this._view3d.camera3D.rotationX = angle * egret3d.Matrix3DUtils.DEGREES_TO_RADIANS;
+            this._view3d.camera3D.y = Math.acos(angle * egret3d.Matrix3DUtils.DEGREES_TO_RADIANS) * distance;
+            this._view3d.camera3D.z = -Math.asin(angle * egret3d.Matrix3DUtils.DEGREES_TO_RADIANS) * distance;
         };
-        LzmaDecoder.prototype.create = function () {
-            this.outWindow.create(this.dictSize);
-            this.createLiterals();
+        /**
+        * @language zh_CN
+        *
+        * @param timer
+        * @param elapsed
+        */
+        CameraControllerBase.prototype.update = function (timer, elapsed) {
         };
-        //Private
-        LzmaDecoder.prototype.createLiterals = function () {
-            this.litProbs = new Uint16Array(0x300 << (this.lc + this.lp));
+        /**
+        * @language zh_CN
+        *
+        * @param pos
+        */
+        CameraControllerBase.prototype.setCameraLookAtPos = function (pos) {
         };
-        LzmaDecoder.prototype.initLiterals = function () {
-            var num = 0x300 << (this.lc + this.lp); //UInt32
-            for (var i = 0; i < num; i++) {
-                this.litProbs[i] = nid.LZMA.PROB_INIT_VAL;
-            }
+        /**
+        * @language zh_CN
+        *
+        * @retruns Vector3D
+        */
+        CameraControllerBase.prototype.getCameraPos = function () {
+            return this._view3d.camera3D.position;
         };
-        LzmaDecoder.prototype.decodeLiteral = function (state, rep0) {
-            nid.MEMORY.u16[this.prevByteI] = 0; //unsigned byte
-            if (!this.outWindow.isEmpty())
-                nid.MEMORY.u16[this.prevByteI] = this.outWindow.getByte(1);
-            nid.MEMORY.u16[this.symbolI] = 1;
-            nid.MEMORY.u16[this.litStateI] = ((this.outWindow.totalPos & ((1 << this.lp) - 1)) << this.lc) + (nid.MEMORY.u16[this.prevByteI] >>> (8 - this.lc));
-            var probsOffset = (0x300 * nid.MEMORY.u16[this.litStateI]) | 0;
-            if (state >= 7) {
-                nid.MEMORY.u16[this.matchByteI] = this.outWindow.getByte(rep0 + 1);
-                do {
-                    nid.MEMORY.u16[this.matchBitI] = (nid.MEMORY.u16[this.matchByteI] >>> 7) & 1;
-                    nid.MEMORY.u16[this.matchByteI] <<= 1;
-                    nid.MEMORY.u16[this.bitI] = this.rangeDec.decodeBit(this.litProbs, probsOffset + ((1 + nid.MEMORY.u16[this.matchBitI]) << 8) + nid.MEMORY.u16[this.symbolI]);
-                    nid.MEMORY.u16[this.symbolI] = (nid.MEMORY.u16[this.symbolI] << 1) | nid.MEMORY.u16[this.bitI];
-                    if (nid.MEMORY.u16[this.matchBitI] != nid.MEMORY.u16[this.bitI])
-                        break;
-                } while (nid.MEMORY.u16[this.symbolI] < 0x100);
-            }
-            while (nid.MEMORY.u16[this.symbolI] < 0x100) {
-                nid.MEMORY.u16[this.symbolI] = (nid.MEMORY.u16[this.symbolI] << 1) | this.rangeDec.decodeBit(this.litProbs, probsOffset + nid.MEMORY.u16[this.symbolI]);
-            }
-            this.outWindow.putByte(nid.MEMORY.u16[this.symbolI] - 0x100);
-        };
-        LzmaDecoder.prototype.decodeDistance = function (len) {
-            var lenState = len; //unsigned byte
-            if (lenState > nid.LZMA.kNumLenToPosStates - 1)
-                lenState = nid.LZMA.kNumLenToPosStates - 1;
-            var posSlot = this.posSlotDecoder[lenState].decode(this.rangeDec); //unsigned byte
-            if (posSlot < 4)
-                return posSlot;
-            var numDirectBits = ((posSlot >>> 1) - 1); //unsigned byte
-            nid.MEMORY.u32[this.loc1] = ((2 | (posSlot & 1)) << numDirectBits); //UInt32
-            if (posSlot < nid.LZMA.kEndPosModelIndex) {
-                nid.MEMORY.u32[this.loc1] += nid.LZMA.BitTreeReverseDecode(this.posDecoders, numDirectBits, this.rangeDec, nid.MEMORY.u32[this.loc1] - posSlot);
-            }
-            else {
-                nid.MEMORY.u32[this.loc1] += this.rangeDec.decodeDirectBits(numDirectBits - nid.LZMA.kNumAlignBits) << nid.LZMA.kNumAlignBits;
-                nid.MEMORY.u32[this.loc1] += this.alignDecoder.reverseDecode(this.rangeDec);
-            }
-            return nid.MEMORY.u32[this.loc1];
-        };
-        LzmaDecoder.prototype.initDist = function () {
-            for (var i = 0; i < nid.LZMA.kNumLenToPosStates; i++) {
-                this.posSlotDecoder[i].init();
-            }
-            this.alignDecoder.init();
-            nid.LZMA.INIT_PROBS(this.posDecoders);
-        };
-        LzmaDecoder.prototype.decodeProperties = function (properties) {
-            var prop = new Uint8Array(4);
-            prop[0] = properties[0];
-            if (prop[0] >= (9 * 5 * 5)) {
-                throw "Incorrect LZMA properties";
-            }
-            prop[1] = prop[0] % 9;
-            prop[0] /= 9;
-            prop[2] = prop[0] / 5;
-            prop[3] = prop[0] % 5;
-            this.lc = prop[1];
-            this.pb = prop[2];
-            this.lp = prop[3];
-            this.dictSizeInProperties = 0;
-            for (var i = 0; i < 4; i++) {
-                this.dictSizeInProperties |= properties[i + 1] << (8 * i);
-            }
-            this.dictSize = this.dictSizeInProperties;
-            if (this.dictSize < nid.LZMA.LZMA_DIC_MIN) {
-                this.dictSize = nid.LZMA.LZMA_DIC_MIN;
-            }
-        };
-        LzmaDecoder.prototype.updateState_Literal = function (state) {
-            if (state < 4)
-                return 0;
-            else if (state < 10)
-                return state - 3;
-            else
-                return state - 6;
-        };
-        LzmaDecoder.prototype.updateState_ShortRep = function (state) { return state < 7 ? 9 : 11; };
-        LzmaDecoder.prototype.updateState_Rep = function (state) { return state < 7 ? 8 : 11; };
-        LzmaDecoder.prototype.updateState_Match = function (state) { return state < 7 ? 7 : 10; };
-        LzmaDecoder.prototype.decode = function (unpackSizeDefined, unpackSize) {
-            this.init();
-            this.rangeDec.init();
-            if (unpackSizeDefined) {
-                this.outWindow.outStream = new Uint8Array(new ArrayBuffer(unpackSize));
-            }
-            var rep0 = 0, rep1 = 0, rep2 = 0, rep3 = 0; //UInt32
-            var state = 0; //unsigned byte
-            for (;;) {
-                if (unpackSizeDefined && unpackSize == 0 && !this.markerIsMandatory) {
-                    if (this.rangeDec.isFinishedOK()) {
-                        return nid.LZMA.LZMA_RES_FINISHED_WITHOUT_MARKER;
-                    }
-                }
-                var posState = this.outWindow.totalPos & ((1 << this.pb) - 1);
-                if (this.rangeDec.decodeBit(this.isMatch, (state << nid.LZMA.kNumPosBitsMax) + posState) == 0) {
-                    if (unpackSizeDefined && unpackSize == 0) {
-                        return nid.LZMA.LZMA_RES_ERROR;
-                    }
-                    this.decodeLiteral(state, rep0);
-                    state = this.updateState_Literal(state);
-                    unpackSize--;
-                    continue;
-                }
-                var len;
-                if (this.rangeDec.decodeBit(this.isRep, state) != 0) {
-                    if (unpackSizeDefined && unpackSize == 0) {
-                        return nid.LZMA.LZMA_RES_ERROR;
-                    }
-                    if (this.outWindow.isEmpty()) {
-                        return nid.LZMA.LZMA_RES_ERROR;
-                    }
-                    if (this.rangeDec.decodeBit(this.isRepG0, state) == 0) {
-                        if (this.rangeDec.decodeBit(this.isRep0Long, (state << nid.LZMA.kNumPosBitsMax) + posState) == 0) {
-                            state = this.updateState_ShortRep(state);
-                            this.outWindow.putByte(this.outWindow.getByte(rep0 + 1));
-                            unpackSize--;
-                            continue;
-                        }
-                    }
-                    else {
-                        var dist;
-                        if (this.rangeDec.decodeBit(this.isRepG1, state) == 0) {
-                            dist = rep1;
-                        }
-                        else {
-                            if (this.rangeDec.decodeBit(this.isRepG2, state) == 0) {
-                                dist = rep2;
-                            }
-                            else {
-                                dist = rep3;
-                                rep3 = rep2;
-                            }
-                            rep2 = rep1;
-                        }
-                        rep1 = rep0;
-                        rep0 = dist;
-                    }
-                    len = this.repLenDecoder.decode(this.rangeDec, posState);
-                    state = this.updateState_Rep(state);
-                }
-                else {
-                    rep3 = rep2;
-                    rep2 = rep1;
-                    rep1 = rep0;
-                    len = this.lenDecoder.decode(this.rangeDec, posState);
-                    state = this.updateState_Match(state);
-                    rep0 = this.decodeDistance(len);
-                    if (rep0 == 0xFFFFFFFF) {
-                        return this.rangeDec.isFinishedOK() ?
-                            nid.LZMA.LZMA_RES_FINISHED_WITH_MARKER :
-                            nid.LZMA.LZMA_RES_ERROR;
-                    }
-                    if (unpackSizeDefined && unpackSize == 0) {
-                        return nid.LZMA.LZMA_RES_ERROR;
-                    }
-                    if (rep0 >= this.dictSize || !this.outWindow.checkDistance(rep0)) {
-                        return nid.LZMA.LZMA_RES_ERROR;
-                    }
-                }
-                len += nid.LZMA.kMatchMinLen;
-                var isError = false;
-                if (unpackSizeDefined && unpackSize < len) {
-                    len = unpackSize;
-                    isError = true;
-                }
-                this.outWindow.copyMatch(rep0 + 1, len);
-                unpackSize -= len;
-                if (isError) {
-                    return nid.LZMA.LZMA_RES_ERROR;
-                }
-            }
-        };
-        return LzmaDecoder;
+        Object.defineProperty(CameraControllerBase.prototype, "target", {
+            /**
+            * @language zh_CN
+            *
+            * @retruns Object3D
+            */
+            get: function () {
+                return this._target;
+            },
+            /**
+            * @language zh_CN
+            *
+            * @param obj
+            */
+            set: function (obj) {
+                this._target = obj;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(CameraControllerBase.prototype, "lockTarget", {
+            /**
+            * @language zh_CN
+            *
+            * @retruns Boolean
+            */
+            get: function () {
+                return this._lockTarget;
+            },
+            /**
+            * @language zh_CN
+            *
+            * @param value
+            */
+            set: function (value) {
+                this._lockTarget = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(CameraControllerBase.prototype, "cameraMoveHandler", {
+            /**
+            * @language zh_CN
+            *
+            * @retruns Function
+            */
+            get: function () {
+                return this._cameraMoveHandler;
+            },
+            /**
+            * @language zh_CN
+            *
+            * @event handler
+            */
+            set: function (handler) {
+                this._cameraMoveHandler = handler;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return CameraControllerBase;
     })();
-    nid.LzmaDecoder = LzmaDecoder;
-})(nid || (nid = {}));
-///<reference path="LZMA.d.ts" />
-var nid;
-(function (nid) {
-    "use strict";
+    egret3d.CameraControllerBase = CameraControllerBase;
+})(egret3d || (egret3d = {}));
+var egret3d;
+(function (egret3d) {
     /**
-     * LZMA Decoder
-     * @author Nidin Vinayakan | nidinthb@gmail.com
-     */
-    var LZMA = (function () {
-        function LZMA() {
-            this.decoder = new nid.LzmaDecoder();
+    * @class egret3d.FreeCameraControl
+    * @classdesc
+    * 自由摄相机控制器
+    */
+    var FreeCameraControl = (function (_super) {
+        __extends(FreeCameraControl, _super);
+        /**
+        * @language zh_CN
+        * constructor
+        */
+        function FreeCameraControl(view3d) {
+            _super.call(this, view3d);
+            this._moveSpeed = 3;
+            this._moveDetail = new egret3d.Vector3D();
+            this._screenMoveStartDetail = new egret3d.Point();
+            this._screenMoveDelay = new egret3d.Point();
+            this._mouseDown = false;
+            this.initView();
         }
-        LZMA.INIT_PROBS = function (p) {
-            for (var i = 0; i < p.length; i++) {
-                p[i] = this.PROB_INIT_VAL;
-            }
+        FreeCameraControl.prototype.initView = function () {
         };
-        LZMA.BitTreeReverseDecode = function (probs, numBits, rc, offset) {
-            if (offset === void 0) { offset = 0; }
-            var m = 1;
-            var symbol = 0;
-            for (var i = 0; i < numBits; i++) {
-                var bit = rc.decodeBit(probs, offset + m);
-                m <<= 1;
-                m += bit;
-                symbol |= (bit << i);
-            }
-            return symbol;
-        };
-        LZMA.prototype.decode = function (data) {
-            this.data = data;
-            //var header:Uint8Array = data.readUint8Array(13);
-            var header = new Uint8Array(13);
-            var i; //int
-            for (i = 0; i < 13; i++) {
-                header[i] = data[i];
-            }
-            this.decoder.decodeProperties(header);
-            //console.log("lc="+this.decoder.lc+", lp="+this.decoder.lp+", pb="+this.decoder.pb);
-            //console.log("Dictionary Size in properties = "+this.decoder.dictSizeInProperties);
-            //console.log("Dictionary Size for decoding  = "+this.decoder.dictSize);
-            //return this.ucdata;
-            var unpackSize = 0; //UInt64
-            var unpackSizeDefined = false;
-            for (i = 0; i < 8; i++) {
-                var b = header[5 + i];
-                if (b != 0xFF) {
-                    unpackSizeDefined = true;
-                }
-                unpackSize |= b << (8 * i);
-            }
-            this.decoder.markerIsMandatory = !unpackSizeDefined;
-            /*if (unpackSizeDefined){
-                console.log("Uncompressed Size : "+ unpackSize +" bytes");
-            }else{
-                console.log("End marker is expected");
-            }*/
-            this.decoder.rangeDec.inStream = data;
-            this.decoder.create();
-            // we support the streams that have uncompressed size and marker.
-            var res = this.decoder.decode(unpackSizeDefined, unpackSize); //int
-            //console.log("Read    ", this.decoder.rangeDec.in_pos);
-            //console.log("Written ", this.decoder.outWindow.out_pos);
-            if (res == LZMA.LZMA_RES_ERROR) {
-                throw "LZMA decoding error";
-            }
-            else if (res == LZMA.LZMA_RES_FINISHED_WITHOUT_MARKER) {
-            }
-            else if (res == LZMA.LZMA_RES_FINISHED_WITH_MARKER) {
-                if (unpackSizeDefined) {
-                    if (this.decoder.outWindow.out_pos != unpackSize) {
-                        throw "Finished with end marker before than specified size";
-                    }
-                }
-            }
-            else {
-                throw "Internal Error";
-            }
-            if (this.decoder.rangeDec.corrupted) {
-                console.log("Warning: LZMA stream is corrupted");
-            }
-            return this.decoder.outWindow.outStream;
-        };
-        LZMA.LZMA_DIC_MIN = (1 << 12);
-        LZMA.LZMA_RES_ERROR = 0;
-        LZMA.LZMA_RES_FINISHED_WITH_MARKER = 1;
-        LZMA.LZMA_RES_FINISHED_WITHOUT_MARKER = 2;
-        LZMA.kNumBitModelTotalBits = 11;
-        LZMA.kNumMoveBits = 5;
-        LZMA.PROB_INIT_VAL = ((1 << LZMA.kNumBitModelTotalBits) / 2); //1024
-        LZMA.kNumPosBitsMax = 4;
-        LZMA.kNumStates = 12;
-        LZMA.kNumLenToPosStates = 4;
-        LZMA.kNumAlignBits = 4;
-        LZMA.kStartPosModelIndex = 4;
-        LZMA.kEndPosModelIndex = 14;
-        LZMA.kNumFullDistances = (1 << (LZMA.kEndPosModelIndex >>> 1));
-        LZMA.kMatchMinLen = 2;
-        return LZMA;
-    })();
-    nid.LZMA = LZMA;
-})(nid || (nid = {}));
-///<reference path="LZMA.ts" />
-var nid;
-(function (nid) {
-    /**
-     * LZMA Decoder
-     * @author Nidin Vinayakan | nidinthb@gmail.com
-     */
-    var OutWindow = (function () {
-        function OutWindow() {
-            this.out_pos = 0;
-        }
-        OutWindow.prototype.create = function (dictSize) {
-            this.buf = new Uint8Array(dictSize);
-            this.pos = 0;
-            this.size = dictSize;
-            this.isFull = false;
-            this.totalPos = 0;
-        };
-        OutWindow.prototype.putByte = function (b) {
-            this.totalPos++;
-            this.buf[this.pos++] = b;
-            if (this.pos == this.size) {
-                this.pos = 0;
-                this.isFull = true;
-            }
-            this.outStream[this.out_pos++] = b;
-        };
-        OutWindow.prototype.getByte = function (dist) {
-            return this.buf[dist <= this.pos ? this.pos - dist : this.size - dist + this.pos];
-        };
-        OutWindow.prototype.copyMatch = function (dist, len) {
-            for (; len > 0; len--) {
-                this.putByte(this.getByte(dist));
-            }
-        };
-        OutWindow.prototype.checkDistance = function (dist) {
-            return dist <= this.pos || this.isFull;
-        };
-        OutWindow.prototype.isEmpty = function () {
-            return this.pos == 0 && !this.isFull;
-        };
-        return OutWindow;
-    })();
-    nid.OutWindow = OutWindow;
-})(nid || (nid = {}));
-///<reference path="LZMA.ts" />
-var nid;
-(function (nid) {
-    /**
-     * LZMA Decoder
-     * @author Nidin Vinayakan | nidinthb@gmail.com
-     */
-    //import MEMORY = nid.MEMORY;
-    var RangeDecoder = (function () {
-        function RangeDecoder() {
-            this.rangeI = 0;
-            this.codeI = 1;
-            this.loc1 = 2;
-            this.loc2 = 3;
-            this.in_pos = 13;
-        }
-        RangeDecoder.prototype.isFinishedOK = function () {
-            return this.U32[this.codeI] == 0;
-        };
-        RangeDecoder.prototype.init = function () {
-            this.U32 = new Uint32Array(4);
-            this.U16 = new Uint16Array(4);
-            this.corrupted = false;
-            if (this.inStream[this.in_pos++] != 0) {
-                this.corrupted = true;
-            }
-            this.U32[this.rangeI] = 0xFFFFFFFF;
-            this.U32[this.codeI] = 0;
-            for (var i = 0; i < 4; i++) {
-                this.U32[this.codeI] = (this.U32[this.codeI] << 8) | this.inStream[this.in_pos++];
-            }
-            if (this.U32[this.codeI] == this.U32[this.rangeI]) {
-                this.corrupted = true;
-            }
-        };
-        RangeDecoder.prototype.normalize = function () {
-            if (this.U32[this.rangeI] < RangeDecoder.kTopValue) {
-                this.U32[this.rangeI] <<= 8;
-                this.U32[this.codeI] = (this.U32[this.codeI] << 8) | this.inStream[this.in_pos++];
-            }
-        };
-        RangeDecoder.prototype.decodeDirectBits = function (numBits) {
-            this.U32[this.loc1] = 0; //UInt32
-            do {
-                this.U32[this.rangeI] >>>= 1;
-                this.U32[this.codeI] -= this.U32[this.rangeI];
-                this.U32[this.loc2] = 0 - (this.U32[this.codeI] >>> 31);
-                this.U32[this.codeI] += this.U32[this.rangeI] & this.U32[this.loc2];
-                if (this.U32[this.codeI] == this.U32[this.rangeI]) {
-                    this.corrupted = true;
-                }
-                this.normalize();
-                this.U32[this.loc1] <<= 1;
-                this.U32[this.loc1] += this.U32[this.loc2] + 1;
-            } while (--numBits);
-            return this.U32[this.loc1];
-        };
-        RangeDecoder.prototype.decodeBit = function (prob, index) {
-            this.U16[0] = prob[index];
-            //bound
-            this.U32[2] = (this.U32[0] >>> 11) * this.U16[0];
-            //var symbol:number;
-            if (this.U32[1] < this.U32[2]) {
-                this.U16[0] += ((1 << 11) - this.U16[0]) >>> 5;
-                this.U32[0] = this.U32[2];
-                this.U16[1] = 0;
-            }
-            else {
-                //v -= v >>> LZMA.kNumMoveBits;
-                this.U16[0] -= this.U16[0] >>> 5;
-                this.U32[1] -= this.U32[2];
-                this.U32[0] -= this.U32[2];
-                this.U16[1] = 1;
-            }
-            prob[index] = this.U16[0];
-            //this.normalize();
-            if (this.U32[0] < 16777216) {
-                this.U32[0] <<= 8;
-                this.U32[1] = (this.U32[1] << 8) | this.inStream[this.in_pos++];
-            }
-            return this.U16[1];
-        };
-        RangeDecoder.kTopValue = (1 << 24);
-        return RangeDecoder;
-    })();
-    nid.RangeDecoder = RangeDecoder;
-})(nid || (nid = {}));
-///<reference path="LZMA.d.ts" />
-var nid;
-(function (nid) {
-    /**
-     * LZMA Decoder
-     * @author Nidin Vinayakan | nidinthb@gmail.com
-     */
-    var LenDecoder = (function () {
-        function LenDecoder() {
-            this.lowCoder = nid.BitTreeDecoder.constructArray(3, 1 << nid.LZMA.kNumPosBitsMax);
-            this.midCoder = nid.BitTreeDecoder.constructArray(3, 1 << nid.LZMA.kNumPosBitsMax);
-            this.highCoder = new nid.BitTreeDecoder(8);
-        }
-        LenDecoder.prototype.init = function () {
-            this.choice = [nid.LZMA.PROB_INIT_VAL, nid.LZMA.PROB_INIT_VAL];
-            this.highCoder.init();
-            for (var i = 0; i < (1 << nid.LZMA.kNumPosBitsMax); i++) {
-                this.lowCoder[i].init();
-                this.midCoder[i].init();
-            }
-        };
-        LenDecoder.prototype.decode = function (rc, posState) {
-            if (rc.decodeBit(this.choice, 0) == 0) {
-                return this.lowCoder[posState].decode(rc);
-            }
-            if (rc.decodeBit(this.choice, 1) == 0) {
-                return 8 + this.midCoder[posState].decode(rc);
-            }
-            return 16 + this.highCoder.decode(rc);
-        };
-        return LenDecoder;
-    })();
-    nid.LenDecoder = LenDecoder;
-})(nid || (nid = {}));
-///<reference path="LZMA.d.ts" />
-var nid;
-(function (nid) {
-    /**
-     * LZMA Decoder
-     * @author Nidin Vinayakan | nidinthb@gmail.com
-     */
-    var BitTreeDecoder = (function () {
-        function BitTreeDecoder(numBits) {
-            this.numBits = numBits;
-            this.probs = new Uint16Array(1 << this.numBits);
-        }
-        BitTreeDecoder.prototype.init = function () {
-            nid.LZMA.INIT_PROBS(this.probs);
-        };
-        BitTreeDecoder.prototype.decode = function (rc) {
-            var m = 1; //Uint16
-            for (var i = 0; i < this.numBits; i++)
-                m = (m << 1) + rc.decodeBit(this.probs, m);
-            return m - (1 << this.numBits);
-        };
-        BitTreeDecoder.prototype.reverseDecode = function (rc) {
-            return nid.LZMA.BitTreeReverseDecode(this.probs, this.numBits, rc);
-        };
-        BitTreeDecoder.constructArray = function (numBits, len) {
-            var vec = [];
-            for (var i = 0; i < len; i++) {
-                vec[i] = new BitTreeDecoder(numBits);
-            }
-            return vec;
-        };
-        return BitTreeDecoder;
-    })();
-    nid.BitTreeDecoder = BitTreeDecoder;
-})(nid || (nid = {}));
-///<reference path="LZMA.d.ts" />
-var nid;
-(function (nid) {
-    //import LZMA = nid.LZMA;
-    var LZMAHelper = (function () {
-        function LZMAHelper() {
-        }
-        LZMAHelper.init = function () {
-            var command = 0;
-            LZMAHelper.decoderAsync.onmessage = function (e) {
-                if (command == 0) {
-                    command = e.data;
-                }
-                else if (command == LZMAHelper.ENCODE) {
-                    command = 0; //encode not implemented
-                }
-                else if (command == LZMAHelper.DECODE) {
-                    command = 0;
-                    LZMAHelper.callback(e.data);
-                    LZMAHelper.callback = null;
-                }
-            };
-        };
-        LZMAHelper.encode = function (data) {
-            return null;
-        };
-        LZMAHelper.decode = function (data) {
-            return LZMAHelper.decoder.decode(new Uint8Array(data)).buffer;
-        };
-        LZMAHelper.encodeAsync = function (data, _callback) {
-        };
-        LZMAHelper.decodeAsync = function (data, _callback) {
-            if (LZMAHelper.callback == null) {
-                LZMAHelper.callback = _callback;
-                LZMAHelper.decoderAsync.postMessage(LZMAHelper.DECODE);
-                LZMAHelper.decoderAsync.postMessage(data, [data]);
-            }
-            else {
-                console.log('Warning! Another LZMA decoding is running...');
-            }
-        };
-        LZMAHelper.decoder = new nid.LZMA();
-        LZMAHelper.decoderAsync = new Worker('LZMAWorker.min.js');
-        LZMAHelper.ENCODE = 1;
-        LZMAHelper.DECODE = 2;
-        return LZMAHelper;
-    })();
-    nid.LZMAHelper = LZMAHelper;
-})(nid || (nid = {}));
-nid.LZMAHelper.init();
-///<reference path="LZMA.ts" />
-var nid;
-(function (nid) {
-    "use strict";
-    var LZMAWorker = (function () {
-        function LZMAWorker() {
-            this.command = null;
+        /**
+        * @language zh_CN
+        * 初始化
+        * @param angle 角度
+        * @param distance 相机距离
+        * @param wide
+        * @param locked 是否锁定
+        * @param lockRect
+        */
+        FreeCameraControl.prototype.start = function (angle, distance, wide, locked) {
             var _this = this;
-            this.decoder = new nid.LZMA();
-            addEventListener('message', function (e) {
-                if (_this.command == null) {
-                    _this.command = e.data;
-                }
-                else if (_this.command['job'] == 1) {
-                    _this.command = null;
-                }
-                else if (_this.command['job'] == 2) {
-                    _this.decode(e.data);
-                }
-            }, false);
-        }
-        LZMAWorker.prototype.decode = function (data) {
-            this.time = Date.now();
-            var result = this.decoder.decode(new Uint8Array(data));
-            this.command['time'] = Date.now() - this.time;
-            postMessage(this.command);
-            postMessage(result.buffer, [result.buffer]);
+            _super.prototype.start.call(this, angle, distance, wide, locked);
+            egret3d.Input.instance.addListenerKeyDown(function (key) { return _this.onKeyDown(key); });
+            egret3d.Input.instance.addListenerKeyUp(function (key) { return _this.onKeyUp(key); });
+            egret3d.Input.instance.addListenerMouseMove(function () { return _this.mouseMove(); });
+            egret3d.Input.instance.addListenerMouseWheel(function () { return _this.mouseWheel(); });
         };
-        LZMAWorker.ENCODE = 1;
-        LZMAWorker.DECODE = 2;
-        return LZMAWorker;
-    })();
-    nid.LZMAWorker = LZMAWorker;
-})(nid || (nid = {}));
-new nid.LZMAWorker();
+        /**
+        * @language zh_CN
+        * 停止控制
+        */
+        FreeCameraControl.prototype.stop = function () {
+        };
+        FreeCameraControl.prototype.onKeyDown = function (key) {
+            switch (key) {
+                case egret3d.KeyCode.Key_Mouse_Left:
+                    this._mouseDown = true;
+                    break;
+                case egret3d.KeyCode.Key_W:
+                    this._moveDetail.z = this._moveSpeed;
+                    break;
+                case egret3d.KeyCode.Key_A:
+                    this._moveDetail.x = this._moveSpeed;
+                    break;
+                case egret3d.KeyCode.Key_S:
+                    this._moveDetail.z = -this._moveSpeed;
+                    break;
+                case egret3d.KeyCode.Key_D:
+                    this._moveDetail.x = -this._moveSpeed;
+                    break;
+            }
+        };
+        FreeCameraControl.prototype.onKeyUp = function (key) {
+            switch (key) {
+                case egret3d.KeyCode.Key_Mouse_Left:
+                    this._mouseDown = false;
+                    break;
+                case egret3d.KeyCode.Key_W:
+                    this._moveDetail.z = 0;
+                    break;
+                case egret3d.KeyCode.Key_A:
+                    this._moveDetail.x = 0;
+                    break;
+                case egret3d.KeyCode.Key_S:
+                    this._moveDetail.z = 0;
+                    break;
+                case egret3d.KeyCode.Key_D:
+                    this._moveDetail.x = 0;
+                    break;
+            }
+        };
+        FreeCameraControl.prototype.mouseMove = function () {
+            if (this._mouseDown) {
+                this._view3d.camera3D.rotationY -= egret3d.Input.instance.mouseOffsetX * 0.1;
+                this._view3d.camera3D.rotationX -= egret3d.Input.instance.mouseOffsetY * 0.1;
+            }
+        };
+        FreeCameraControl.prototype.mouseWheel = function () {
+            this._view3d.camera3D.rotationY += (egret3d.Input.instance.wheelDelta * 0.0001);
+            ///this._view3d.camera3D.z += e.wheelDelta;
+        };
+        /**
+        * @language zh_CN
+        * 数据更新
+        * @param timer 当前时间
+        * @param elapsed 时间间隔
+        */
+        FreeCameraControl.prototype.update = function (timer, elapsed) {
+            ///this._view3d.camera3D.moveLeft(-this._moveDetail.x);
+            ///this._view3d.camera3D.moveForward(this._moveDetail.z);
+        };
+        return FreeCameraControl;
+    })(egret3d.CameraControllerBase);
+    egret3d.FreeCameraControl = FreeCameraControl;
+})(egret3d || (egret3d = {}));
 var DeviceUtil = (function () {
     function DeviceUtil() {
     }
@@ -20769,7 +20007,7 @@ var egret3d;
     /**
      * @class egret3d.WriframeMesh
      * @classdesc
-     * 模型线框网格,以线框形式渲染模型
+     * 模型线框网格 以线框形式渲染模型
      */
     var WireframeMesh = (function (_super) {
         __extends(WireframeMesh, _super);
@@ -20780,12 +20018,7 @@ var egret3d;
         function WireframeMesh() {
             _super.call(this, "wireframe_vertex", "wireframe_fragment");
         }
-        /**
-        * @language zh_CN
-        * 根据mesh创建一个线框
-        * @param mesh
-        */
-        WireframeMesh.prototype.createByMesh = function (mesh) {
+        WireframeMesh.prototype.creatByMesh = function (mesh) {
             this.createFromGeometry(mesh.geometry);
             mesh.bindWireframe(this);
         };
@@ -21604,6 +20837,7 @@ var egret3d;
             var _this = this;
             if (camera === void 0) { camera = null; }
             if (deferredShading === void 0) { deferredShading = false; }
+            this._root = new egret3d.Object3D();
             this._width = 0;
             this._height = 0;
             this._x = 0;
@@ -21623,7 +20857,7 @@ var egret3d;
             this._camera = camera || new egret3d.Camera3D(egret3d.CameraType.perspective);
             this._scissorRect = new egret3d.Rectangle();
             this._viewPort = viewPort;
-            this._scene = new egret3d.Scene3D();
+            this._collect = new egret3d.EntityCollect(this._root);
             this._render = egret3d.RenderManager.getRender(egret3d.RenderType.defaultRender);
             this._isDeferred = deferredShading;
             //this.requestFrameBuffer();
@@ -21632,7 +20866,7 @@ var egret3d;
             this.width = viewPort.width;
             this.height = viewPort.height;
             window.addEventListener("resize", function () { return _this.resize(); });
-            this._mouseEventManager = new egret3d.Mouse3DManager(this._camera);
+            this._mouseEventManager = new egret3d.Mouse3DManager(this._camera, this._collect);
         }
         Object.defineProperty(View3D.prototype, "root", {
             /**
@@ -21642,27 +20876,7 @@ var egret3d;
             * @returns 根节点
             */
             get: function () {
-                return this._scene;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(View3D.prototype, "scene", {
-            /**
-            * @language zh_CN
-            * @param viewPort
-            * @readOnly
-            * @returns Scene3D
-            */
-            get: function () {
-                return this._scene;
-            },
-            /**
-            * @language zh_CN
-            * @param Scene3D
-            */
-            set: function (scene) {
-                this._scene = scene;
+                return this._root;
             },
             enumerable: true,
             configurable: true
@@ -21839,11 +21053,23 @@ var egret3d;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(View3D.prototype, "collect", {
+            /**
+            * @language zh_CN
+            * xxxxxxxx
+            * @returns xxx
+            */
+            get: function () {
+                return this._collect;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(View3D.prototype, "camera3D", {
             /**
             * @language zh_CN
             * xxxxxxxx
-            * @returns Camera3D
+            * @returns xxx
             */
             get: function () {
                 return this._camera;
@@ -21967,7 +21193,7 @@ var egret3d;
         * @param child3D xxx
         */
         View3D.prototype.addChild3D = function (child3D) {
-            this._scene.addChild(child3D);
+            this._root.addChild(child3D);
         };
         /**
         * @language zh_CN
@@ -21977,8 +21203,6 @@ var egret3d;
         */
         View3D.prototype.renden = function (time, delay) {
             this.updateViewSizeData();
-            this._scene.collect.update(this._camera);
-            this._mouseEventManager.update(this._scene.collect);
             this._context3D.gl.enable(egret3d.Egret3DDrive.BLEND);
             this._context3D.gl.enable(egret3d.Egret3DDrive.CULL_FACE);
             this._context3D.viewPort(this._viewPort.x, this._viewPort.y, this._viewPort.width, this._viewPort.height);
@@ -21987,11 +21211,12 @@ var egret3d;
                 this._backImg.draw(this._context3D);
             this._context3D.clearDepth(1);
             this._context3D.clearStencil(0);
+            this._collect.update(this._camera);
             //----------即时渲染部分-------------------
             if (!this._isDeferred) {
                 if (this._postList) {
                     if (this._useShadow) {
-                        egret3d.RttManager.drawToTexture(time, delay, egret3d.ShadowRender.frameBuffer.texture.texture, this._context3D, this._shadowRender, this._scene.collect, this._camera, this.viewPort);
+                        egret3d.RttManager.drawToTexture(time, delay, egret3d.ShadowRender.frameBuffer.texture.texture, this._context3D, this._shadowRender, this.collect, this._camera, this.viewPort);
                     }
                     if (this._sky) {
                         this._sky.draw(this._context3D, this.camera3D);
@@ -21999,7 +21224,7 @@ var egret3d;
                     else if (this._sphereSky) {
                         this._sphereSky.draw(this._context3D, this.camera3D);
                     }
-                    egret3d.RttManager.drawToTexture(time, delay, this._sourceFrameBuffer.texture.texture, this._context3D, this._render, this._scene.collect, this._camera, this.viewPort);
+                    egret3d.RttManager.drawToTexture(time, delay, this._sourceFrameBuffer.texture.texture, this._context3D, this._render, this.collect, this._camera, this.viewPort);
                     this._context3D.clearDepth(1);
                     var next = this._sourceFrameBuffer;
                     for (var i = 0; i < this._postList.length; i++) {
@@ -22019,11 +21244,11 @@ var egret3d;
                         this._sphereSky.draw(this._context3D, this.camera3D);
                     }
                     if (this._useShadow) {
-                        egret3d.RttManager.drawToTexture(time, delay, egret3d.ShadowRender.frameBuffer.texture.texture, this._context3D, this._shadowRender, this._scene.collect, this._camera, this.viewPort);
+                        egret3d.RttManager.drawToTexture(time, delay, egret3d.ShadowRender.frameBuffer.texture.texture, this._context3D, this._shadowRender, this.collect, this._camera, this.viewPort);
                     }
                     this._context3D.clearDepth(1);
                     this._context3D.viewPort(this._viewPort.x, this._viewPort.y, this._viewPort.width, this._viewPort.height);
-                    this._render.draw(time, delay, this._context3D, this._scene.collect, this._camera);
+                    this._render.draw(time, delay, this._context3D, this.collect, this._camera);
                 }
             }
             //----------延迟渲染部分-------------------
@@ -22053,7 +21278,7 @@ var egret3d;
         * @param index 下标
         */
         View3D.prototype.setTags = function (name, index) {
-            this._scene.collect.setTags(name, index);
+            this._collect.setTags(name, index);
         };
         /**
         * @language zh_CN
@@ -22062,7 +21287,7 @@ var egret3d;
         * @param index 下标
         */
         View3D.prototype.setTagsItem = function (layer, index) {
-            this._scene.collect.setTagsItem(layer, index);
+            this._collect.setTagsItem(layer, index);
         };
         /**
         * @language zh_CN
@@ -22074,7 +21299,7 @@ var egret3d;
         View3D.prototype.getTagLayer = function (name, layer) {
             if (name === void 0) { name = "default"; }
             if (layer === void 0) { layer = "layer_0"; }
-            return this._scene.collect.getTagLayer(name, layer);
+            return this._collect.getTagLayer(name, layer);
         };
         /**
         * @language zh_CN
@@ -22084,7 +21309,7 @@ var egret3d;
         */
         View3D.prototype.getTag = function (name) {
             if (name === void 0) { name = "default"; }
-            return this._scene.collect.getTag(name);
+            return this._collect.getTag(name);
         };
         return View3D;
     })();
@@ -22165,7 +21390,6 @@ var egret3d;
         */
         VRView3D.prototype.renden = function (time, delay) {
             _super.prototype.updateViewSizeData.call(this);
-            this._scene.collect.update(this._camera);
             this._context3D.gl.enable(egret3d.Egret3DDrive.BLEND);
             this._context3D.gl.enable(egret3d.Egret3DDrive.CULL_FACE);
             this._context3D.viewPort(this._viewPort.x, this._viewPort.y, this._viewPort.width, this._viewPort.height);
@@ -22173,6 +21397,7 @@ var egret3d;
             //this._root.rotationZ = 180;
             //this._root.rotationX = -90 ;
             //this._camera.tap(CameraType.perspective);
+            this._collect.update(this._camera);
             // if (this.tab) {
             this.leftEye(time, delay);
             //      this.tab = false;
@@ -22201,7 +21426,7 @@ var egret3d;
                 this._sphereSky.draw(this._context3D, this.camera3D);
             }
             this._context3D.clearDepth(1);
-            this._render.draw(time, delay, this._context3D, this._scene.collect, this._camera);
+            this._render.draw(time, delay, this._context3D, this._collect, this._camera);
             this._context3D.setRenderToBackBuffer();
         };
         VRView3D.prototype.rightEye = function (time, delay) {
@@ -22215,7 +21440,7 @@ var egret3d;
                 this._sphereSky.draw(this._context3D, this.camera3D);
             }
             this._context3D.clearDepth(1);
-            this._render.draw(time, delay, this._context3D, this._scene.collect, this._camera);
+            this._render.draw(time, delay, this._context3D, this._collect, this._camera);
             this._context3D.setRenderToBackBuffer();
         };
         return VRView3D;
@@ -22557,6 +21782,7 @@ var egret3d;
             egret3d.Debug.instance.trace(html);
         };
         Input.prototype.detectShake = function (evt) {
+            var status = document.getElementById("console");
             var accl = evt.acceleration; //acceleration 排除重力影响的加速度  accelerationIncludingGravity(含重力的加速度)
             //x、y 和 z 轴方向加速
             if (accl.x > 1.5 || accl.y > 1.5 || accl.z > 1.5) {
@@ -22567,6 +21793,7 @@ var egret3d;
                 var x = Math.ceil(accl.x * 1000) / 1000;
                 var y = Math.ceil(accl.y * 1000) / 1000;
                 var z = Math.ceil(accl.z * 1000) / 1000;
+                status.innerHTML = "x :" + x + "y :" + y + "z :" + z;
                 this._ondevicemotion[0](x, y, z);
             }
         };
@@ -22577,6 +21804,8 @@ var egret3d;
             //在围绕 x 轴旋转时（即前后旋转时），z 轴的度数差 -180到180度。  
             //gamma The gamma angle is associated with the y-axis between -90 and 90 degrees 
             //在围绕 y 轴旋转时（即扭转设备时），z 轴的度数差 -90到90度。  
+            var directions = document.getElementById("console");
+            //directions.style.color = 'red';
             if (this._ondeviceorientation && this._ondeviceorientation.length > 0) {
                 var alpha = Math.round(e.alpha * 100) * 0.01;
                 var beta = Math.round(e.beta * 100) * 0.01;
@@ -22596,6 +21825,8 @@ var egret3d;
                 this._initAngle.y += this._delayY;
                 this._initAngle.z += this._delayZ;
                 this._ondeviceorientation[0](this._initAngle);
+                directions.innerHTML = e.absolute + "<br>" + this._delayX + "<br>" + this._delayY + " <br>" + this._delayZ;
+                directions.innerHTML += "<br>" + this._initAngle["x"] + "<br>" + this._initAngle["y"] + "<br>" + this._initAngle["z"];
             }
         };
         //屏幕翻转
@@ -22874,7 +22105,7 @@ var egret3d;
             this.mouseOffsetX = this.mouseX - this.mouseLastX;
             this.mouseOffsetY = this.mouseY - this.mouseLastY;
             for (var i = 0; i < this._mouseMoveFunc.length; ++i) {
-                this._mouseMoveFunc[i](e);
+                this._mouseMoveFunc[i]();
             }
         };
         Input.prototype.mouseWheel = function (e) {

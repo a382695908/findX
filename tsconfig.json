@@ -13,6 +13,7 @@
     "files": [
         "libs/modules/egret/egret.d.ts",
         "src/egret3d.d.ts",
+        "src/CharTexture.ts",
         "src/Main.ts",
         "src/CreateView3D.ts",
         "src/CreateBox.ts",

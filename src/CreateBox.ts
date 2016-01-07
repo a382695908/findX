@@ -1,5 +1,6 @@
 ﻿class CreateBox extends CreateSky{
     protected _boxInfo : any = {};
+    protected _boxBak  : any = {};
     protected _boxCnt : number = 12;
     protected _mspeed : number = 10;
     protected _rspeed : number = 1;
@@ -7,26 +8,18 @@
     protected _width  : number = 600;
     protected _height : number = 600;
     protected _depth  : number = 600;
-    private  _cvs: HTMLCanvasElement = null;
-    private _url: string = "";
 
     public constructor() {
         super();
     }
 
     protected onView3DInitComplete(): void {
-
-        var textureLoad: egret3d.TextureLoader = new egret3d.TextureLoader("resource/chars/chars.jpg");
-        textureLoad.addEventListener(egret3d.Event3D.EVENT_LOAD_COMPLETE,(e: egret3d.Event3D) => this.textureComplete(e));
-        textureLoad.load();
-
+        this.textureComplete();
         super.onView3DInitComplete();
     }
 
 
-    private textureComplete(e: egret3d.Event3D) {
-        var loader: egret3d.TextureLoader = <egret3d.TextureLoader>e.data; 
-
+    private textureComplete() {
         var lightGroup: egret3d.LightGroup = new egret3d.LightGroup();
         var directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
         directLight.diffuse = 0xaaaaaa;
@@ -36,16 +29,22 @@
 
         for (var idx:number = 0; idx < this._boxCnt; ++idx){
             var box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
-            var bi = {"box" : box };
+            box.mouseEnable = true;
+            box.addEventListener(egret3d.Event3D.MOUSE_CLICK, (e: egret3d.Event3D) => this.onPickupBox(e));
+            box.material.lightGroup = lightGroup;
+            this._view3D.addChild3D(box);
 
             if ( idx == rnd ){
-                egret3d.TxtTexture.createTxtTexture(64, 64, "夭", '60px 楷体', 'rgba(255, 0, 0, 1)', 'rgba(200, 200, 200, 1)', 'rgba(255, 0, 0, 1)');
+                aw.CharTexture.createCharTexture(64, 64, "夭", '60px 楷体', 'rgba(255, 0, 0, 1)', 'rgba(200, 200, 200, 1)', 'rgba(255, 0, 0, 1)', 3);
             }
             else{
-                egret3d.TxtTexture.createTxtTexture(64, 64, "天", '60px 楷体', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(0, 0, 255, 1)');
+                aw.CharTexture.createCharTexture(64, 64, "天", '60px 楷体', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(0, 0, 255, 1)', 3);
             }
 
-            bi['box'].material.diffuseTexture = egret3d.TxtTexture.texture;
+            box.material.diffuseTexture = aw.CharTexture.texture;
+
+            var bi = {"box" : box, 'id': box.id, 'idx': idx };
+
 
             bi['moveX']     = Math.random() * this._mspeed + 1;
             bi['moveY']     = Math.random() * this._mspeed + 1;
@@ -64,10 +63,9 @@
             bi['box'].moveUp(      (Math.random() * 2 - 1) * this._height/2 );
             bi['box'].moveForward( (Math.random() * 2 - 1) * this._depth/2 );
 
-            box.material.lightGroup = lightGroup;
-            this._view3D.addChild3D(box);
 
-            this._boxInfo[idx] = bi;
+            this._boxInfo[box.id] = bi;
+            this._boxBak[box.id]  = bi;
         }
 
         this._cameraCtl.setEyesLength(3000);
@@ -75,8 +73,9 @@
 
     protected onUpdate(): void {
         super.onUpdate();
-        for(var idx in this._boxInfo ){
-            var bi = this._boxInfo[idx];
+        for(var id in this._boxInfo ){
+            var bi = this._boxInfo[id];
+            if ( bi == null ) continue;
 
             //bi['box'].rotationX += bi['rotationX'];
             //bi['box'].rotationY += bi['rotationY'];
@@ -95,6 +94,19 @@
             if ( bi['box'].x < -this._depth || bi['box'].x > this._depth ){
                 bi['moveZ'] = -bi['moveZ']
             }
+        }
+    }
+
+    protected onPickupBox(e: egret3d.Event3D): void {
+        console.log("click obj");
+        if ( this._boxInfo[ e.currentTarget.id ] == null ){
+            this._boxInfo[ e.currentTarget.id ] = this._boxBak[ e.currentTarget.id ];
+            console.log("obj is empty:" + e.currentTarget.id);
+            console.log();
+        }
+        else{
+            this._boxInfo[ e.currentTarget.id ] = null;
+            console.log("got obj:" + e.currentTarget.id);
         }
     }
 } 
