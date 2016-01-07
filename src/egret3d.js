@@ -15566,7 +15566,6 @@ var egret3d;
         };
         TextureLoader.prototype.onEMFileLoadComplete = function (textureLoader) {
             this._texture = textureLoader.data;
-			this._texture.upload(egret3d.Egret3DDrive.context3D);	
             this.dispatchEvent(new egret3d.Event3D(egret3d.Event3D.EVENT_LOAD_COMPLETE, this));
         };
         return TextureLoader;
@@ -21805,7 +21804,7 @@ var egret3d;
             //gamma The gamma angle is associated with the y-axis between -90 and 90 degrees 
             //在围绕 y 轴旋转时（即扭转设备时），z 轴的度数差 -90到90度。  
             var directions = document.getElementById("console");
-            //directions.style.color = 'red';
+            directions.style.color = 'red';
             if (this._ondeviceorientation && this._ondeviceorientation.length > 0) {
                 var alpha = Math.round(e.alpha * 100) * 0.01;
                 var beta = Math.round(e.beta * 100) * 0.01;
