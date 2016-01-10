@@ -17,6 +17,14 @@ var aw;
          * @language zh_CN
          */
         function CharTexture(w, h, txt, font, rgba, bg_rgba, frame_rgba, frame_with) {
+            if (w === void 0) { w = 32; }
+            if (h === void 0) { h = 32; }
+            if (txt === void 0) { txt = "Test info."; }
+            if (font === void 0) { font = "60px 楷体"; }
+            if (rgba === void 0) { rgba = "rgba(255,0,0,1)"; }
+            if (bg_rgba === void 0) { bg_rgba = "rgba(200,200,200,1)"; }
+            if (frame_rgba === void 0) { frame_rgba = "rgba(255,0,0,1)"; }
+            if (frame_with === void 0) { frame_with = 2; }
             _super.call(this);
             this._width = 32;
             this._height = 32;
@@ -32,6 +40,14 @@ var aw;
          * @language zh_CN
          */
         CharTexture.createCharTexture = function (w, h, txt, font, rgba, bg_rgba, frame_rgba, frame_with) {
+            if (w === void 0) { w = 32; }
+            if (h === void 0) { h = 32; }
+            if (txt === void 0) { txt = "Test info."; }
+            if (font === void 0) { font = "60px 楷体"; }
+            if (rgba === void 0) { rgba = "rgba(255,0,0,1)"; }
+            if (bg_rgba === void 0) { bg_rgba = "rgba(200,200,200,1)"; }
+            if (frame_rgba === void 0) { frame_rgba = "rgba(255,0,0,1)"; }
+            if (frame_with === void 0) { frame_with = 2; }
             CharTexture.texture = new CharTexture(w, h, txt, font, rgba, bg_rgba, frame_rgba, frame_with);
             aw.CharTexture.texture.upload(egret3d.Egret3DDrive.context3D);
         };
@@ -79,10 +95,14 @@ var aw;
                 this._pixelArray = new Uint8Array(this._width * this._height * 4);
                 for (var y = 0; y < this._height; y++) {
                     for (var x = this._width - 1; x >= 0; x--) {
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData.data[((this._width - y - 1) * this._width + (this._width - 1 - x)) * 4 + 0];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData.data[((this._width - y - 1) * this._width + (this._width - 1 - x)) * 4 + 1];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData.data[((this._width - y - 1) * this._width + (this._width - 1 - x)) * 4 + 2];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = this._txtImgData.data[((this._width - y - 1) * this._width + (this._width - 1 - x)) * 4 + 3];
+                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 0];
+                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 1];
+                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 2];
+                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 3];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 0];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 1];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 2];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 3];
                     }
                 }
             }

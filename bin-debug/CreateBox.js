@@ -67,10 +67,15 @@ var CreateBox = (function (_super) {
             this._boxInfo[box.id] = bi;
             this._boxBak[box.id] = bi;
         }
+        aw.CharTexture.createCharTexture(128, 128, "测试.", "32px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
+        var hud = new egret3d.HUD();
+        hud.texture = aw.CharTexture.texture;
+        this._view3D.addHUD(hud);
         this._cameraCtl.setEyesLength(3000);
     };
     CreateBox.prototype.onUpdate = function () {
         _super.prototype.onUpdate.call(this);
+        return;
         for (var id in this._boxInfo) {
             var bi = this._boxInfo[id];
             if (bi == null)
@@ -93,8 +98,6 @@ var CreateBox = (function (_super) {
         }
     };
     CreateBox.prototype.onPickupBox = function (e) {
-        //console.log("click obj");
-        //console.log(e);
         if (this._boxInfo[e.currentTarget.id] == null) {
             this._boxInfo[e.currentTarget.id] = this._boxBak[e.currentTarget.id];
         }

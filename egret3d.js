@@ -21280,10 +21280,10 @@ var egret3d;
                     case 0:
                         break;
                     case 1:
-                        this.onSwipeUp();
+                        //this.onSwipeUp();
                         break;
                     case 2:
-                        this.onSwipeDown();
+                        //this.onSwipeDown();
                         break;
                     case 3:
                         this.onSwipeLeft();

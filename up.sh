@@ -17,6 +17,7 @@ if [ $# -eq 1 ];then
         cp ~/workspace/egret/egret-3d/Sample-wing/egret3d.js ./src
         cp ~/workspace/egret/egret-3d/Sample-wing/src/egret3d.d.ts ./src
     elif [ $1 = "1" ] || [ $1 = "egret3d_1" ];then
+        echo -e "Copy from egret3d_1(QQ friend) github"
         cp ~/bak/egret3d_1/Sample-wing/egret3d.js ./
         cp ~/bak/egret3d_1/Sample-wing/egret3d.js ./src
         cp ~/bak/egret3d_1/Sample-wing/egret3d.d.ts ./src

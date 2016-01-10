@@ -20,6 +20,7 @@ class CreateBox extends CreateSky{
 
 
     private textureComplete() {
+
         var lightGroup: egret3d.LightGroup = new egret3d.LightGroup();
         var directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
         directLight.diffuse = 0xFFFFFF;
@@ -65,11 +66,17 @@ class CreateBox extends CreateSky{
             this._boxBak[box.id]  = bi;
         }
 
+        aw.CharTexture.createCharTexture(128,128,"测试.", "32px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
+        var hud: egret3d.HUD = new egret3d.HUD();
+        hud.texture = aw.CharTexture.texture;
+        this._view3D.addHUD( hud );
+
         this._cameraCtl.setEyesLength(3000);
     }
 
     protected onUpdate(): void {
         super.onUpdate();
+        return;
         for(var id in this._boxInfo ){
             var bi = this._boxInfo[id];
             if ( bi == null ) continue;
@@ -95,15 +102,11 @@ class CreateBox extends CreateSky{
     }
 
     protected onPickupBox(e: egret3d.Event3D): void {
-        //console.log("click obj");
-        //console.log(e);
         if ( this._boxInfo[ e.currentTarget.id ] == null ){
             this._boxInfo[ e.currentTarget.id ] = this._boxBak[ e.currentTarget.id ];
-            //console.log("obj is empty:" + e.currentTarget.id);
         }
         else{
             this._boxInfo[ e.currentTarget.id ] = null;
-            //console.log("got obj:" + e.currentTarget.id);
         }
     }
 } 

@@ -16,6 +16,7 @@
         this._view3D = new egret3d.View3D(this._viewPort);
         this._cameraCtl = new egret3d.LookAtController(this._view3D.camera3D, new egret3d.Object3D());
         this._cameraCtl.setEyesLength(1000);
+
         this.onView3DInitComplete();
         this._time = new Date().getTime();
         requestAnimationFrame(() => this.onUpdate());
