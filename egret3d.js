@@ -21280,10 +21280,10 @@ var egret3d;
                     case 0:
                         break;
                     case 1:
-                        //this.onSwipeUp();
+                        this.onSwipeUp();
                         break;
                     case 2:
-                        //this.onSwipeDown();
+                        this.onSwipeDown();
                         break;
                     case 3:
                         this.onSwipeLeft();
@@ -23954,10 +23954,10 @@ var egret3d;
             context3D.gl.clear(egret3d.Egret3DDrive.DEPTH_BUFFER_BIT);
         };
         HUD.singleQuadData = [
-            -0.5, -0.5, 0.0, 0.0, 0.0,
-            0.5, -0.5, 0.0, 1.0, 0.0,
-            0.5, 0.5, 0.0, 1.0, 1.0,
-            -0.5, 0.5, 0.0, 0.0, 1.0
+            -0.5, -0.5, 0.0, 0.0, 1.0,
+            0.5, -0.5, 0.0, 1.0, 1.0,
+            0.5, 0.5, 0.0, 1.0, 0.0,
+            -0.5, 0.5, 0.0, 0.0, 0.0
         ];
         HUD.singleQuadIndex = [0, 1, 2, 0, 2, 3];
         return HUD;

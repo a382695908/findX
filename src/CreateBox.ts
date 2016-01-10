@@ -9,6 +9,8 @@ class CreateBox extends CreateSky{
     protected _height : number = 600;
     protected _depth  : number = 600;
 
+    protected _hud : egret3d.HUD;
+
     public constructor() {
         super();
     }
@@ -67,16 +69,15 @@ class CreateBox extends CreateSky{
         }
 
         aw.CharTexture.createCharTexture(128,128,"测试.", "32px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
-        var hud: egret3d.HUD = new egret3d.HUD();
-        hud.texture = aw.CharTexture.texture;
-        this._view3D.addHUD( hud );
+        this._hud = new egret3d.HUD();
+        this._hud.texture = aw.CharTexture.texture;
+        this._view3D.addHUD(this._hud );
 
         this._cameraCtl.setEyesLength(3000);
     }
 
     protected onUpdate(): void {
         super.onUpdate();
-        return;
         for(var id in this._boxInfo ){
             var bi = this._boxInfo[id];
             if ( bi == null ) continue;
@@ -99,6 +100,8 @@ class CreateBox extends CreateSky{
                 bi['moveZ'] = -bi['moveZ']
             }
         }
+        aw.CharTexture.createCharTexture(128,128,"测试:" + (Math.floor(this._time/1000)%10).toString(), "32px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
+        this._hud.texture = aw.CharTexture.texture;
     }
 
     protected onPickupBox(e: egret3d.Event3D): void {
