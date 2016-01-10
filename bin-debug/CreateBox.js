@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var CreateBox = (function (_super) {
     __extends(CreateBox, _super);
     function CreateBox() {
@@ -11,12 +16,11 @@ var CreateBox = (function (_super) {
         this._height = 600;
         this._depth = 600;
     }
-    var d = __define,c=CreateBox,p=c.prototype;
-    p.onView3DInitComplete = function () {
+    CreateBox.prototype.onView3DInitComplete = function () {
         this.textureComplete();
         _super.prototype.onView3DInitComplete.call(this);
     };
-    p.textureComplete = function () {
+    CreateBox.prototype.textureComplete = function () {
         var _this = this;
         var lightGroup = new egret3d.LightGroup();
         var directLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
@@ -26,6 +30,7 @@ var CreateBox = (function (_super) {
         for (var idx = 0; idx < this._boxCnt; ++idx) {
             var box = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
+            box.mousePickEnable = true;
             box.addEventListener(egret3d.Event3D.MOUSE_CLICK, function (e) { return _this.onPickupBox(e); });
             box.addEventListener(egret3d.Event3D.TOUCH_START, function (e) { return _this.onPickupBox(e); });
             box.material.lightGroup = lightGroup;
@@ -38,24 +43,33 @@ var CreateBox = (function (_super) {
             }
             box.material.diffuseTexture = aw.CharTexture.texture;
             var bi = { "box": box, 'id': box.id, 'idx': idx };
-            bi['moveX'] = Math.random() * this._mspeed + 1;
-            bi['moveY'] = Math.random() * this._mspeed + 1;
-            bi['moveZ'] = Math.random() * this._mspeed + 1;
-            bi['rotationX'] = Math.random() * this._rspeed + 1;
-            bi['rotationY'] = Math.random() * this._rspeed + 1;
-            bi['rotationZ'] = Math.random() * this._rspeed + 1;
+            bi['moveX'] = (Math.random() * 2 - 1) * this._mspeed;
+            bi['moveY'] = (Math.random() * 2 - 1) * this._mspeed;
+            bi['moveZ'] = (Math.random() * 2 - 1) * this._mspeed;
+            if (bi['moveX'] == 0) {
+                bi['moveX'] = this._mspeed;
+            }
+            ;
+            if (bi['moveY'] == 0) {
+                bi['moveY'] = this._mspeed;
+            }
+            ;
+            if (bi['moveZ'] == 0) {
+                bi['moveZ'] = this._mspeed;
+            }
+            ;
+            bi['rotationX'] = (Math.random() * 2 - 1) * this._rspeed;
+            bi['rotationY'] = (Math.random() * 2 - 1) * this._rspeed;
+            bi['rotationZ'] = (Math.random() * 2 - 1) * this._rspeed;
             bi['box'].rotationX = bi['rotationX'];
             bi['box'].rotationY = bi['rotationY'];
             bi['box'].rotationZ = bi['rotationZ'];
-            //bi['box'].moveRight(   (Math.random() * 2 - 1) * this._width/2 );
-            //bi['box'].moveUp(      (Math.random() * 2 - 1) * this._height/2 );
-            //bi['box'].moveForward( (Math.random() * 2 - 1) * this._depth/2 );
             this._boxInfo[box.id] = bi;
             this._boxBak[box.id] = bi;
         }
         this._cameraCtl.setEyesLength(3000);
     };
-    p.onUpdate = function () {
+    CreateBox.prototype.onUpdate = function () {
         _super.prototype.onUpdate.call(this);
         for (var id in this._boxInfo) {
             var bi = this._boxInfo[id];
@@ -66,31 +80,27 @@ var CreateBox = (function (_super) {
             bi['box'].rotationZ += bi['rotationZ'];
             bi['box'].x += bi['moveX'];
             bi['box'].y += bi['moveY'];
-            bi['box'].y += bi['moveY'];
+            bi['box'].z += bi['moveZ'];
             if (bi['box'].x < -this._width || bi['box'].x > this._width) {
                 bi['moveX'] = -bi['moveX'];
             }
             if (bi['box'].y < -this._height || bi['box'].y > this._height) {
                 bi['moveY'] = -bi['moveY'];
             }
-            if (bi['box'].x < -this._depth || bi['box'].x > this._depth) {
+            if (bi['box'].z < -this._depth || bi['box'].z > this._depth) {
                 bi['moveZ'] = -bi['moveZ'];
             }
         }
     };
-    p.onPickupBox = function (e) {
-        console.log("click obj");
-        console.log(e);
+    CreateBox.prototype.onPickupBox = function (e) {
+        //console.log("click obj");
+        //console.log(e);
         if (this._boxInfo[e.currentTarget.id] == null) {
             this._boxInfo[e.currentTarget.id] = this._boxBak[e.currentTarget.id];
-            console.log("obj is empty:" + e.currentTarget.id);
-            console.log();
         }
         else {
             this._boxInfo[e.currentTarget.id] = null;
-            console.log("got obj:" + e.currentTarget.id);
         }
     };
     return CreateBox;
 })(CreateSky);
-egret.registerClass(CreateBox,'CreateBox');
