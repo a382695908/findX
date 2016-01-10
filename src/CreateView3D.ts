@@ -8,9 +8,7 @@
     protected _cameraCtl: egret3d.LookAtController = null;
 
     public constructor(width: number = 800, height: number = 600) {
-
         this._viewPort = new egret3d.Rectangle(0, 0, width, height);
-
         egret3d.Egret3DDrive.requstContext3D(DeviceUtil.getGPUMode, this._viewPort, () => this.onInit3D());
     }
 

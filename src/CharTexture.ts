@@ -80,7 +80,7 @@
                 this.texture.gpu_internalformat = egret3d.InternalFormat.PixelArray;
                 this.texture.gpu_colorformat = egret3d.Egret3DDrive.ColorFormat_RGBA8888;
                 this.texture.mipmapDatas = this.mimapData;
-                this.useMipmap = false;
+                //this.useMipmap = false;
                 context3D.upLoadTextureData(0, this.texture);
             }
         }
