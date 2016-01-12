@@ -24,8 +24,8 @@ class CreateBox extends CreateSky{
     private textureComplete() {
 
         var lightGroup: egret3d.LightGroup = new egret3d.LightGroup();
-        var directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
-        directLight.diffuse = 0xFFFFFF;
+        var directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 1000, 100));
+        directLight.diffuse = 0xAAAAAA;
         lightGroup.addDirectLight(directLight);
 
         var rnd: number = Math.floor( Math.random() * this._boxCnt );
@@ -33,7 +33,7 @@ class CreateBox extends CreateSky{
         for (var idx:number = 0; idx < this._boxCnt; ++idx){
             var box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
-            box.mousePickEnable = true;
+            //box.mousePickEnable = true;
             box.addEventListener(egret3d.Event3D.MOUSE_CLICK, (e: egret3d.Event3D) => this.onPickupBox(e));
             box.addEventListener(egret3d.Event3D.TOUCH_START, (e: egret3d.Event3D) => this.onPickupBox(e));
             box.material.lightGroup = lightGroup;

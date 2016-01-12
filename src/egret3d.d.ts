@@ -198,7 +198,7 @@ declare module egret3d {
         * @event call
         */
         static requstContext3D(GPU_CONFIG: string, canvasRec: Rectangle, call: Function): void;
-        private static requstWEBGL(viewPort);
+        private static requestWEBGL(viewPort);
         /**
         * @language zh_CN
         * 请求全屏
@@ -4293,7 +4293,7 @@ declare module egret3d {
     *
     * @version Egret 3.0
     * @platform Web,Native
-    * @includeExample egret3d/texture/TextureBase.ts
+    * @includeExample texture/TextureBase.ts
     */
     class TextureBase {
         /**
@@ -4347,6 +4347,7 @@ declare module egret3d {
          * @param context3D
          */
         upload(context3D: Context3D): void;
+        uploadForcing(context3D: Context3D): void;
         /**
          * @language zh_CN
          * 获取宽度值
@@ -4372,7 +4373,7 @@ declare module egret3d {
     *
     * @version Egret 3.0
     * @platform Web,Native
-    * @includeExample egret3d/texture/RenderTexture.ts
+    * @includeExample texture/RenderTexture.ts
     */
     class RenderTexture extends TextureBase {
         /**
@@ -4415,7 +4416,7 @@ declare module egret3d {
     * @see egret3d.Sky
     * @version Egret 3.0
     * @platform Web,Native
-    * @includeExample egret3d/texture/SkyTexture.ts
+    * @includeExample texture/SkyTexture.ts
     */
     class SkyTexture extends TextureBase {
         private image_front;
@@ -4462,7 +4463,7 @@ declare module egret3d {
     *
     * @version Egret 3.0
     * @platform Web,Native
-    * @includeExample egret3d/texture/ImageTexture.ts
+    * @includeExample texture/ImageTexture.ts
     */
     class ImageTexture extends TextureBase {
         /**
@@ -4499,7 +4500,7 @@ declare module egret3d {
     *
     * @version Egret 3.0
     * @platform Web,Native
-    * @includeExample egret3d/texture/CheckerboardTexture.ts
+    * @includeExample texture/CheckerboardTexture.ts
     */
     class CheckerboardTexture extends TextureBase {
         /**
@@ -4534,7 +4535,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/animation/IAnimation.ts
+     * @includeExample animation/IAnimation.ts
      */
     interface IAnimation {
         /**
@@ -4624,7 +4625,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/animation/AnimNodeBase.ts
+     * @includeExample animation/AnimNodeBase.ts
      */
     class AnimNodeBase {
         /**
@@ -4687,7 +4688,7 @@ declare module egret3d {
      * 动画功能的收集，整理，初始化容器，一般在粒子系统里使用
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/animation/AnimaNodeCollection.ts
+     * @includeExample animation/AnimaNodeCollection.ts
      */
     class AnimaNodeCollection {
         /**
@@ -4777,7 +4778,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/animation/skeletonAnimation/Joint.ts
+     * @includeExample animation/skeletonAnimation/Joint.ts
      */
     class Joint {
         /**
@@ -4880,7 +4881,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/animation/skeletonAnimation/Skeleton.ts
+     * @includeExample animation/skeletonAnimation/Skeleton.ts
      */
     class Skeleton {
         /**
@@ -5000,7 +5001,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/animation/skeletonAnimation/SkeletonAnimationClip.ts
+     * @includeExample animation/skeletonAnimation/SkeletonAnimationClip.ts
      */
     class SkeletonAnimationClip {
         /**
@@ -5149,7 +5150,7 @@ declare module egret3d {
      * @see egret3d.SkeletonAnimationClip
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/animation/skeletonAnimation/SkeletonAnimation.ts
+     * @includeExample animation/skeletonAnimation/SkeletonAnimation.ts
      */
     class SkeletonAnimation extends EventDispatcher implements IAnimation {
         /**
@@ -7327,6 +7328,59 @@ declare module egret3d {
 }
 declare module egret3d {
     /**
+   * @private
+    * @language zh_CN
+    * @class egret3d.ParticleVertexMethod
+    * @classdesc
+    * 粒子顶点方法。
+    * @version Egret 3.0
+    * @platform Web,Native
+    */
+    class ParticleVertexMethod extends MethodBase {
+        private index;
+        /**
+        * @language zh_CN
+        * 创建一个新的 ParticleVertexMethod 对象。
+        * @version Egret 3.0
+        * @platform Web,Native
+        */
+        constructor();
+        /**
+         * @language zh_CN
+         * 激活 粒子顶点方法。
+         * @param context3D {Context3D}
+         * @param program3D {IProgram3D}
+         * @param modeltransform {Matrix4_4}
+         * @param camera3D {Camera3D}
+         * @param geometry {GeometryBase}
+         * @param animation {IAnimation}
+         * -pos            3       12      0
+         * -uv0            2        8      12
+         * -speed          3       12      20
+         * -lifecycle      1       4       32
+         * @version Egret 3.0
+         * @platform Web,Native
+         */
+        activate(context3D: Context3D, program3D: IProgram3D, modeltransform: Matrix4_4, camera3D: Camera3D, geometry: GeometryBase, animation: IAnimation): void;
+        private time;
+        private normalMatrix;
+        /**
+         * @language zh_CN
+         * 更新 粒子顶点方法。
+         * @param context3D {Context3D}
+         * @param program3D {IProgram3D}
+         * @param modeltransform {Matrix4_4}
+         * @param camera3D {Camera3D}
+         * @param geometry {GeometryBase}
+         * @param animation {IAnimation}
+         * @version Egret 3.0
+         * @platform Web,Native
+         */
+        updata(context3D: Context3D, program3D: IProgram3D, modeltransform: Matrix4_4, camera3D: Camera3D, geometry: GeometryBase, animation: IAnimation): void;
+    }
+}
+declare module egret3d {
+    /**
     * @language zh_CN
     * @class egret3d.ShadowMapMethod
     * @classdesc
@@ -7454,7 +7508,7 @@ declare module egret3d {
         */
         constructor();
         /**
-         * @language zh_CN
+         * @language zh_CNO
          * 激活 NormalMethod。
          * @param context3D {Context3D}
          * @param program3D {IProgram3D}
@@ -8265,59 +8319,6 @@ declare module egret3d {
     /**
    * @private
     * @language zh_CN
-    * @class egret3d.ParticleVertexMethod
-    * @classdesc
-    * 粒子顶点方法。
-    * @version Egret 3.0
-    * @platform Web,Native
-    */
-    class ParticleVertexMethod extends MethodBase {
-        private index;
-        /**
-        * @language zh_CN
-        * 创建一个新的 ParticleVertexMethod 对象。
-        * @version Egret 3.0
-        * @platform Web,Native
-        */
-        constructor();
-        /**
-         * @language zh_CN
-         * 激活 粒子顶点方法。
-         * @param context3D {Context3D}
-         * @param program3D {IProgram3D}
-         * @param modeltransform {Matrix4_4}
-         * @param camera3D {Camera3D}
-         * @param geometry {GeometryBase}
-         * @param animation {IAnimation}
-         * -pos            3       12      0
-         * -uv0            2        8      12
-         * -speed          3       12      20
-         * -lifecycle      1       4       32
-         * @version Egret 3.0
-         * @platform Web,Native
-         */
-        activate(context3D: Context3D, program3D: IProgram3D, modeltransform: Matrix4_4, camera3D: Camera3D, geometry: GeometryBase, animation: IAnimation): void;
-        private time;
-        private normalMatrix;
-        /**
-         * @language zh_CN
-         * 更新 粒子顶点方法。
-         * @param context3D {Context3D}
-         * @param program3D {IProgram3D}
-         * @param modeltransform {Matrix4_4}
-         * @param camera3D {Camera3D}
-         * @param geometry {GeometryBase}
-         * @param animation {IAnimation}
-         * @version Egret 3.0
-         * @platform Web,Native
-         */
-        updata(context3D: Context3D, program3D: IProgram3D, modeltransform: Matrix4_4, camera3D: Camera3D, geometry: GeometryBase, animation: IAnimation): void;
-    }
-}
-declare module egret3d {
-    /**
-   * @private
-    * @language zh_CN
     * @class egret3d.MaterialPassBase
     * @classdesc
     * 材质通道渲染器。ColorMapPass，DepthMapPass，DiffuseMapPass，NormalMapPass，OutLinePass的基类。
@@ -8415,44 +8416,6 @@ declare module egret3d {
          * @platform Web,Native
          */
         removeEffectMethod(method: EffectMethod): void;
-        /**
-         * @language zh_CN
-         * 返回 cull 模式。
-         * @returns {Number}
-         * @version Egret 3.0
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 设置 cull 模式。
-         * @param value {Number}
-         * @version Egret 3.0
-         * @platform Web,Native
-         */
-        cullMode: number;
-        /**
-         * @language zh_CN
-         * 返回bothSides。
-         * @returns {boolean}
-         * @version Egret 3.0
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 设置 bothSides。
-         * @param flag {boolean}
-         * @version Egret 3.0
-         * @platform Web,Native
-         */
-        bothSides: boolean;
-        /**
-         * @language zh_CN
-         * 设置 lightGroup。
-         * @param lights {Array<LightBase>}
-         * @version Egret 3.0
-         * @platform Web,Native
-         */
-        lightGroup: Array<LightBase>;
         /**
          * @language zh_CN
          * 初始化 shader 。
@@ -9247,6 +9210,21 @@ declare module egret3d {
          */
         bothside: boolean;
         /**
+         * @language zh_CN
+         * 返回 cull 模式。
+         * @returns {Number}
+         * @version Egret 3.0
+         * @platform Web,Native
+         */
+        /**
+       * @language zh_CN
+       * 设置 cull 模式。
+       * @param value {Number}
+       * @version Egret 3.0
+       * @platform Web,Native
+       */
+        cullMode: number;
+        /**
         * @language zh_CN
         * 返回材质 blendMode 值。
         * 返回材质 blendMode 值。
@@ -9817,14 +9795,6 @@ declare module egret3d {
         pickType: PickType;
         /**
         * @language zh_CN
-        * 鼠标 事件开关
-        * 设置是否进行鼠标的pick 的开关，有的需要鼠标事件，但是不需要拣选能力
-        * @version Egret 3.0
-        * @platform Web,Native
-        */
-        mousePickEnable: boolean;
-        /**
-        * @language zh_CN
         * 实例化这个类
         * 如果直接实例化这个类，就会生成一个空的3D容器，可以往里添加3D显示对象，作为对象的父级，但是本身没有渲染属性
         * @version Egret 3.0
@@ -10286,17 +10256,17 @@ declare module egret3d {
 declare module egret3d {
     /**
      * @language zh_CN
-     * @class egret3d.Billborad
+     * @class egret3d.Billboard
      * @classdesc
      * 公告板渲染对象 始终面朝摄像机的面板
      *
      * 示例:创建一个棋盘格材质的公告板在场景中
-     * @includeExample egret3d/core/node/Billborad.ts
+     * @includeExample core/node/Billboard.ts
      *
      * @version Egret 3.0
      * @platform Web,Native
      */
-    class Billborad extends Object3D {
+    class Billboard extends Object3D {
         /**
          * @language zh_CN
          * 指定材质，和公告板宽、高，构建一个公告板
@@ -10389,7 +10359,7 @@ declare module egret3d {
     * 示例:
     * @version Egret 3.0
     * @platform Web,Native
-    * @includeExample egret3d/core/node/Sky.ts
+    * @includeExample core/node/Sky.ts
     */
     class Sky {
         private viewMatIndex;
@@ -10518,7 +10488,7 @@ declare module egret3d {
     * @see egret3d.core.traverse.Frustum
     * @see egret3d.geom.Matrix4_4
     *
-    * @includeExample egret3d/camera/Camera3D.ts
+    * @includeExample camera/Camera3D.ts
     * @version Egret 3.0
     * @platform Web,Native
     */
@@ -10929,6 +10899,7 @@ declare module egret3d {
     * @see egret3d.LightBase
     * @see egret3d.PointLight
     * @see egret3d.SportLight
+    * @includeExample lights/DirectLight.ts
     * @version Egret 3.0
     * @platform Web,Native
     */
@@ -10990,6 +10961,7 @@ declare module egret3d {
     * @see egret3d.LightBase
     * @see egret3d.PointLight
     * @see egret3d.SportLight
+    * @includeExample lights/PointLight.ts
     * @version Egret 3.0
     * @platform Web,Native
     */
@@ -11777,7 +11749,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/geometry/GeometryData.ts
+     * @includeExample geometry/GeometryData.ts
      */
     class GeometryData {
         /**
@@ -11996,7 +11968,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/geometry/GeometryBase.ts
+     * @includeExample geometry/GeometryBase.ts
      */
     class GeometryBase {
         /**
@@ -12146,7 +12118,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/geometry/SubGeometry.ts
+     * @includeExample geometry/SubGeometry.ts
      */
     class SubGeometry extends GeometryBase {
         /**
@@ -12176,7 +12148,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/geometry/CubeGeometry.ts
+     * @includeExample geometry/CubeGeometry.ts
      */
     class CubeGeometry extends SubGeometry {
         /**
@@ -12225,7 +12197,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/geometry/SphereGeometry.ts
+     * @includeExample geometry/SphereGeometry.ts
      */
     class SphereGeometry extends SubGeometry {
         private _segmentsW;
@@ -12255,7 +12227,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/geometry/PlaneGeometry.ts
+     * @includeExample geometry/PlaneGeometry.ts
      */
     class PlaneGeometry extends SubGeometry {
         private _segmentsW;
@@ -12292,7 +12264,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/geometry/CylinderGeometry.ts
+     * @includeExample geometry/CylinderGeometry.ts
      */
     class CylinderGeometry extends SubGeometry {
         /**
@@ -12318,7 +12290,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/geometry/FaceData.ts
+     * @includeExample geometry/FaceData.ts
      */
     class FaceData {
         /**
@@ -12362,7 +12334,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/geometry/SkinGeometry.ts
+     * @includeExample geometry/SkinGeometry.ts
      */
     class SkinGeometry extends GeometryBase {
         /**
@@ -12396,7 +12368,7 @@ declare module egret3d {
      *
      * @version Egret 3.0
      * @platform Web,Native
-     * @includeExample egret3d/geometry/ElevationGeometry.ts
+     * @includeExample geometry/ElevationGeometry.ts
      */
     class ElevationGeometry extends GeometryBase {
         private _segmentsW;
@@ -12476,7 +12448,7 @@ declare module egret3d {
     * @see egret3d.animation.IAnimation
     *
     * 示例:
-    * @includeExample egret3d/core/node/Mesh.ts
+    * @includeExample core/node/Mesh.ts
     * @version Egret 3.0
     * @platform Web,Native
     */
@@ -13335,7 +13307,7 @@ declare module egret3d {
     * @see egret3d.core.PickType
     *
     * 示例:鼠标拣选模型,拣选到的进行绕Y轴旋转
-    * @includeExample egret3d/core/traverse/Picker.ts
+    * @includeExample core/traverse/Picker.ts
     * @version Egret 3.0
     * @platform Web,Native
     */
@@ -13414,7 +13386,7 @@ declare module egret3d {
     * 3.滑动鼠标滚轮可以控制摄像机的视距.
     *
     * 示例:
-    * @includeExample egret3d/controller/ctl/LookAtController.ts
+    * @includeExample controller/ctl/LookAtController.ts
     * @version Egret 3.0
     * @platform Web,Native
     */
@@ -13461,10 +13433,6 @@ declare module egret3d {
         * @platform Web,Native
         */
         constructor(targetObject?: Object3D, lookAtObject?: Object3D);
-        private onSwipeUp();
-        private onSwipeDown();
-        private onSwipeLeft();
-        private onSwipeRight();
         private mouseWheel();
         private mouseMove();
         /**
@@ -14109,7 +14077,7 @@ declare module egret3d {
     */
     class Debug {
         private _console;
-        private _isDebug;
+        isDebug: boolean;
         /**
          * @language zh_CN
          * 构造
@@ -14261,7 +14229,7 @@ declare module egret3d {
      * @classdesc
      *
      * 线渲染把两个顶点之间以线渲染的形式渲染出来
-     * @includeExample egret3d/Wireframe/WireframeLine.ts
+     * @includeExample Wireframe/WireframeLine.ts
      * @version Egret 3.0
      * @platform Web,Native
      *
@@ -14293,7 +14261,7 @@ declare module egret3d {
      * @classdesc
      *
      * 模型线框网格,以线框形式渲染模型
-     * @includeExample egret3d/Wireframe/WireframeLine.ts
+     * @includeExample Wireframe/WireframeLine.ts
      * @version Egret 3.0
      * @platform Web,Native
      */
@@ -14440,10 +14408,10 @@ declare module egret3d {
     /**
      * @class egret3d.HUD
      * @classdesc
-     * HUD直接渲染在屏幕上的一张贴图。
-     * 可直接指定2维坐标，贴图的宽度和高度
-     * 其底层渲染也是由4个顶点构成，顶点数据结构有位置信息和uv信息
-     * 其所有的HUD对象的顶点信息数据都是共用的
+     * HUDֱ����Ⱦ����Ļ�ϵ�һ����ͼ��
+     * ��ֱ��ָ��2ά���꣬��ͼ�Ŀ��Ⱥ͸߶�
+     * ���ײ���ȾҲ����4�򶥵㹹�ɣ��������ݽṹ��λ����Ϣ��uv��Ϣ
+     * �����е�HUD�����Ķ�����Ϣ���ݶ��ǹ��õ�
      * @version Egret 3.0
      * @platform Web,Native
      */
@@ -14533,57 +14501,57 @@ declare module egret3d {
         private list;
         /**
         * @language zh_CN
-        * 构造
+        * ����
         */
         constructor();
         /**
         * @language zh_CN
-        * 得到x坐标
-        * @returns x坐标
+        * �õ�x����
+        * @returns x����
         */
         /**
         * @language zh_CN
-        * 设置x坐标
-        * @param value x坐标
+        * ����x����
+        * @param value x����
         */
         x: number;
         /**
         * @language zh_CN
-        * 得到y坐标
-        * @returns y坐标
+        * �õ�y����
+        * @returns y����
         */
         /**
         * @language zh_CN
-        * 设置y坐标
-        * @param value y坐标
+        * ����y����
+        * @param value y����
         */
         y: number;
         /**
         * @language zh_CN
-        * 得到HUD的宽度
-        * @returns HUD宽
+        * �õ�HUD�Ŀ���
+        * @returns HUD��
         */
         /**
         * @language zh_CN
-        * 设置HUD的宽度
-        * @param value HUD宽
+        * ����HUD�Ŀ���
+        * @param value HUD��
         */
         width: number;
         /**
         * @language zh_CN
-        * 得到HUD的高度
-        * @returns HUD高
+        * �õ�HUD�ĸ߶�
+        * @returns HUD��
         */
         /**
         * @language zh_CN
-        * 设置HUD的高度
-        * @param value HUD高
+        * ����HUD�ĸ߶�
+        * @param value HUD��
         */
         height: number;
         private rebuild(context3D);
         /**
         * @language zh_CN
-        * 提交数据给GPU渲染
+        * �ύ���ݸ�GPU��Ⱦ
         * @param context3D Context3D
         */
         draw(context3D: Context3D): void;
@@ -15557,36 +15525,12 @@ declare module egret3d {
         addListenerKeyDown(func: Function): void;
         /**
         * @language zh_CN
-        * 添加向上划动的手势事件。
+        * 移动端手指划动的手势事件。
         * @version Egret 3.0
         * @platform Web,Native
-        * @param func {Function} 处理向上划动的手势事件的侦听器函数
+        * @param func {Function} 手指划动划动的手势事件的侦听器函数
         */
-        addListenerSwipeUp(func: Function): void;
-        /**
-        * @language zh_CN
-        * 添加向下划动的手势事件。
-        * @version Egret 3.0
-        * @platform Web,Native
-        * @param func {Function} 处理向下划动的手势事件的侦听器函数
-        */
-        addListenerSwipeDown(func: Function): void;
-        /**
-        * @language zh_CN
-        * 添加向左划动的手势事件。
-        * @version Egret 3.0
-        * @platform Web,Native
-        * @param func {Function} 处理向下划动的手势事件的侦听器函数
-        */
-        addListenerSwipeLeft(func: Function): void;
-        /**
-        * @language zh_CN
-        * 添加向右划动的手势事件。
-        * @version Egret 3.0
-        * @platform Web,Native
-        * @param func {Function} 处理向下划动的手势事件的侦听器函数
-        */
-        addListenerSwipeRight(func: Function): void;
+        addListenerSwipe(func: Function): void;
         /**
         * @language zh_CN
         * 添加设备旋转事件。

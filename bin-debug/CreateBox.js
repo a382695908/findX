@@ -23,14 +23,14 @@ var CreateBox = (function (_super) {
     CreateBox.prototype.textureComplete = function () {
         var _this = this;
         var lightGroup = new egret3d.LightGroup();
-        var directLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
-        directLight.diffuse = 0xFFFFFF;
+        var directLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 1000, 100));
+        directLight.diffuse = 0xAAAAAA;
         lightGroup.addDirectLight(directLight);
         var rnd = Math.floor(Math.random() * this._boxCnt);
         for (var idx = 0; idx < this._boxCnt; ++idx) {
             var box = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
-            box.mousePickEnable = true;
+            //box.mousePickEnable = true;
             box.addEventListener(egret3d.Event3D.MOUSE_CLICK, function (e) { return _this.onPickupBox(e); });
             box.addEventListener(egret3d.Event3D.TOUCH_START, function (e) { return _this.onPickupBox(e); });
             box.material.lightGroup = lightGroup;
