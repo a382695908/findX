@@ -100,7 +100,8 @@ class CreateBox extends CreateSky{
                 bi['moveZ'] = -bi['moveZ']
             }
         }
-        aw.CharTexture.createCharTexture(128,128,"测试:" + (Math.floor(this._time/1000)%10).toString(), "32px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
+		var tips:string = "计时:" + (Math.floor(this._time/100)%100/10).toString();// + "\r\n" + "等级:1";
+        aw.CharTexture.createCharTexture(128,128, tips, "32px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
         this._hud.texture = aw.CharTexture.texture;
     }
 
