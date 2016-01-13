@@ -11,13 +11,22 @@
 cd `dirname $0`
 
 if [ $# -eq 0 ];then
-    tsc
-    if [ $? -eq 0 ];then
-        mv ./bin-debug/src/* ./bin-debug/
-        cd bin-debug
-        rm -rf src
-    fi
-else
-    echo -e "\n$0 \n"
+	tsc --outDir ./bin-debug/
+	if [ -d ./bin-debug/src ];then
+    	cp -f ./bin-debug/src/* ./bin-debug/
+    	cd bin-debug 
+    	rm -rf src
+	else
+		echo "Not found ./bin-debug/src"
+	fi
+elif [ $# -eq 1 ];then
+	tsc --out ./bin-debug/findX.js
+	if [ -f ./bin-debug/findX.js ];then
+		cd ./bin-debug
+		uglifyjs ./findX.js -m -o ./findX.min.js
+	else
+		echo "Not found ./bin-debug/findX.js"
+	fi
+else:
+	echo -e "\n$0 [f]\n"
 fi
-

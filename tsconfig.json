@@ -4,7 +4,6 @@
         "target": "es5",
         "noImplicitAny": false,
         "rootDir": ".",
-        "outDir": "./bin-debug/",
         "sourceMap": false
     },
     "exclude": [
