@@ -12,9 +12,9 @@
          * @language zh_CN
          */
 
-        public static createCharTexture (w:number=32, h:number=32, txt: string="Test info.", font:string="60px 楷体", rgba:string="rgba(255,0,0,1)", 
+        public static createCharTexture (w:number=32, h:number=32, txt: string="Test info.", align: string, font:string="60px 楷体", rgba:string="rgba(255,0,0,1)", 
                                             bg_rgba:string="rgba(200,200,200,1)", frame_rgba:string="rgba(255,0,0,1)", frame_with:number=2) {
-            CharTexture.texture = new CharTexture(w, h, txt, font, rgba, bg_rgba, frame_rgba, frame_with);
+            CharTexture.texture = new CharTexture(w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with);
             aw.CharTexture.texture.upload(egret3d.Egret3DDrive.context3D);
         }
 
@@ -26,7 +26,7 @@
         private _txt: string;
         private _txtImgData: ImageData;
 
-        public genTxtImg(w:number, h:number, txt: string, font:string, rgba:string, bg_rgba:string, frame_rgba:string, frame_with:number): ImageData {
+        public genTxtImg(w:number, h:number, txt: string, align: string, font:string, rgba:string, bg_rgba:string, frame_rgba:string, frame_with:number): ImageData {
             var cvs: HTMLCanvasElement = document.createElement("canvas");
             var ctx: CanvasRenderingContext2D = cvs.getContext("2d");
             cvs.width  = w; cvs.height = h;
@@ -43,10 +43,21 @@
 
             ctx.fillStyle = rgba;
             ctx.font = font;
-            ctx.textAlign = 'center';
+            ctx.textAlign = align;
             ctx.lineWidth =3;
             ctx.textBaseline = 'middle';
-            ctx.fillText(txt,   w/2, h/2);
+			var txts: Array<string> = txt.split("\n");
+			for(var idx:number = 0; idx < txts.length; idx++){
+				if ( align == 'left' ){
+            		ctx.fillText(txts[idx],   0, h/txts.length/2*(1+idx));
+				}
+				else if ( align == 'center' ){
+            		ctx.fillText(txts[idx],   w/2, h/txts.length/2*(1+idx));
+				}
+				else if ( align == 'right' ){
+            		ctx.fillText(txts[idx],   w, h/txts.length/2*(1+idx));
+				}
+			}
 
             this._txtImgData = ctx.getImageData(0, 0, w, h);
             return this._txtImgData;
@@ -56,12 +67,12 @@
         /**
          * @language zh_CN
          */
-        constructor(w:number=32, h:number=32, txt: string="Test info.", font:string="60px 楷体", rgba:string="rgba(255,0,0,1)", 
+        constructor(w:number=32, h:number=32, txt: string="Test info.", align: string="center", font:string="60px 楷体", rgba:string="rgba(255,0,0,1)", 
                     bg_rgba:string="rgba(200,200,200,1)", frame_rgba:string="rgba(255,0,0,1)", frame_with:number=2) {
             super();
 
             this._width = w; this._height= h; this._txt = txt;
-            this.genTxtImg(this._width, this._height, this._txt, font, rgba, bg_rgba, frame_rgba, frame_with);
+            this.genTxtImg(this._width, this._height, this._txt, align, font, rgba, bg_rgba, frame_rgba, frame_with);
 
             this.buildCheckerboard();
 

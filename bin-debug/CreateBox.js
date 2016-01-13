@@ -36,10 +36,10 @@ var CreateBox = (function (_super) {
             box.material.lightGroup = lightGroup;
             this._view3D.addChild3D(box);
             if (idx == rnd) {
-                aw.CharTexture.createCharTexture(64, 64, "夭", '60px 楷体', 'rgba(255, 0, 0, 1)', 'rgba(200, 200, 200, 1)', 'rgba(255, 0, 0, 1)', 3);
+                aw.CharTexture.createCharTexture(64, 64, "夭", 'center', '60px 楷体', 'rgba(255, 0, 0, 1)', 'rgba(200, 200, 200, 1)', 'rgba(255, 0, 0, 1)', 3);
             }
             else {
-                aw.CharTexture.createCharTexture(64, 64, "天", '60px 楷体', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(0, 0, 255, 1)', 3);
+                aw.CharTexture.createCharTexture(64, 64, "天", 'center', '60px 楷体', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(0, 0, 255, 1)', 3);
             }
             box.material.diffuseTexture = aw.CharTexture.texture;
             var bi = { "box": box, 'id': box.id, 'idx': idx };
@@ -67,7 +67,7 @@ var CreateBox = (function (_super) {
             this._boxInfo[box.id] = bi;
             this._boxBak[box.id] = bi;
         }
-        aw.CharTexture.createCharTexture(128, 128, "测试.", "32px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
+        aw.CharTexture.createCharTexture(128, 128, "测试.", 'left', "32px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
         this._hud = new egret3d.HUD();
         this._hud.texture = aw.CharTexture.texture;
         this._view3D.addHUD(this._hud);
@@ -95,8 +95,8 @@ var CreateBox = (function (_super) {
                 bi['moveZ'] = -bi['moveZ'];
             }
         }
-        var tips = "计时:" + (Math.floor(this._time / 100) % 100 / 10).toString(); // + "\r\n" + "等级:1";
-        aw.CharTexture.createCharTexture(128, 128, tips, "32px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
+        var tips = "计时:" + (Math.floor(this._time / 100) % 100 / 10).toString() + "\n等级:1" + "\n积分:342";
+        aw.CharTexture.createCharTexture(128, 128, tips, 'left', "24px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
         this._hud.texture = aw.CharTexture.texture;
     };
     CreateBox.prototype.onPickupBox = function (e) {

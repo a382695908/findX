@@ -16,10 +16,11 @@ var aw;
         /**
          * @language zh_CN
          */
-        function CharTexture(w, h, txt, font, rgba, bg_rgba, frame_rgba, frame_with) {
+        function CharTexture(w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with) {
             if (w === void 0) { w = 32; }
             if (h === void 0) { h = 32; }
             if (txt === void 0) { txt = "Test info."; }
+            if (align === void 0) { align = "center"; }
             if (font === void 0) { font = "60px 楷体"; }
             if (rgba === void 0) { rgba = "rgba(255,0,0,1)"; }
             if (bg_rgba === void 0) { bg_rgba = "rgba(200,200,200,1)"; }
@@ -31,7 +32,7 @@ var aw;
             this._width = w;
             this._height = h;
             this._txt = txt;
-            this.genTxtImg(this._width, this._height, this._txt, font, rgba, bg_rgba, frame_rgba, frame_with);
+            this.genTxtImg(this._width, this._height, this._txt, align, font, rgba, bg_rgba, frame_rgba, frame_with);
             this.buildCheckerboard();
             this.mimapData = new Array();
             this.mimapData.push(new egret3d.MipmapData(this._pixelArray, this._width, this._height));
@@ -39,7 +40,7 @@ var aw;
         /**
          * @language zh_CN
          */
-        CharTexture.createCharTexture = function (w, h, txt, font, rgba, bg_rgba, frame_rgba, frame_with) {
+        CharTexture.createCharTexture = function (w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with) {
             if (w === void 0) { w = 32; }
             if (h === void 0) { h = 32; }
             if (txt === void 0) { txt = "Test info."; }
@@ -48,10 +49,10 @@ var aw;
             if (bg_rgba === void 0) { bg_rgba = "rgba(200,200,200,1)"; }
             if (frame_rgba === void 0) { frame_rgba = "rgba(255,0,0,1)"; }
             if (frame_with === void 0) { frame_with = 2; }
-            CharTexture.texture = new CharTexture(w, h, txt, font, rgba, bg_rgba, frame_rgba, frame_with);
+            CharTexture.texture = new CharTexture(w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with);
             aw.CharTexture.texture.upload(egret3d.Egret3DDrive.context3D);
         };
-        CharTexture.prototype.genTxtImg = function (w, h, txt, font, rgba, bg_rgba, frame_rgba, frame_with) {
+        CharTexture.prototype.genTxtImg = function (w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with) {
             var cvs = document.createElement("canvas");
             var ctx = cvs.getContext("2d");
             cvs.width = w;
@@ -67,10 +68,21 @@ var aw;
             ctx.strokeRect(0, 0, w, h);
             ctx.fillStyle = rgba;
             ctx.font = font;
-            ctx.textAlign = 'center';
+            ctx.textAlign = align;
             ctx.lineWidth = 3;
             ctx.textBaseline = 'middle';
-            ctx.fillText(txt, w / 2, h / 2);
+            var txts = txt.split("\n");
+            for (var idx = 0; idx < txts.length; idx++) {
+                if (align == 'left') {
+                    ctx.fillText(txts[idx], 0, h / txts.length / 2 * (1 + idx));
+                }
+                else if (align == 'center') {
+                    ctx.fillText(txts[idx], w / 2, h / txts.length / 2 * (1 + idx));
+                }
+                else if (align == 'right') {
+                    ctx.fillText(txts[idx], w, h / txts.length / 2 * (1 + idx));
+                }
+            }
             this._txtImgData = ctx.getImageData(0, 0, w, h);
             return this._txtImgData;
         };
