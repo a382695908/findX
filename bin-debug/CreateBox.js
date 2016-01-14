@@ -54,7 +54,6 @@ var CreateBox = (function (_super) {
         for (var idx = 0; idx < this._dtDriver.totalObjCnt; ++idx) {
             var box = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
-            //box.mousePickEnable = true;
             box.addEventListener(egret3d.Event3D.MOUSE_CLICK, function (e) { return _this.onPickupBox(e); });
             box.addEventListener(egret3d.Event3D.TOUCH_START, function (e) { return _this.onPickupBox(e); });
             box.material.lightGroup = lightGroup;

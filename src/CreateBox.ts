@@ -57,7 +57,6 @@ class CreateBox extends CreateSky{
         for (var idx:number = 0; idx < this._dtDriver.totalObjCnt; ++idx){
             var box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
-            //box.mousePickEnable = true;
             box.addEventListener(egret3d.Event3D.MOUSE_CLICK, (e: egret3d.Event3D) => this.onPickupBox(e));
             box.addEventListener(egret3d.Event3D.TOUCH_START, (e: egret3d.Event3D) => this.onPickupBox(e));
             box.material.lightGroup = lightGroup;

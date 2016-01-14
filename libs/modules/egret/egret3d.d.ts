@@ -14408,10 +14408,10 @@ declare module egret3d {
     /**
      * @class egret3d.HUD
      * @classdesc
-     * HUDֱ����Ⱦ����Ļ�ϵ�һ����ͼ��
-     * ��ֱ��ָ��2ά���꣬��ͼ�Ŀ��Ⱥ͸߶�
-     * ���ײ���ȾҲ����4�򶥵㹹�ɣ��������ݽṹ��λ����Ϣ��uv��Ϣ
-     * �����е�HUD�����Ķ�����Ϣ���ݶ��ǹ��õ�
+     * HUD直接渲染在屏幕上的一张贴图。
+     * 可直接指定2维坐标，贴图的宽度和高度
+     * 其底层渲染也是由4个顶点构成，顶点数据结构有位置信息和uv信息
+     * 其所有的HUD对象的顶点信息数据都是共用的
      * @version Egret 3.0
      * @platform Web,Native
      */
@@ -14501,57 +14501,57 @@ declare module egret3d {
         private list;
         /**
         * @language zh_CN
-        * ����
+        * 构造
         */
         constructor();
         /**
         * @language zh_CN
-        * �õ�x����
-        * @returns x����
+        * 得到x坐标
+        * @returns x坐标
         */
         /**
         * @language zh_CN
-        * ����x����
-        * @param value x����
+        * 设置x坐标
+        * @param value x坐标
         */
         x: number;
         /**
         * @language zh_CN
-        * �õ�y����
-        * @returns y����
+        * 得到y坐标
+        * @returns y坐标
         */
         /**
         * @language zh_CN
-        * ����y����
-        * @param value y����
+        * 设置y坐标
+        * @param value y坐标
         */
         y: number;
         /**
         * @language zh_CN
-        * �õ�HUD�Ŀ���
-        * @returns HUD��
+        * 得到HUD的宽度
+        * @returns HUD宽
         */
         /**
         * @language zh_CN
-        * ����HUD�Ŀ���
-        * @param value HUD��
+        * 设置HUD的宽度
+        * @param value HUD宽
         */
         width: number;
         /**
         * @language zh_CN
-        * �õ�HUD�ĸ߶�
-        * @returns HUD��
+        * 得到HUD的高度
+        * @returns HUD高
         */
         /**
         * @language zh_CN
-        * ����HUD�ĸ߶�
-        * @param value HUD��
+        * 设置HUD的高度
+        * @param value HUD高
         */
         height: number;
         private rebuild(context3D);
         /**
         * @language zh_CN
-        * �ύ���ݸ�GPU��Ⱦ
+        * 提交数据给GPU渲染
         * @param context3D Context3D
         */
         draw(context3D: Context3D): void;
