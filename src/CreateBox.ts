@@ -1,5 +1,6 @@
 class CreateBox extends CreateSky{
     protected _dtDriver: aw.FindXDataDriver = null;
+    protected _pickedCnt: number = 0;
 
     protected _boxInfo : any = {};
     protected _boxBak  : any = {};
@@ -75,7 +76,7 @@ class CreateBox extends CreateSky{
             }
             box.material.diffuseTexture = aw.CharTexture.texture;
 
-            var bi = {"box" : box, 'id': box.id, 'idx': idx };
+            var bi: any = {"box" : box, 'id': box.id, 'idx': idx };
 
             bi['moveX']     = (Math.random()*2-1) * this._dtDriver.moveSpeed;
             bi['moveY']     = (Math.random()*2-1) * this._dtDriver.moveSpeed;
@@ -97,7 +98,7 @@ class CreateBox extends CreateSky{
         }
 
         this._hud = new egret3d.HUD();
-        var lostTime: number = this._time - this._timeStart.getTime();
+        var lostTime: number = this._time - this._dtDriver.startTime;
 		var tips:string = " 目标:" + this._dtDriver.charsFind  + "\n 计时:" + (Math.floor(lostTime/100)/10).toString() 
                          +"\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
@@ -148,6 +149,7 @@ class CreateBox extends CreateSky{
             this._boxInfo[ e.currentTarget.id ] = this._boxBak[ e.currentTarget.id ];
         }
         else{
+            this._pickedCnt += 1;
             this._boxInfo[ e.currentTarget.id ] = null;
         }
     }
