@@ -66,13 +66,16 @@ var aw;
             ctx.fillStyle = frame_rgba;
             ctx.lineWidth = frame_with;
             ctx.strokeRect(0, 0, w, h);
-            ctx.fillStyle = rgba;
             ctx.font = font;
             ctx.textAlign = align;
             ctx.lineWidth = 3;
             ctx.textBaseline = 'middle';
+            var rgbas = rgba.split(";");
             var txts = txt.split("\n");
             for (var idx = 0; idx < txts.length; idx++) {
+                if (idx + 1 <= rgbas.length && rgbas[idx].length > 3) {
+                    ctx.fillStyle = rgbas[idx];
+                }
                 if (align == 'left') {
                     ctx.fillText(txts[idx], 0, h / txts.length / 2 * (1 + 2 * idx));
                 }

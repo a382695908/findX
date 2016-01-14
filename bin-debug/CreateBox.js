@@ -8,9 +8,9 @@ var CreateBox = (function (_super) {
     function CreateBox() {
         _super.call(this);
         this._dtDriver = null;
-        this._pickedCnt = 0;
         this._boxInfo = {};
         this._boxBak = {};
+        this._xBoxIds = [];
         this._width = 600;
         this._height = 600;
         this._depth = 600;
@@ -18,7 +18,7 @@ var CreateBox = (function (_super) {
         this._hudH = 128;
         this._hudFont = "24px 宋体";
         this._hudAlign = "left";
-        this._hudColor = "rgba(255,0,0,1)";
+        this._hudColor = "rgba(255,0,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
         this._hudBgColor = "rgba(0,0,0,0)";
         this._hudFrmBgColor = "rgba(0,0,0,0)";
         this._hudFrmW = 0;
@@ -61,6 +61,7 @@ var CreateBox = (function (_super) {
             this._view3D.addChild3D(box);
             if (idx == rnd) {
                 aw.CharTexture.createCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsFind, this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
+                this._xBoxIds.push(box.id);
             }
             else {
                 var n = Math.random() > 0.5 ? 1 : 0;
@@ -102,6 +103,14 @@ var CreateBox = (function (_super) {
         this._cameraCtl.setEyesLength(3000);
     };
     CreateBox.prototype.onUpdate = function () {
+        if (this._dtDriver.lostSeconds10 > this._dtDriver.maxSeconds * 10 && this._dtDriver.IsRunning) {
+            alert("Game Over!");
+            return;
+        }
+        if (!this._dtDriver.IsRunning) {
+            alert("Game Over!");
+            return;
+        }
         _super.prototype.onUpdate.call(this);
         for (var id in this._boxInfo) {
             var bi = this._boxInfo[id];
@@ -123,19 +132,26 @@ var CreateBox = (function (_super) {
                 bi['moveZ'] = -bi['moveZ'];
             }
         }
-        var lostTime = this._time - this._timeStart.getTime();
-        var tips = " 目标:" + this._dtDriver.charsFind + "\n 计时:" + (Math.floor(lostTime / 100) / 10).toString()
+        this._dtDriver.lostSeconds10 = Math.floor((this._time - this._timeStart.getTime()) / 100);
+        var tips = " 目标:" + this._dtDriver.charsFind + "\n 计时:" + (this._dtDriver.lostSeconds10 / 10).toString()
             + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
     };
     CreateBox.prototype.onPickupBox = function (e) {
+        this._dtDriver.update();
         if (this._boxInfo[e.currentTarget.id] == null) {
             this._boxInfo[e.currentTarget.id] = this._boxBak[e.currentTarget.id];
         }
         else {
-            this._pickedCnt += 1;
-            this._boxInfo[e.currentTarget.id] = null;
+            for (var idx = 0; idx < this._xBoxIds.length; idx++) {
+                if (e.currentTarget.id == this._xBoxIds[idx]) {
+                    this._boxInfo[e.currentTarget.id] = null;
+                    this._dtDriver.addPickedXCnt();
+                    this._dtDriver.updatePoints();
+                    break;
+                }
+            }
         }
     };
     return CreateBox;
