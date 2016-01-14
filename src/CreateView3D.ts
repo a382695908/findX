@@ -3,6 +3,7 @@
     protected _time: number = 0;
     protected _delay: number = 0;
     protected _timeDate: Date = null;
+    protected _timeStart:Date = new Date();
     protected _view3D: egret3d.View3D = null;
     protected _viewPort: egret3d.Rectangle = null;
     protected _cameraCtl: egret3d.LookAtController = null;

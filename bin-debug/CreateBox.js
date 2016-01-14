@@ -7,15 +7,21 @@ var CreateBox = (function (_super) {
     __extends(CreateBox, _super);
     function CreateBox() {
         _super.call(this);
+        this._dtDriver = null;
         this._boxInfo = {};
         this._boxBak = {};
-        this._boxCnt = 12;
-        this._mspeed = 1;
-        this._rspeed = 1;
         this._width = 600;
         this._height = 600;
         this._depth = 600;
+        this._dtDriver = new aw.FindXDataDriver();
     }
+    Object.defineProperty(CreateBox.prototype, "dataDrive", {
+        get: function () {
+            return this._dtDriver;
+        },
+        enumerable: true,
+        configurable: true
+    });
     CreateBox.prototype.onView3DInitComplete = function () {
         this.textureComplete();
         _super.prototype.onView3DInitComplete.call(this);
@@ -26,8 +32,8 @@ var CreateBox = (function (_super) {
         var directLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 1000, 100));
         directLight.diffuse = 0xAAAAAA;
         lightGroup.addDirectLight(directLight);
-        var rnd = Math.floor(Math.random() * this._boxCnt);
-        for (var idx = 0; idx < this._boxCnt; ++idx) {
+        var rnd = Math.floor(Math.random() * this._dtDriver.totalObjCnt);
+        for (var idx = 0; idx < this._dtDriver.totalObjCnt; ++idx) {
             var box = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
             //box.mousePickEnable = true;
@@ -36,31 +42,32 @@ var CreateBox = (function (_super) {
             box.material.lightGroup = lightGroup;
             this._view3D.addChild3D(box);
             if (idx == rnd) {
-                aw.CharTexture.createCharTexture(64, 64, "夭", 'center', '60px 楷体', 'rgba(255, 0, 0, 1)', 'rgba(200, 200, 200, 1)', 'rgba(255, 0, 0, 1)', 3);
+                aw.CharTexture.createCharTexture(64, 64, this._dtDriver.charsFind, 'center', '60px 楷体', 'rgba(0, 0, 255, 1)', 'rgba(200, 200, 200, 1)', 'rgba(0, 0, 255, 1)', 3);
             }
             else {
-                aw.CharTexture.createCharTexture(64, 64, "天", 'center', '60px 楷体', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(0, 0, 255, 1)', 3);
+                var n = Math.random() > 0.5 ? 1 : 0;
+                aw.CharTexture.createCharTexture(64, 64, this._dtDriver.charsPool[n], 'center', '60px 楷体', 'rgba(0, 0, 255, 1)', 'rgba(200, 200, 200, 1)', 'rgba(0, 0, 255, 1)', 3);
             }
             box.material.diffuseTexture = aw.CharTexture.texture;
             var bi = { "box": box, 'id': box.id, 'idx': idx };
-            bi['moveX'] = (Math.random() * 2 - 1) * this._mspeed;
-            bi['moveY'] = (Math.random() * 2 - 1) * this._mspeed;
-            bi['moveZ'] = (Math.random() * 2 - 1) * this._mspeed;
+            bi['moveX'] = (Math.random() * 2 - 1) * this._dtDriver.moveSpeed;
+            bi['moveY'] = (Math.random() * 2 - 1) * this._dtDriver.moveSpeed;
+            bi['moveZ'] = (Math.random() * 2 - 1) * this._dtDriver.moveSpeed;
             if (bi['moveX'] == 0) {
-                bi['moveX'] = this._mspeed;
+                bi['moveX'] = this._dtDriver.moveSpeed;
             }
             ;
             if (bi['moveY'] == 0) {
-                bi['moveY'] = this._mspeed;
+                bi['moveY'] = this._dtDriver.moveSpeed;
             }
             ;
             if (bi['moveZ'] == 0) {
-                bi['moveZ'] = this._mspeed;
+                bi['moveZ'] = this._dtDriver.moveSpeed;
             }
             ;
-            bi['rotationX'] = (Math.random() * 2 - 1) * this._rspeed;
-            bi['rotationY'] = (Math.random() * 2 - 1) * this._rspeed;
-            bi['rotationZ'] = (Math.random() * 2 - 1) * this._rspeed;
+            bi['rotationX'] = (Math.random() * 2 - 1) * this._dtDriver.rotateSpeed;
+            bi['rotationY'] = (Math.random() * 2 - 1) * this._dtDriver.rotateSpeed;
+            bi['rotationZ'] = (Math.random() * 2 - 1) * this._dtDriver.rotateSpeed;
             bi['box'].rotationX = bi['rotationX'];
             bi['box'].rotationY = bi['rotationY'];
             bi['box'].rotationZ = bi['rotationZ'];
@@ -95,7 +102,9 @@ var CreateBox = (function (_super) {
                 bi['moveZ'] = -bi['moveZ'];
             }
         }
-        var tips = "计时:" + (Math.floor(this._time / 100) % 100 / 10).toString() + "\n等级:1" + "\n积分:342";
+        var lostTime = this._time - this._timeStart.getTime();
+        var tips = " 目标:" + this._dtDriver.charsFind + "\n 计时:" + (Math.floor(lostTime / 100) / 10).toString()
+            + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
         aw.CharTexture.createCharTexture(128, 128, tips, 'left', "24px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
         this._hud.texture = aw.CharTexture.texture;
     };

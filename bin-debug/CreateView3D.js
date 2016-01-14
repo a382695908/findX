@@ -6,6 +6,7 @@ var CreateView3D = (function () {
         this._time = 0;
         this._delay = 0;
         this._timeDate = null;
+        this._timeStart = new Date();
         this._view3D = null;
         this._viewPort = null;
         this._cameraCtl = null;

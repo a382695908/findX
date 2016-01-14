@@ -49,13 +49,13 @@
 			var txts: Array<string> = txt.split("\n");
 			for(var idx:number = 0; idx < txts.length; idx++){
 				if ( align == 'left' ){
-            		ctx.fillText(txts[idx],   0, h/txts.length/2*(1+idx));
+            		ctx.fillText( txts[idx],   0,   h/txts.length/2 * (1+2*idx) );
 				}
 				else if ( align == 'center' ){
-            		ctx.fillText(txts[idx],   w/2, h/txts.length/2*(1+idx));
+            		ctx.fillText( txts[idx],   w/2, h/txts.length/2 * (1+2*idx) );
 				}
 				else if ( align == 'right' ){
-            		ctx.fillText(txts[idx],   w, h/txts.length/2*(1+idx));
+            		ctx.fillText( txts[idx],   w,   h/txts.length/2 * (1+2*idx) );
 				}
 			}
 
