@@ -13,6 +13,24 @@ var CreateBox = (function (_super) {
         this._width = 600;
         this._height = 600;
         this._depth = 600;
+        this._hudW = 128;
+        this._hudH = 128;
+        this._hudFont = "24px 宋体";
+        this._hudAlign = "left";
+        this._hudColor = "rgba(255,0,0,1)";
+        this._hudBgColor = "rgba(0,0,0,0)";
+        this._hudFrmBgColor = "rgba(0,0,0,0)";
+        this._hudFrmW = 0;
+        this._boxTxtureW = 64;
+        this._boxTxtureH = 64;
+        this._boxTxtureFont = "60px 楷体";
+        this._boxTxtureAlign = "center";
+        this._boxTxtureColor = "rgba(0,0,255,1)";
+        this._boxTxtureBgColor = "rgba(200,200,200,1)";
+        this._boxTxtureFrmBgColor = "rgba(0,0,255,1)";
+        this._boxTxtureFrmW = 3;
+        this._width = this._viewPort.width;
+        this._height = this._viewPort.height;
         this._dtDriver = new aw.FindXDataDriver();
     }
     Object.defineProperty(CreateBox.prototype, "dataDrive", {
@@ -29,7 +47,7 @@ var CreateBox = (function (_super) {
     CreateBox.prototype.textureComplete = function () {
         var _this = this;
         var lightGroup = new egret3d.LightGroup();
-        var directLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 1000, 100));
+        var directLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
         directLight.diffuse = 0xAAAAAA;
         lightGroup.addDirectLight(directLight);
         var rnd = Math.floor(Math.random() * this._dtDriver.totalObjCnt);
@@ -42,11 +60,11 @@ var CreateBox = (function (_super) {
             box.material.lightGroup = lightGroup;
             this._view3D.addChild3D(box);
             if (idx == rnd) {
-                aw.CharTexture.createCharTexture(64, 64, this._dtDriver.charsFind, 'center', '60px 楷体', 'rgba(0, 0, 255, 1)', 'rgba(200, 200, 200, 1)', 'rgba(0, 0, 255, 1)', 3);
+                aw.CharTexture.createCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsFind, this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
             }
             else {
                 var n = Math.random() > 0.5 ? 1 : 0;
-                aw.CharTexture.createCharTexture(64, 64, this._dtDriver.charsPool[n], 'center', '60px 楷体', 'rgba(0, 0, 255, 1)', 'rgba(200, 200, 200, 1)', 'rgba(0, 0, 255, 1)', 3);
+                aw.CharTexture.createCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsPool[n], this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
             }
             box.material.diffuseTexture = aw.CharTexture.texture;
             var bi = { "box": box, 'id': box.id, 'idx': idx };
@@ -74,8 +92,11 @@ var CreateBox = (function (_super) {
             this._boxInfo[box.id] = bi;
             this._boxBak[box.id] = bi;
         }
-        aw.CharTexture.createCharTexture(128, 128, "测试.", 'left', "32px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
         this._hud = new egret3d.HUD();
+        var lostTime = this._time - this._timeStart.getTime();
+        var tips = " 目标:" + this._dtDriver.charsFind + "\n 计时:" + (Math.floor(lostTime / 100) / 10).toString()
+            + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
+        aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
         this._view3D.addHUD(this._hud);
         this._cameraCtl.setEyesLength(3000);
@@ -105,7 +126,7 @@ var CreateBox = (function (_super) {
         var lostTime = this._time - this._timeStart.getTime();
         var tips = " 目标:" + this._dtDriver.charsFind + "\n 计时:" + (Math.floor(lostTime / 100) / 10).toString()
             + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
-        aw.CharTexture.createCharTexture(128, 128, tips, 'left', "24px 宋体", "rgba(255,0,0,1)", "rgba(0,0,0,0)", "rgba(0,0,0,0)", 0);
+        aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
     };
     CreateBox.prototype.onPickupBox = function (e) {
