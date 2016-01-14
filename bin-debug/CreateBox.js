@@ -8,6 +8,7 @@ var CreateBox = (function (_super) {
     function CreateBox() {
         _super.call(this);
         this._dtDriver = null;
+        this._pickedCnt = 0;
         this._boxInfo = {};
         this._boxBak = {};
         this._width = 600;
@@ -92,7 +93,7 @@ var CreateBox = (function (_super) {
             this._boxBak[box.id] = bi;
         }
         this._hud = new egret3d.HUD();
-        var lostTime = this._time - this._timeStart.getTime();
+        var lostTime = this._time - this._dtDriver.startTime;
         var tips = " 目标:" + this._dtDriver.charsFind + "\n 计时:" + (Math.floor(lostTime / 100) / 10).toString()
             + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
@@ -133,6 +134,7 @@ var CreateBox = (function (_super) {
             this._boxInfo[e.currentTarget.id] = this._boxBak[e.currentTarget.id];
         }
         else {
+            this._pickedCnt += 1;
             this._boxInfo[e.currentTarget.id] = null;
         }
     };
