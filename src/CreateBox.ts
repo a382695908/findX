@@ -1,9 +1,9 @@
 class CreateBox extends CreateSky{
     protected _dtDriver: aw.FindXDataDriver = null;
-    protected _pickedCnt: number = 0;
 
     protected _boxInfo : any = {};
     protected _boxBak  : any = {};
+    protected _xBoxIds : number[] = [];
 
     protected _width  : number = 600;
     protected _height : number = 600;
@@ -14,7 +14,7 @@ class CreateBox extends CreateSky{
     protected _hudH: number = 128;
     protected _hudFont: string = "24px 宋体";
     protected _hudAlign: string = "left";
-    protected _hudColor: string = "rgba(255,0,0,1)";
+    protected _hudColor: string = "rgba(255,0,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
     protected _hudBgColor: string="rgba(0,0,0,0)";
     protected _hudFrmBgColor: string="rgba(0,0,0,0)";
     protected _hudFrmW: number=0;
@@ -67,6 +67,7 @@ class CreateBox extends CreateSky{
                 aw.CharTexture.createCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsFind, 
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
+                this._xBoxIds.push( box.id );
             }
             else{
                 var n: number = Math.random() > 0.5 ? 1 : 0;
@@ -111,6 +112,15 @@ class CreateBox extends CreateSky{
     }
 
     protected onUpdate(): void {
+        if ( this._dtDriver.lostSeconds10 > this._dtDriver.maxSeconds*10 && this._dtDriver.IsRunning ){
+            alert("Game Over!");
+            return;
+        }
+        if ( !this._dtDriver.IsRunning ){
+            alert("Game Over!");
+            return;
+        }
+
         super.onUpdate();
 
         for(var id in this._boxInfo ){
@@ -135,9 +145,9 @@ class CreateBox extends CreateSky{
                 bi['moveZ'] = -bi['moveZ']
             }
         }
-        var lostTime: number = this._time - this._timeStart.getTime();
+        this._dtDriver.lostSeconds10 = Math.floor((this._time - this._timeStart.getTime())/100);
 
-		var tips:string = " 目标:" + this._dtDriver.charsFind  + "\n 计时:" + (Math.floor(lostTime/100)/10).toString() 
+		var tips:string = " 目标:" + this._dtDriver.charsFind  + "\n 计时:" + (this._dtDriver.lostSeconds10/10).toString() 
                             + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
                                         this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
@@ -145,12 +155,19 @@ class CreateBox extends CreateSky{
     }
 
     protected onPickupBox(e: egret3d.Event3D): void {
+        this._dtDriver.update();
         if ( this._boxInfo[ e.currentTarget.id ] == null ){
             this._boxInfo[ e.currentTarget.id ] = this._boxBak[ e.currentTarget.id ];
         }
         else{
-            this._pickedCnt += 1;
-            this._boxInfo[ e.currentTarget.id ] = null;
+            for (var idx: number=0; idx < this._xBoxIds.length; idx++){
+                if ( e.currentTarget.id == this._xBoxIds[idx] ){
+                    this._boxInfo[ e.currentTarget.id ] = null;
+                    this._dtDriver.addPickedXCnt();
+                    this._dtDriver.updatePoints();
+                    break;
+                }
+            }
         }
     }
 } 

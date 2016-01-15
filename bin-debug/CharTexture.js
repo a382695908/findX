@@ -1,16 +1,7 @@
 var aw;
 (function (aw) {
-    /**
-     * @language zh_CN
-    * @class aw.CharTexture
-    * @classdesc
-    * 棋盘格纹理
-    */
     var CharTexture = (function (_super) {
         __extends(CharTexture, _super);
-        /**
-         * @language zh_CN
-         */
         function CharTexture(w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with) {
             if (w === void 0) { w = 32; }
             if (h === void 0) { h = 32; }
@@ -32,10 +23,13 @@ var aw;
             this.mimapData = new Array();
             this.mimapData.push(new egret3d.MipmapData(this._pixelArray, this._width, this._height));
         }
+<<<<<<< HEAD
         var d = __define,c=CharTexture,p=c.prototype;
         /**
          * @language zh_CN
          */
+=======
+>>>>>>> e4df5b47a677abedaf34c9668167bf275b4f95fc
         CharTexture.createCharTexture = function (w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with) {
             if (w === void 0) { w = 32; }
             if (h === void 0) { h = 32; }
@@ -62,13 +56,16 @@ var aw;
             ctx.fillStyle = frame_rgba;
             ctx.lineWidth = frame_with;
             ctx.strokeRect(0, 0, w, h);
-            ctx.fillStyle = rgba;
             ctx.font = font;
             ctx.textAlign = align;
             ctx.lineWidth = 3;
             ctx.textBaseline = 'middle';
+            var rgbas = rgba.split(";");
             var txts = txt.split("\n");
             for (var idx = 0; idx < txts.length; idx++) {
+                if (idx + 1 <= rgbas.length && rgbas[idx].length > 3) {
+                    ctx.fillStyle = rgbas[idx];
+                }
                 if (align == 'left') {
                     ctx.fillText(txts[idx], 0, h / txts.length / 2 * (1 + 2 * idx));
                 }
@@ -82,12 +79,16 @@ var aw;
             this._txtImgData = ctx.getImageData(0, 0, w, h);
             return this._txtImgData;
         };
+<<<<<<< HEAD
         /**
          * @language zh_CN
          * 上传贴图数据给GPU
          * @param context3D
          */
         p.upload = function (context3D) {
+=======
+        CharTexture.prototype.upload = function (context3D) {
+>>>>>>> e4df5b47a677abedaf34c9668167bf275b4f95fc
             if (!this.texture) {
                 this.texture = context3D.creatTexture2D();
                 this.texture.gpu_border = 0;
@@ -103,10 +104,6 @@ var aw;
                 this._pixelArray = new Uint8Array(this._width * this._height * 4);
                 for (var y = 0; y < this._height; y++) {
                     for (var x = 0; x < this._width; x++) {
-                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 0];
-                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 1];
-                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 2];
-                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 3];
                         this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 0];
                         this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 1];
                         this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 2];

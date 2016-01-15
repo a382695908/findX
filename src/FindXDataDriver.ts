@@ -13,6 +13,8 @@ module aw {
         protected _maxFaceCnt: number =  4;
         protected _XFaceCnt:   number =  4;
 
+        protected _pickedXCnt: number =  0;
+
         private _charsFind: string = "X";
         private _charsPool: string[] = ["入", "人" ];
 
@@ -62,5 +64,30 @@ module aw {
             return this._charsPool;
         }
 
+        public addPickedXCnt(v: number=1) {
+            this._pickedXCnt += v;
+        }
+        public get pickedXCnt(): number {
+            return this._pickedXCnt;
+        }
+
+        public update( now: Date = new Date() ){
+            if ( this._startTime == null ) return;
+            super.update( now );
+            this._points += Math.floor( (30 - this._pickedXCnt) *  (600 - this._lostSeconds10 ) / 10);
+            this._level = Math.ceil( this._points / 1600 );
+            this._lostSeconds10 = Math.floor( (now.getTime() - this._startTime.getTime() ) / 100 );
+        }
+
+        public updatePoints( ){
+            if ( this._startTime == null ) {
+                this._running = false; return;
+            }
+            if ( 30 <= this._pickedXCnt || 600 <= this._lostSeconds10 ){
+                this._running = false; return;
+            }
+            this._points += Math.floor( (30 - this._pickedXCnt) *  (600 - this._lostSeconds10 ) / 10);
+            this._level = Math.ceil( this._points / 1600 );
+        }
     }
 }

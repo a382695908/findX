@@ -8,8 +8,9 @@
      */
     export class GameDataDriver {
         protected _startTime : Date = null;        
+        protected _running : boolean   = false;        
         protected _maxSeconds: number = 60;
-        protected _lostSeconds:number=  0;
+        protected _lostSeconds10:number=  0;
         protected _moveSpeed:  number = 3;
         protected _rotateSpeed:number = 1;
 
@@ -27,6 +28,11 @@
             else{
                 this._startTime = startTime;
             } 
+            this._running = true;
+        }
+        
+        public get IsRunning(): boolean {
+            return this._running;
         }
 
         public update( now: Date = new Date() ) {
@@ -48,11 +54,14 @@
             return this._maxSeconds;
         }
 
-        public set lostSeconds(v: number) {
-            this._lostSeconds = v;
+        public set lostSeconds10(v: number) {
+            this._lostSeconds10 = v;
+            if ( this._lostSeconds10 >= this._maxSeconds * 10 ){
+                this._running = false;
+            }
         }
-        public get lostSeconds(): number {
-            return this._lostSeconds;
+        public get lostSeconds10(): number {
+            return this._lostSeconds10;
         }
 
         public set moveSpeed(v: number) {
