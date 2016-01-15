@@ -11,7 +11,7 @@
 cd `dirname $0`
 
 if [ $# -eq 0 ];then
-	tsc --outDir ./bin-debug/
+	tsc --diagnostics --listFiles --noEmitOnError --removeComments --outDir ./bin-debug/
 	if [ -d ./bin-debug/src ];then
     	cp -f ./bin-debug/src/* ./bin-debug/
     	cd bin-debug 
@@ -20,13 +20,16 @@ if [ $# -eq 0 ];then
 		echo "Not found ./bin-debug/src"
 	fi
 elif [ $# -eq 1 ];then
-	tsc --out ./bin-debug/findX.js
+	if [ -d ./bin-debug/ ];then
+        cd ./bin-debug && rm -rf * && cd ..
+    fi
+	tsc --diagnostics --listFiles --noEmitOnError --removeComments --outFile ./bin-debug/findX.js
 	if [ -f ./bin-debug/findX.js ];then
 		cd ./bin-debug
 		uglifyjs ./findX.js -m -o ./findX.min.js
 	else
 		echo "Not found ./bin-debug/findX.js"
 	fi
-else:
+else
 	echo -e "\n$0 [f]\n"
 fi
