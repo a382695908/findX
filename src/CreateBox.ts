@@ -7,7 +7,7 @@ class CreateBox extends CreateSky{
 
     protected _width  : number = 600;
     protected _height : number = 600;
-    protected _depth  : number = 600;
+    protected _depth  : number = 400;
 
     protected _hud : egret3d.HUD;
     protected _hudW: number = 128;
@@ -48,15 +48,15 @@ class CreateBox extends CreateSky{
 
     private textureComplete() {
 
-        var lightGroup: egret3d.LightGroup = new egret3d.LightGroup();
-        var directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
+        let lightGroup: egret3d.LightGroup = new egret3d.LightGroup();
+        let directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
         directLight.diffuse = 0xAAAAAA;
         lightGroup.addDirectLight(directLight);
 
-        var rnd: number = Math.floor( Math.random() * this._dtDriver.totalObjCnt );
+        let rnd: number = Math.floor( Math.random() * this._dtDriver.totalObjCnt );
 
-        for (var idx:number = 0; idx < this._dtDriver.totalObjCnt; ++idx){
-            var box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
+        for (let idx:number = 0; idx < this._dtDriver.totalObjCnt; ++idx){
+            let box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
             box.addEventListener(egret3d.Event3D.MOUSE_CLICK, (e: egret3d.Event3D) => this.onPickupBox(e));
             box.addEventListener(egret3d.Event3D.TOUCH_START, (e: egret3d.Event3D) => this.onPickupBox(e));
@@ -70,14 +70,14 @@ class CreateBox extends CreateSky{
                 this._xBoxIds.push( box.id );
             }
             else{
-                var n: number = Math.random() > 0.5 ? 1 : 0;
+                let n: number = Math.random() > 0.5 ? 1 : 0;
                 aw.CharTexture.createCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsPool[n], 
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
             }
             box.material.diffuseTexture = aw.CharTexture.texture;
 
-            var bi: any = {"box" : box, 'id': box.id, 'idx': idx };
+            let bi: any = {"box" : box, 'id': box.id, 'idx': idx };
 
             bi['moveX']     = (Math.random()*2-1) * this._dtDriver.moveSpeed;
             bi['moveY']     = (Math.random()*2-1) * this._dtDriver.moveSpeed;
@@ -99,8 +99,8 @@ class CreateBox extends CreateSky{
         }
 
         this._hud = new egret3d.HUD();
-        var lostTime: number = this._time - this._dtDriver.startTime;
-		var tips:string = " 目标:" + this._dtDriver.charsFind  + "\n 计时:" + (Math.floor(lostTime/100)/10).toString() 
+        let lostTime: number = this._time - this._dtDriver.startTime;
+		let tips:string = " 目标:" + this._dtDriver.charsFind  + "\n 计时:" + (Math.floor(lostTime/100)/10).toString() 
                          +"\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
                                         this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
@@ -123,8 +123,8 @@ class CreateBox extends CreateSky{
 
         super.onUpdate();
 
-        for(var id in this._boxInfo ){
-            var bi = this._boxInfo[id];
+        for(let id in this._boxInfo ){
+            let bi = this._boxInfo[id];
             if ( bi == null ) continue;
 
             bi['box'].rotationX += bi['rotationX'];
@@ -147,7 +147,7 @@ class CreateBox extends CreateSky{
         }
         this._dtDriver.lostSeconds10 = Math.floor((this._time - this._timeStart.getTime())/100);
 
-		var tips:string = " 目标:" + this._dtDriver.charsFind  + "\n 计时:" + (this._dtDriver.lostSeconds10/10).toString() 
+		let tips:string = " 目标:" + this._dtDriver.charsFind  + "\n 计时:" + (this._dtDriver.lostSeconds10/10).toString() 
                             + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
                                         this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
@@ -160,7 +160,7 @@ class CreateBox extends CreateSky{
             this._boxInfo[ e.currentTarget.id ] = this._boxBak[ e.currentTarget.id ];
         }
         else{
-            for (var idx: number=0; idx < this._xBoxIds.length; idx++){
+            for (let idx: number=0; idx < this._xBoxIds.length; idx++){
                 if ( e.currentTarget.id == this._xBoxIds[idx] ){
                     this._boxInfo[ e.currentTarget.id ] = null;
                     this._dtDriver.addPickedXCnt();

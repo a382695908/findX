@@ -27,8 +27,8 @@
         private _txtImgData: ImageData;
 
         public genTxtImg(w:number, h:number, txt: string, align: string, font:string, rgba:string, bg_rgba:string, frame_rgba:string, frame_with:number): ImageData {
-            var cvs: HTMLCanvasElement = document.createElement("canvas");
-            var ctx: CanvasRenderingContext2D = cvs.getContext("2d");
+            let cvs: HTMLCanvasElement = document.createElement("canvas");
+            let ctx: CanvasRenderingContext2D = cvs.getContext("2d");
             cvs.width  = w; cvs.height = h;
             cvs = document.createElement("canvas");
             ctx = cvs.getContext("2d");
@@ -45,9 +45,9 @@
             ctx.textAlign = align;
             ctx.lineWidth =3;
             ctx.textBaseline = 'middle';
-            var rgbas: Array<string> = rgba.split(";");
-			var txts: Array<string> = txt.split("\n");
-			for(var idx:number = 0; idx < txts.length; idx++){
+            let rgbas: Array<string> = rgba.split(";");
+			let txts: Array<string> = txt.split("\n");
+			for(let idx:number = 0; idx < txts.length; idx++){
                 if ( idx+1 <= rgbas.length && rgbas[idx].length > 3 ){
                     ctx.fillStyle = rgbas[idx];
                 }
@@ -105,12 +105,8 @@
         private buildCheckerboard(): void {
             if (!this._pixelArray && this._txtImgData) {
                 this._pixelArray = new Uint8Array(this._width * this._height * 4);
-                for (var y: number = 0; y < this._height  ; y++) {
-                    for (var x: number = 0; x < this._width ; x++) {
-                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 0];
-                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 1];
-                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 2];
-                        //this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = this._txtImgData.data[((this._width-y-1) * this._width + (this._width-1-x))*4 + 3];
+                for (let y: number = 0; y < this._height  ; y++) {
+                    for (let x: number = 0; x < this._width ; x++) {
                         this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 0];
                         this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 1];
                         this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 2];
