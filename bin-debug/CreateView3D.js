@@ -13,7 +13,8 @@ var CreateView3D = (function () {
         this._viewPort = new egret3d.Rectangle(0, 0, width, height);
         egret3d.Egret3DDrive.requstContext3D(DeviceUtil.getGPUMode, this._viewPort, function () { return _this.onInit3D(); });
     }
-    CreateView3D.prototype.onInit3D = function () {
+    var d = __define,c=CreateView3D,p=c.prototype;
+    p.onInit3D = function () {
         var _this = this;
         this._view3D = new egret3d.View3D(this._viewPort);
         this._cameraCtl = new egret3d.LookAtController(this._view3D.camera3D, new egret3d.Object3D());
@@ -22,9 +23,9 @@ var CreateView3D = (function () {
         this._time = new Date().getTime();
         requestAnimationFrame(function () { return _this.onUpdate(); });
     };
-    CreateView3D.prototype.onView3DInitComplete = function () {
+    p.onView3DInitComplete = function () {
     };
-    CreateView3D.prototype.onUpdate = function () {
+    p.onUpdate = function () {
         var _this = this;
         this._timeDate = new Date();
         this._delay = this._timeDate.getTime() - this._time;
@@ -35,3 +36,4 @@ var CreateView3D = (function () {
     };
     return CreateView3D;
 })();
+egret.registerClass(CreateView3D,'CreateView3D');

@@ -1,8 +1,3 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var CreateBox = (function (_super) {
     __extends(CreateBox, _super);
     function CreateBox() {
@@ -34,18 +29,17 @@ var CreateBox = (function (_super) {
         this._height = this._viewPort.height;
         this._dtDriver = new aw.FindXDataDriver();
     }
-    Object.defineProperty(CreateBox.prototype, "dataDrive", {
-        get: function () {
+    var d = __define,c=CreateBox,p=c.prototype;
+    d(p, "dataDrive"
+        ,function () {
             return this._dtDriver;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    CreateBox.prototype.onView3DInitComplete = function () {
+        }
+    );
+    p.onView3DInitComplete = function () {
         this.textureComplete();
         _super.prototype.onView3DInitComplete.call(this);
     };
-    CreateBox.prototype.textureComplete = function () {
+    p.textureComplete = function () {
         var _this = this;
         var lightGroup = new egret3d.LightGroup();
         var directLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
@@ -101,7 +95,7 @@ var CreateBox = (function (_super) {
         this._view3D.addHUD(this._hud);
         this._cameraCtl.setEyesLength(3000);
     };
-    CreateBox.prototype.onUpdate = function () {
+    p.onUpdate = function () {
         _super.prototype.onUpdate.call(this);
         for (var id in this._boxInfo) {
             var bi = this._boxInfo[id];
@@ -129,7 +123,7 @@ var CreateBox = (function (_super) {
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
     };
-    CreateBox.prototype.onPickupBox = function (e) {
+    p.onPickupBox = function (e) {
         if (this._boxInfo[e.currentTarget.id] == null) {
             this._boxInfo[e.currentTarget.id] = this._boxBak[e.currentTarget.id];
         }
@@ -140,3 +134,4 @@ var CreateBox = (function (_super) {
     };
     return CreateBox;
 })(CreateSky);
+egret.registerClass(CreateBox,'CreateBox');

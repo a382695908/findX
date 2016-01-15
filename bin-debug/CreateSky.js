@@ -1,14 +1,10 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var CreateSky = (function (_super) {
     __extends(CreateSky, _super);
     function CreateSky() {
         _super.call(this);
     }
-    CreateSky.prototype.onView3DInitComplete = function () {
+    var d = __define,c=CreateSky,p=c.prototype;
+    p.onView3DInitComplete = function () {
         var fimg = document.getElementById("t1");
         var bimg = document.getElementById("t2");
         var limg = document.getElementById("t3");
@@ -32,3 +28,4 @@ var CreateSky = (function (_super) {
     };
     return CreateSky;
 })(CreateView3D);
+egret.registerClass(CreateSky,'CreateSky');

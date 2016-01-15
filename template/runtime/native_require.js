@@ -4,11 +4,12 @@ var game_file_list = [
     //----auto game_file_list start----
 	"libs/modules/egret/egret.js",
 	"libs/modules/egret/egret.native.js",
-	"egret3d.min.js",
 	"bin-debug/CharTexture.js",
 	"bin-debug/CreateView3D.js",
 	"bin-debug/CreateSky.js",
 	"bin-debug/CreateBox.js",
+	"bin-debug/GameDataDriver.js",
+	"bin-debug/FindXDataDriver.js",
 	"bin-debug/Main.js",
 	//----auto game_file_list end----
 ];

@@ -1,8 +1,3 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var aw;
 (function (aw) {
     /**
@@ -37,6 +32,7 @@ var aw;
             this.mimapData = new Array();
             this.mimapData.push(new egret3d.MipmapData(this._pixelArray, this._width, this._height));
         }
+        var d = __define,c=CharTexture,p=c.prototype;
         /**
          * @language zh_CN
          */
@@ -52,7 +48,7 @@ var aw;
             CharTexture.texture = new CharTexture(w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with);
             aw.CharTexture.texture.upload(egret3d.Egret3DDrive.context3D);
         };
-        CharTexture.prototype.genTxtImg = function (w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with) {
+        p.genTxtImg = function (w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with) {
             var cvs = document.createElement("canvas");
             var ctx = cvs.getContext("2d");
             cvs.width = w;
@@ -91,7 +87,7 @@ var aw;
          * 上传贴图数据给GPU
          * @param context3D
          */
-        CharTexture.prototype.upload = function (context3D) {
+        p.upload = function (context3D) {
             if (!this.texture) {
                 this.texture = context3D.creatTexture2D();
                 this.texture.gpu_border = 0;
@@ -102,7 +98,7 @@ var aw;
                 context3D.upLoadTextureData(0, this.texture);
             }
         };
-        CharTexture.prototype.buildCheckerboard = function () {
+        p.buildCheckerboard = function () {
             if (!this._pixelArray && this._txtImgData) {
                 this._pixelArray = new Uint8Array(this._width * this._height * 4);
                 for (var y = 0; y < this._height; y++) {
@@ -123,4 +119,5 @@ var aw;
         return CharTexture;
     })(egret3d.TextureBase);
     aw.CharTexture = CharTexture;
+    egret.registerClass(CharTexture,'aw.CharTexture');
 })(aw || (aw = {}));
