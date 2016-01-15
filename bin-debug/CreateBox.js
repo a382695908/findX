@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var CreateBox = (function (_super) {
     __extends(CreateBox, _super);
     function CreateBox() {
@@ -29,17 +34,18 @@ var CreateBox = (function (_super) {
         this._height = this._viewPort.height;
         this._dtDriver = new aw.FindXDataDriver();
     }
-    var d = __define,c=CreateBox,p=c.prototype;
-    d(p, "dataDrive"
-        ,function () {
+    Object.defineProperty(CreateBox.prototype, "dataDrive", {
+        get: function () {
             return this._dtDriver;
-        }
-    );
-    p.onView3DInitComplete = function () {
+        },
+        enumerable: true,
+        configurable: true
+    });
+    CreateBox.prototype.onView3DInitComplete = function () {
         this.textureComplete();
         _super.prototype.onView3DInitComplete.call(this);
     };
-    p.textureComplete = function () {
+    CreateBox.prototype.textureComplete = function () {
         var _this = this;
         var lightGroup = new egret3d.LightGroup();
         var directLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
@@ -96,9 +102,6 @@ var CreateBox = (function (_super) {
         this._view3D.addHUD(this._hud);
         this._cameraCtl.setEyesLength(3000);
     };
-<<<<<<< HEAD
-    p.onUpdate = function () {
-=======
     CreateBox.prototype.onUpdate = function () {
         if (this._dtDriver.lostSeconds10 > this._dtDriver.maxSeconds * 10 && this._dtDriver.IsRunning) {
             alert("Game Over!");
@@ -108,7 +111,6 @@ var CreateBox = (function (_super) {
             alert("Game Over!");
             return;
         }
->>>>>>> e4df5b47a677abedaf34c9668167bf275b4f95fc
         _super.prototype.onUpdate.call(this);
         for (var id in this._boxInfo) {
             var bi = this._boxInfo[id];
@@ -136,12 +138,8 @@ var CreateBox = (function (_super) {
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
     };
-<<<<<<< HEAD
-    p.onPickupBox = function (e) {
-=======
     CreateBox.prototype.onPickupBox = function (e) {
         this._dtDriver.update();
->>>>>>> e4df5b47a677abedaf34c9668167bf275b4f95fc
         if (this._boxInfo[e.currentTarget.id] == null) {
             this._boxInfo[e.currentTarget.id] = this._boxBak[e.currentTarget.id];
         }
@@ -158,4 +156,3 @@ var CreateBox = (function (_super) {
     };
     return CreateBox;
 })(CreateSky);
-egret.registerClass(CreateBox,'CreateBox');
