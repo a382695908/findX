@@ -8,12 +8,15 @@ module aw {
      * 棋盘格纹理
      */
     export class FindXDataDriver extends aw.GameDataDriver {
-        protected _totalObjCnt:number = 12;  // 物体总数
-        protected _XObjCnt:    number =  3;  // 需要找到的目标物体数
-        protected _maxFaceCnt: number =  4;  // 物体的最大面数
-        protected _XFaceCnt:   number =  4;  // 物体上有特殊字符的面数
+        protected _totalObjCnt:number = 12;// 物体总数
+        protected _XObjCnt:    number =  3;// 需要找到的目标物体数
+        protected _maxFaceCnt: number =  4;// 物体的最大面数
+        protected _XFaceCnt:   number =  4;// 物体上有特殊字符的面数
 
-        protected _pickedXCnt: number =  0;  // 当前已经拾取的目标物体数
+        protected _moveSpeed:  number = 3; // 移动线速度
+        protected _rotateSpeed:number = 1; // 移动转速
+
+        protected _pickedXCnt: number =  0; // 当前已经拾取的目标物体数
 
         private _charsFind: string = "X";   // 特殊字符
         private _charsPool: string[] = ["入", "人" ];  // 干扰字符
@@ -32,6 +35,20 @@ module aw {
         }
         public get totalObjCnt(): number {
             return this._totalObjCnt;
+        }
+
+        public set moveSpeed(v: number) {
+            this._moveSpeed = v;
+        }
+        public get moveSpeed(): number {
+            return this._moveSpeed;
+        }
+ 
+        public set rotateSpeed(v: number) {
+            this._rotateSpeed = v;
+        }
+        public get rotateSpeed(): number {
+            return this._rotateSpeed;
         }
 
         public get startTips(): string {
@@ -87,11 +104,21 @@ module aw {
 
         public updatePoints( ){
             if ( this._startTime == null ) {
-                this._running = false; return;
+                this._running = false;
+                this._overReason = GameOverReason.NEVER_START;
+                return;
             }
-            if ( this._XObjCnt <= this._pickedXCnt || this._maxSeconds * 10 <= this._lostSeconds10 ){
-                this._running = false; return;
+            if ( this._XObjCnt <= this._pickedXCnt ){
+                this._running = false;
+                this._overReason = GameOverReason.USER_WIN;
+                return;
             }
+            if ( this._maxSeconds * 10 <= this._lostSeconds10 ){
+                this._running = false;
+                this._overReason = GameOverReason.TIME_OVER;
+                return;
+            }
+
             this._points += Math.floor( (30 - this._pickedXCnt) *  (600 - this._lostSeconds10 ) / 10);
             this._level = Math.ceil( this._points / 1600 );
         }

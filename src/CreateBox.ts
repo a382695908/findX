@@ -119,7 +119,20 @@ class CreateBox extends CreateSky{
         this._dtDriver.update();
 
         if ( !this._dtDriver.IsRunning ){
-            alert("Game Over!");
+			switch ( this._dtDriver.OverReason ){
+			case aw.GameOverReason.USER_WIN:
+            	alert("恭喜， 你成功了!");
+				break;
+			case aw.GameOverReason.TIME_OVER:
+            	alert("没时间了，你失败了!");
+				break;
+			case aw.GameOverReason.USER_FAILED:
+            	alert("哈哈， you are a loser!");
+				break;
+			default:
+            	alert(":(， something wrong!");
+				;
+			}
 			if (true === confirm( this._dtDriver.startTips ) ){
 				this.dataDrive.startGame();
 				console.log("Start game again.");

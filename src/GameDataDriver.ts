@@ -6,16 +6,24 @@
      * @classdesc
      * 
      */
-    export class GameDataDriver {
-        protected _startTime : Date = null;        
-        protected _running : boolean   = false;        
-        protected _maxSeconds: number = 10;
-        protected _lostSeconds10:number=  0;
-        protected _moveSpeed:  number = 3;
-        protected _rotateSpeed:number = 1;
+    export enum GameOverReason {
+        NEVER_START,
+        NOT_OVER,
+        TIME_OVER,
+        USER_WIN,
+        USER_FAILED
+    }
 
-        protected _level      : number=  0;
-        protected _points     : number=  0;
+    export class GameDataDriver {
+        protected _startTime : Date = null;     // 数据驱动开始时间    
+        protected _running : boolean   = false; // 数据驱动是否在运行
+        protected _maxSeconds: number = 10;     // 数据驱动最大运行秒数
+        protected _lostSeconds10:number=  0;    // 数据驱动已经运行秒数 * 10
+
+        protected _level      : number=  0;     // 等级
+        protected _points     : number=  0;     // 积分
+
+        protected _overReason : GameOverReason = GameOverReason.NEVER_START;
 
         constructor( startTime: Date = null ) {
             this.startGame( startTime );
@@ -28,6 +36,14 @@
                 this._startTime = startTime;
             } 
             this._running = true;
+            this._overReason = GameOverReason.NOT_OVER;
+        }
+
+        public set OverReason( v : GameOverReason ){
+            this._overReason = v;
+        }
+        public get OverReason( ): GameOverReason {
+            return this._overReason;
         }
         
         public get IsRunning(): boolean {
@@ -40,6 +56,7 @@
             this._lostSeconds10 = Math.floor( (now.getTime() - this._startTime.getTime() ) / 100 );
             if ( this._lostSeconds10 > this._maxSeconds * 10 ){
                 this._running = false;
+                this._overReason = GameOverReason.TIME_OVER;
             }
         }
 
@@ -63,24 +80,11 @@
             this._lostSeconds10 = v;
             if ( this._lostSeconds10 >= this._maxSeconds * 10 ){
                 this._running = false;
+                this._overReason = GameOverReason.TIME_OVER;
             }
         }
         public get lostSeconds10(): number {
             return this._lostSeconds10;
-        }
-
-        public set moveSpeed(v: number) {
-            this._moveSpeed = v;
-        }
-        public get moveSpeed(): number {
-            return this._moveSpeed;
-        }
- 
-        public set rotateSpeed(v: number) {
-            this._rotateSpeed = v;
-        }
-        public get rotateSpeed(): number {
-            return this._rotateSpeed;
         }
  
         public set level(v: number) {
