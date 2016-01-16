@@ -135,6 +135,7 @@ class CreateBox extends CreateSky{
 			}
 			if (true === confirm( this._dtDriver.startTips ) ){
 				this.dataDrive.startGame();
+				this.restart();
 				console.log("Start game again.");
 			}
 			else{
@@ -166,8 +167,9 @@ class CreateBox extends CreateSky{
             }
         }
 
-		let tips:string = " 目标:" + this._dtDriver.charsFind  + "\n 计时:" + (this._dtDriver.lostSeconds10/10).toString() 
-                            + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
+		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.XObjCnt})\n `
+						+ `计时:${(this._dtDriver.lostSeconds10/10).toString()}` 
+                        + `\n 等级:${this._dtDriver.level.toString()} \n 积分:${this._dtDriver.points}`;
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
                                         this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
@@ -189,4 +191,12 @@ class CreateBox extends CreateSky{
             }
         }
     }
+
+	protected restart() {
+        for(let id in this._boxInfo ){
+            let bi = this._boxInfo[id];
+            if ( bi !== null ) continue;
+			this._boxInfo[id] = this._boxBak[id];
+		}
+	}
 } 

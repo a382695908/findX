@@ -17,7 +17,7 @@
     export class GameDataDriver {
         protected _startTime : Date = null;     // 数据驱动开始时间    
         protected _running : boolean   = false; // 数据驱动是否在运行
-        protected _maxSeconds: number = 10;     // 数据驱动最大运行秒数
+        protected _maxSeconds: number = 30;     // 数据驱动最大运行秒数
         protected _lostSeconds10:number=  0;    // 数据驱动已经运行秒数 * 10
 
         protected _level      : number=  0;     // 等级
@@ -37,6 +37,7 @@
             } 
             this._running = true;
             this._overReason = GameOverReason.NOT_OVER;
+			this._lostSeconds10 = 0;
         }
 
         public set OverReason( v : GameOverReason ){

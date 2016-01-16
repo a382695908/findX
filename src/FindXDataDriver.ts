@@ -27,7 +27,13 @@ module aw {
 
         constructor( startTime: Date = null ) {
             super( startTime );
-            this._startTips = `请找到${this._XFaceCnt}个有${this._charsFind}字的物体`;
+            this._startTips = `请找到${this._XObjCnt}个有${this._charsFind}字的物体`;
+            this._pickedXCnt = 0;
+        }
+        public startGame( startTime: Date = null ){
+			super.startGame( startTime );
+            this._startTips = `请找到${this._XObjCnt}个有${this._charsFind}字的物体`;
+            this._pickedXCnt = 0;
         }
 
         public set totalObjCnt(v: number) {

@@ -112,7 +112,7 @@ var CreateBox = (function (_super) {
                     alert("恭喜， 你成功了!");
                     break;
                 case aw.GameOverReason.TIME_OVER:
-                    alert("Time lost all, Game Over!");
+                    alert("没时间了，你失败了!");
                     break;
                 case aw.GameOverReason.USER_FAILED:
                     alert("哈哈， you are a loser!");
@@ -123,6 +123,7 @@ var CreateBox = (function (_super) {
             }
             if (true === confirm(this._dtDriver.startTips)) {
                 this.dataDrive.startGame();
+                this.restart();
                 console.log("Start game again.");
             }
             else {
@@ -150,8 +151,9 @@ var CreateBox = (function (_super) {
                 bi['moveZ'] = -bi['moveZ'];
             }
         }
-        var tips = " 目标:" + this._dtDriver.charsFind + "\n 计时:" + (this._dtDriver.lostSeconds10 / 10).toString()
-            + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
+        var tips = (" \u76EE\u6807:" + this._dtDriver.charsFind + "(" + this._dtDriver.pickedXCnt + "/" + this._dtDriver.XObjCnt + ")\n ")
+            + ("\u8BA1\u65F6:" + (this._dtDriver.lostSeconds10 / 10).toString())
+            + ("\n \u7B49\u7EA7:" + this._dtDriver.level.toString() + " \n \u79EF\u5206:" + this._dtDriver.points);
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
     };
@@ -168,6 +170,14 @@ var CreateBox = (function (_super) {
                     break;
                 }
             }
+        }
+    };
+    CreateBox.prototype.restart = function () {
+        for (var id in this._boxInfo) {
+            var bi = this._boxInfo[id];
+            if (bi !== null)
+                continue;
+            this._boxInfo[id] = this._boxBak[id];
         }
     };
     return CreateBox;
