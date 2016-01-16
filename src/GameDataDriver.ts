@@ -26,7 +26,6 @@
         protected _overReason : GameOverReason = GameOverReason.NEVER_START;
 
         constructor( startTime: Date = null ) {
-            this.startGame( startTime );
         }
         public startGame( startTime: Date = null ){
             if ( startTime == null ) { 

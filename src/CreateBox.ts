@@ -38,15 +38,17 @@ class CreateBox extends CreateSky{
         this._depth  = this._viewPort.width;
 
         this._dtDriver = new aw.FindXDataDriver();
+		this._dtDriver.startGame();
     }
 
-    public get dataDrive() :aw.FindXDataDriver {
+    public get dataDriver() :aw.FindXDataDriver {
         return this._dtDriver;
     }
 
     protected onView3DInitComplete(): void {
         this.textureComplete();
         super.onView3DInitComplete();
+
 		confirm( this._dtDriver.startTips );
 
     }
@@ -102,9 +104,14 @@ class CreateBox extends CreateSky{
         }
 
         this._hud = new egret3d.HUD();
-        let lostTime: number = this._time - this._dtDriver.startTime;
-		let tips:string = " 目标:" + this._dtDriver.charsFind  + "\n 计时:" + (Math.floor(lostTime/100)/10).toString() 
-                         +"\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
+		this._hud.width = 150;
+		this._hud.x = (this._view3D.width/2 - this._hud.width/2);
+		this._hud.y = 2;
+
+		let restTime: string = (this._dtDriver.maxSeconds - this._dtDriver.lostSeconds10/10).toFixed(1);
+		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.XObjCnt})\n `
+						+ `计时:${restTime}` 
+                        + `\n 等级:${this._dtDriver.level} \n 积分:${this._dtDriver.points}`;
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
                                         this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
@@ -129,12 +136,14 @@ class CreateBox extends CreateSky{
 			case aw.GameOverReason.USER_FAILED:
             	alert("哈哈， you are a loser!");
 				break;
+			case aw.GameOverReason.NEVER_START:
+            	alert("Sorry， 未准备就绪!");
+				break;
 			default:
             	alert(":(， something wrong!");
-				;
+				return;
 			}
 			if (true === confirm( this._dtDriver.startTips ) ){
-				this.dataDrive.startGame();
 				this.restart();
 				console.log("Start game again.");
 			}
@@ -167,18 +176,18 @@ class CreateBox extends CreateSky{
             }
         }
 
+		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
 		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.XObjCnt})\n `
-						+ `计时:${(this._dtDriver.lostSeconds10/10).toString()}` 
-                        + `\n 等级:${this._dtDriver.level.toString()} \n 积分:${this._dtDriver.points}`;
+						+ `计时:${restTime}` 
+                        + `\n 等级:${this._dtDriver.level} \n 积分:${this._dtDriver.points}`;
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
                                         this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
     }
 
     protected onPickupBox(e: egret3d.Event3D): void {
-
         if ( this._boxInfo[ e.currentTarget.id ] == null ){
-            this._boxInfo[ e.currentTarget.id ] = this._boxBak[ e.currentTarget.id ];
+            //this._boxInfo[ e.currentTarget.id ] = this._boxBak[ e.currentTarget.id ];
         }
         else{
             for (let idx: number=0; idx < this._xBoxIds.length; idx++){
@@ -193,6 +202,7 @@ class CreateBox extends CreateSky{
     }
 
 	protected restart() {
+		this._dtDriver.startGame();
         for(let id in this._boxInfo ){
             let bi = this._boxInfo[id];
             if ( bi !== null ) continue;

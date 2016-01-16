@@ -34,8 +34,9 @@ var CreateBox = (function (_super) {
         this._height = this._viewPort.height;
         this._depth = this._viewPort.width;
         this._dtDriver = new aw.FindXDataDriver();
+        this._dtDriver.startGame();
     }
-    Object.defineProperty(CreateBox.prototype, "dataDrive", {
+    Object.defineProperty(CreateBox.prototype, "dataDriver", {
         get: function () {
             return this._dtDriver;
         },
@@ -95,9 +96,13 @@ var CreateBox = (function (_super) {
             this._boxBak[box.id] = bi;
         }
         this._hud = new egret3d.HUD();
-        var lostTime = this._time - this._dtDriver.startTime;
-        var tips = " 目标:" + this._dtDriver.charsFind + "\n 计时:" + (Math.floor(lostTime / 100) / 10).toString()
-            + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
+        this._hud.width = 150;
+        this._hud.x = (this._view3D.width / 2 - this._hud.width / 2);
+        this._hud.y = 2;
+        var restTime = (this._dtDriver.maxSeconds - this._dtDriver.lostSeconds10 / 10).toFixed(1);
+        var tips = (" \u76EE\u6807:" + this._dtDriver.charsFind + "(" + this._dtDriver.pickedXCnt + "/" + this._dtDriver.XObjCnt + ")\n ")
+            + ("\u8BA1\u65F6:" + restTime)
+            + ("\n \u7B49\u7EA7:" + this._dtDriver.level + " \n \u79EF\u5206:" + this._dtDriver.points);
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
         this._view3D.addHUD(this._hud);
@@ -117,12 +122,14 @@ var CreateBox = (function (_super) {
                 case aw.GameOverReason.USER_FAILED:
                     alert("哈哈， you are a loser!");
                     break;
+                case aw.GameOverReason.NEVER_START:
+                    alert("Sorry， 未准备就绪!");
+                    break;
                 default:
                     alert(":(， something wrong!");
-                    ;
+                    return;
             }
             if (true === confirm(this._dtDriver.startTips)) {
-                this.dataDrive.startGame();
                 this.restart();
                 console.log("Start game again.");
             }
@@ -151,15 +158,15 @@ var CreateBox = (function (_super) {
                 bi['moveZ'] = -bi['moveZ'];
             }
         }
+        var restTime = (this._dtDriver.maxSeconds - this._dtDriver.lostSeconds10 / 10).toFixed(1);
         var tips = (" \u76EE\u6807:" + this._dtDriver.charsFind + "(" + this._dtDriver.pickedXCnt + "/" + this._dtDriver.XObjCnt + ")\n ")
-            + ("\u8BA1\u65F6:" + (this._dtDriver.lostSeconds10 / 10).toString())
-            + ("\n \u7B49\u7EA7:" + this._dtDriver.level.toString() + " \n \u79EF\u5206:" + this._dtDriver.points);
+            + ("\u8BA1\u65F6:" + restTime)
+            + ("\n \u7B49\u7EA7:" + this._dtDriver.level + " \n \u79EF\u5206:" + this._dtDriver.points);
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
     };
     CreateBox.prototype.onPickupBox = function (e) {
         if (this._boxInfo[e.currentTarget.id] == null) {
-            this._boxInfo[e.currentTarget.id] = this._boxBak[e.currentTarget.id];
         }
         else {
             for (var idx = 0; idx < this._xBoxIds.length; idx++) {
@@ -173,6 +180,7 @@ var CreateBox = (function (_super) {
         }
     };
     CreateBox.prototype.restart = function () {
+        this._dtDriver.startGame();
         for (var id in this._boxInfo) {
             var bi = this._boxInfo[id];
             if (bi !== null)
