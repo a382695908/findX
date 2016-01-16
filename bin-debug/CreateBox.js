@@ -12,7 +12,7 @@ var CreateBox = (function (_super) {
         this._boxBak = {};
         this._xBoxIds = [];
         this._width = 600;
-        this._height = 600;
+        this._height = 800;
         this._depth = 400;
         this._hudW = 128;
         this._hudH = 128;
@@ -32,6 +32,7 @@ var CreateBox = (function (_super) {
         this._boxTxtureFrmW = 3;
         this._width = this._viewPort.width;
         this._height = this._viewPort.height;
+        this._depth = this._viewPort.width;
         this._dtDriver = new aw.FindXDataDriver();
     }
     Object.defineProperty(CreateBox.prototype, "dataDrive", {
@@ -44,6 +45,7 @@ var CreateBox = (function (_super) {
     CreateBox.prototype.onView3DInitComplete = function () {
         this.textureComplete();
         _super.prototype.onView3DInitComplete.call(this);
+        confirm(this._dtDriver.startTips);
     };
     CreateBox.prototype.textureComplete = function () {
         var _this = this;
@@ -51,7 +53,6 @@ var CreateBox = (function (_super) {
         var directLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
         directLight.diffuse = 0xAAAAAA;
         lightGroup.addDirectLight(directLight);
-        var rnd = Math.floor(Math.random() * this._dtDriver.totalObjCnt);
         for (var idx = 0; idx < this._dtDriver.totalObjCnt; ++idx) {
             var box = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
@@ -59,7 +60,7 @@ var CreateBox = (function (_super) {
             box.addEventListener(egret3d.Event3D.TOUCH_START, function (e) { return _this.onPickupBox(e); });
             box.material.lightGroup = lightGroup;
             this._view3D.addChild3D(box);
-            if (idx == rnd) {
+            if (this._xBoxIds.length < this._dtDriver.XObjCnt) {
                 aw.CharTexture.createCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsFind, this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
                 this._xBoxIds.push(box.id);
             }
@@ -100,18 +101,22 @@ var CreateBox = (function (_super) {
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
         this._view3D.addHUD(this._hud);
-        this._cameraCtl.setEyesLength(3000);
+        this._cameraCtl.setEyesLength(3500);
     };
     CreateBox.prototype.onUpdate = function () {
-        if (this._dtDriver.lostSeconds10 > this._dtDriver.maxSeconds * 10 && this._dtDriver.IsRunning) {
-            alert("Game Over!");
-            return;
-        }
+        _super.prototype.onUpdate.call(this);
+        this._dtDriver.update();
         if (!this._dtDriver.IsRunning) {
             alert("Game Over!");
+            if (true === confirm(this._dtDriver.startTips)) {
+                this.dataDrive.startGame();
+                console.log("Start game again.");
+            }
+            else {
+                console.log("Give up play again, leave away.");
+            }
             return;
         }
-        _super.prototype.onUpdate.call(this);
         for (var id in this._boxInfo) {
             var bi = this._boxInfo[id];
             if (bi == null)
@@ -132,14 +137,12 @@ var CreateBox = (function (_super) {
                 bi['moveZ'] = -bi['moveZ'];
             }
         }
-        this._dtDriver.lostSeconds10 = Math.floor((this._time - this._timeStart.getTime()) / 100);
         var tips = " 目标:" + this._dtDriver.charsFind + "\n 计时:" + (this._dtDriver.lostSeconds10 / 10).toString()
             + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont, this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
     };
     CreateBox.prototype.onPickupBox = function (e) {
-        this._dtDriver.update();
         if (this._boxInfo[e.currentTarget.id] == null) {
             this._boxInfo[e.currentTarget.id] = this._boxBak[e.currentTarget.id];
         }

@@ -1,14 +1,16 @@
 class CreateBox extends CreateSky{
     protected _dtDriver: aw.FindXDataDriver = null;
 
-    protected _boxInfo : any = {};
-    protected _boxBak  : any = {};
-    protected _xBoxIds : number[] = [];
+    protected _boxInfo : any = {};		 //实时操作的盒子存储
+    protected _boxBak  : any = {};       //生产队盒子的原始备份
+    protected _xBoxIds : number[] = [];  //记录特殊字符，点击时比较判断
 
+	// 盒子活动的空间大小
     protected _width  : number = 600;
-    protected _height : number = 600;
+    protected _height : number = 800;
     protected _depth  : number = 400;
 
+	// 显示信息的HUD(Head UP Display)
     protected _hud : egret3d.HUD;
     protected _hudW: number = 128;
     protected _hudH: number = 128;
@@ -19,6 +21,7 @@ class CreateBox extends CreateSky{
     protected _hudFrmBgColor: string="rgba(0,0,0,0)";
     protected _hudFrmW: number=0;
 
+	//盒子上的字符纹理
     protected _boxTxtureW: number = 64;
     protected _boxTxtureH: number = 64;
     protected _boxTxtureFont: string = "60px 楷体";
@@ -32,6 +35,7 @@ class CreateBox extends CreateSky{
         super();
         this._width  = this._viewPort.width;
         this._height = this._viewPort.height;
+        this._depth  = this._viewPort.width;
 
         this._dtDriver = new aw.FindXDataDriver();
     }
@@ -43,17 +47,16 @@ class CreateBox extends CreateSky{
     protected onView3DInitComplete(): void {
         this.textureComplete();
         super.onView3DInitComplete();
+		confirm( this._dtDriver.startTips );
+
     }
 
-
     private textureComplete() {
-
+		//环境光 
         let lightGroup: egret3d.LightGroup = new egret3d.LightGroup();
         let directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
         directLight.diffuse = 0xAAAAAA;
         lightGroup.addDirectLight(directLight);
-
-        let rnd: number = Math.floor( Math.random() * this._dtDriver.totalObjCnt );
 
         for (let idx:number = 0; idx < this._dtDriver.totalObjCnt; ++idx){
             let box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
@@ -63,7 +66,7 @@ class CreateBox extends CreateSky{
             box.material.lightGroup = lightGroup;
             this._view3D.addChild3D(box);
 
-            if ( idx == rnd ){
+            if ( this._xBoxIds.length < this._dtDriver.XObjCnt ){
                 aw.CharTexture.createCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsFind, 
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
@@ -108,20 +111,24 @@ class CreateBox extends CreateSky{
 
         this._view3D.addHUD(this._hud );
 
-        this._cameraCtl.setEyesLength(3000);
+        this._cameraCtl.setEyesLength(3500);
     }
 
     protected onUpdate(): void {
-        if ( this._dtDriver.lostSeconds10 > this._dtDriver.maxSeconds*10 && this._dtDriver.IsRunning ){
-            alert("Game Over!");
-            return;
-        }
+        super.onUpdate();
+        this._dtDriver.update();
+
         if ( !this._dtDriver.IsRunning ){
             alert("Game Over!");
+			if (true === confirm( this._dtDriver.startTips ) ){
+				this.dataDrive.startGame();
+				console.log("Start game again.");
+			}
+			else{
+				console.log("Give up play again, leave away.");
+			}
             return;
         }
-
-        super.onUpdate();
 
         for(let id in this._boxInfo ){
             let bi = this._boxInfo[id];
@@ -145,7 +152,6 @@ class CreateBox extends CreateSky{
                 bi['moveZ'] = -bi['moveZ']
             }
         }
-        this._dtDriver.lostSeconds10 = Math.floor((this._time - this._timeStart.getTime())/100);
 
 		let tips:string = " 目标:" + this._dtDriver.charsFind  + "\n 计时:" + (this._dtDriver.lostSeconds10/10).toString() 
                             + "\n 等级:" + this._dtDriver.level.toString() + "\n 积分:" + this._dtDriver.points;
@@ -155,7 +161,7 @@ class CreateBox extends CreateSky{
     }
 
     protected onPickupBox(e: egret3d.Event3D): void {
-        this._dtDriver.update();
+
         if ( this._boxInfo[ e.currentTarget.id ] == null ){
             this._boxInfo[ e.currentTarget.id ] = this._boxBak[ e.currentTarget.id ];
         }

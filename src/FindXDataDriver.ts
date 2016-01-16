@@ -8,18 +8,23 @@ module aw {
      * 棋盘格纹理
      */
     export class FindXDataDriver extends aw.GameDataDriver {
-        protected _totalObjCnt:number = 12;
-        protected _XObjCnt:    number =  1;
-        protected _maxFaceCnt: number =  4;
-        protected _XFaceCnt:   number =  4;
+        protected _totalObjCnt:number = 12;  // 物体总数
+        protected _XObjCnt:    number =  3;  // 需要找到的目标物体数
+        protected _maxFaceCnt: number =  4;  // 物体的最大面数
+        protected _XFaceCnt:   number =  4;  // 物体上有特殊字符的面数
 
-        protected _pickedXCnt: number =  0;
+        protected _pickedXCnt: number =  0;  // 当前已经拾取的目标物体数
 
-        private _charsFind: string = "X";
-        private _charsPool: string[] = ["入", "人" ];
+        private _charsFind: string = "X";   // 特殊字符
+        private _charsPool: string[] = ["入", "人" ];  // 干扰字符
+
+        private _startTips: string = "";
+        private _winTips: string = "";
+        private _failedTips: string = "";
 
         constructor( startTime: Date = null ) {
             super( startTime );
+            this._startTips = `请找到${this._XFaceCnt}个有${this._charsFind}字的物体`;
         }
 
         public set totalObjCnt(v: number) {
@@ -27,6 +32,10 @@ module aw {
         }
         public get totalObjCnt(): number {
             return this._totalObjCnt;
+        }
+
+        public get startTips(): string {
+            return this._startTips;
         }
 
         public set XObjCnt(v: number) {
@@ -71,19 +80,16 @@ module aw {
             return this._pickedXCnt;
         }
 
-        public update( now: Date = new Date() ){
+        public update( ){
             if ( this._startTime == null ) return;
-            super.update( now );
-            this._points += Math.floor( (30 - this._pickedXCnt) *  (600 - this._lostSeconds10 ) / 10);
-            this._level = Math.ceil( this._points / 1600 );
-            this._lostSeconds10 = Math.floor( (now.getTime() - this._startTime.getTime() ) / 100 );
+            super.update( );
         }
 
         public updatePoints( ){
             if ( this._startTime == null ) {
                 this._running = false; return;
             }
-            if ( 30 <= this._pickedXCnt || 600 <= this._lostSeconds10 ){
+            if ( this._XObjCnt <= this._pickedXCnt || this._maxSeconds * 10 <= this._lostSeconds10 ){
                 this._running = false; return;
             }
             this._points += Math.floor( (30 - this._pickedXCnt) *  (600 - this._lostSeconds10 ) / 10);

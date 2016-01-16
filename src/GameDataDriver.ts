@@ -9,14 +9,13 @@
     export class GameDataDriver {
         protected _startTime : Date = null;        
         protected _running : boolean   = false;        
-        protected _maxSeconds: number = 60;
+        protected _maxSeconds: number = 10;
         protected _lostSeconds10:number=  0;
         protected _moveSpeed:  number = 3;
         protected _rotateSpeed:number = 1;
 
-
-        protected _level      : number=  1;
-        protected _points     : number=  1;
+        protected _level      : number=  0;
+        protected _points     : number=  0;
 
         constructor( startTime: Date = null ) {
             this.startGame( startTime );
@@ -35,7 +34,13 @@
             return this._running;
         }
 
-        public update( now: Date = new Date() ) {
+        public update( ) {
+            if ( this._startTime == null ) return;
+            let now: Date = new Date();
+            this._lostSeconds10 = Math.floor( (now.getTime() - this._startTime.getTime() ) / 100 );
+            if ( this._lostSeconds10 > this._maxSeconds * 10 ){
+                this._running = false;
+            }
         }
 
         public get startTime(): number {
