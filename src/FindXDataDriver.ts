@@ -27,12 +27,16 @@ module aw {
 
         constructor( startTime: Date = null ) {
             super( startTime );
-            this._startTips = `请找到${this._XObjCnt}个有${this._charsFind}字的物体`;
+            this._startTips = `请找到${this._XObjCnt}个有${this._charsFind}物体`;
+            this._winTips = `恭喜，你找到全部${this._XObjCnt}个有${this._charsFind}物体`;
+            this._failedTips = `:(，你只找到${this._pickedXCnt}个有${this._charsFind}物体`;
             this._pickedXCnt = 0;
         }
         public startGame( startTime: Date = null ){
 			super.startGame( startTime );
-            this._startTips = `请找到${this._XObjCnt}个有${this._charsFind}字的物体`;
+            this._startTips = `请找到${this._XObjCnt}个有${this._charsFind}物体`;
+            this._winTips = `恭喜，你找到全部${this._XObjCnt}个有${this._charsFind}物体`;
+            this._failedTips = `:(，你只找到${this._pickedXCnt}个有${this._charsFind}物体`;
             this._pickedXCnt = 0;
         }
 
@@ -59,6 +63,12 @@ module aw {
 
         public get startTips(): string {
             return this._startTips;
+        }
+        public get winTips(): string {
+            return this._winTips;
+        }
+        public get failedTips(): string {
+            return this._failedTips;
         }
 
         public set XObjCnt(v: number) {

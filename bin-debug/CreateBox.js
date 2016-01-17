@@ -152,16 +152,16 @@ var CreateBox = (function (_super) {
         if (!this._dtDriver.IsRunning) {
             switch (this._dtDriver.OverReason) {
                 case aw.GameOverReason.USER_WIN:
-                    this.updateInteractiveTips("恭喜， 你成功了!");
-                    alert("恭喜， 你成功了!");
+                    this.updateInteractiveTips(this._dtDriver.winTips);
+                    alert(this._dtDriver.winTips);
                     break;
                 case aw.GameOverReason.TIME_OVER:
-                    this.updateInteractiveTips("没时间了，你失败了!");
-                    alert("没时间了，你失败了!");
+                    this.updateInteractiveTips(this._dtDriver.failedTips);
+                    alert(this._dtDriver.failedTips);
                     break;
                 case aw.GameOverReason.USER_FAILED:
-                    this.updateInteractiveTips("哈哈， you are a loser!");
-                    alert("哈哈， you are a loser!");
+                    this.updateInteractiveTips(this._dtDriver.failedTips);
+                    alert(this._dtDriver.failedTips);
                     break;
                 case aw.GameOverReason.NEVER_START:
                     this.updateInteractiveTips("Sorry， 未准备就绪!");

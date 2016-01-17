@@ -62,11 +62,8 @@ class CreateBox extends CreateSky{
 
 		confirm( this._dtDriver.startTips );
     }
-    private interactiveOpt( e : KeyboardEvent) {
-        console.log(`mouse click:${e}`); 
-    }
-
     private textureComplete() {
+		// 全局的鼠标/触摸事件 --- 用于进度控制操作
         egret3d.Input.instance.addListenerKeyClick( this.interactiveOpt );
         egret3d.Input.instance.addTouchStartCallback(this.interactiveOpt );
 
@@ -76,6 +73,7 @@ class CreateBox extends CreateSky{
         directLight.diffuse = 0xAAAAAA;
         lightGroup.addDirectLight(directLight);
 
+		// 生成盒子
         for (let idx:number = 0; idx < this._dtDriver.totalObjCnt; ++idx){
             let box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
@@ -148,9 +146,7 @@ class CreateBox extends CreateSky{
         aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
                                         this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
         this._hud.texture = aw.CharTexture.texture;
-
         this._view3D.addHUD(this._hud );
-
     }
 
     protected updateInteractiveTips( tips:string ) {
@@ -171,21 +167,23 @@ class CreateBox extends CreateSky{
 
     protected onUpdate(): void {
         super.onUpdate();
-        this._dtDriver.update();
+		// 数据计算的更新
+        this._dtDriver.update(); 
 
+		// 根据数据驱动的结果，控制游戏进度选折
         if ( !this._dtDriver.IsRunning ){
 			switch ( this._dtDriver.OverReason ){
 			case aw.GameOverReason.USER_WIN:
-                this.updateInteractiveTips( "恭喜， 你成功了!" );
-            	alert("恭喜， 你成功了!");
+                this.updateInteractiveTips( this._dtDriver.winTips );
+            	alert( this._dtDriver.winTips );
 				break;
 			case aw.GameOverReason.TIME_OVER:
-                this.updateInteractiveTips( "没时间了，你失败了!" );
-            	alert("没时间了，你失败了!");
+                this.updateInteractiveTips( this._dtDriver.failedTips );
+            	alert( this._dtDriver.failedTips );
 				break;
 			case aw.GameOverReason.USER_FAILED:
-                this.updateInteractiveTips( "哈哈， you are a loser!" );
-            	alert("哈哈， you are a loser!");
+                this.updateInteractiveTips( this._dtDriver.failedTips );
+            	alert( this._dtDriver.failedTips );
 				break;
 			case aw.GameOverReason.NEVER_START:
                 this.updateInteractiveTips( "Sorry， 未准备就绪!" );
@@ -196,6 +194,7 @@ class CreateBox extends CreateSky{
             	alert(":(， something wrong!");
 				return;
 			}
+
             this.updateInteractiveTips( this._dtDriver.startTips );
 			if (true === confirm( this._dtDriver.startTips ) ){
 				this.restart();
@@ -207,6 +206,7 @@ class CreateBox extends CreateSky{
             return;
         }
 
+		// 更新盒子飞行
         for(let id in this._boxInfo ){
             let bi = this._boxInfo[id];
             if ( bi == null ) continue;
@@ -230,6 +230,7 @@ class CreateBox extends CreateSky{
             }
         }
 
+		// 更新 分数，等级等暂时信息
 		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
 		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.XObjCnt})\n `
 						+ `计时:${restTime}` 
@@ -261,4 +262,9 @@ class CreateBox extends CreateSky{
 			this._boxInfo[id] = this._boxBak[id];
 		}
 	}
+
+    private interactiveOpt( e : KeyboardEvent) {
+        console.log(`mouse click:${e}`); 
+    }
+
 } 
