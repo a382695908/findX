@@ -11,7 +11,6 @@
         /**
          * @language zh_CN
          */
-
         public static createCharTexture (w:number=32, h:number=32, txt: string="Test info.", align: string, font:string="60px 楷体", rgba:string="rgba(255,0,0,1)", 
                                             bg_rgba:string="rgba(200,200,200,1)", frame_rgba:string="rgba(255,0,0,1)", frame_with:number=2) {
             CharTexture.texture = new CharTexture(w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with);
@@ -47,19 +46,19 @@
             ctx.textBaseline = 'middle';
             let rgbas: Array<string> = rgba.split(";");
 			let txts: Array<string> = txt.split("\n");
+			let minH : number = h/txts.length/2;
 			for(let idx:number = 0; idx < txts.length; idx++){
                 if ( idx+1 <= rgbas.length && rgbas[idx].length > 3 ){
                     ctx.fillStyle = rgbas[idx];
                 }
-
 				if ( align == 'left' ){
-            		ctx.fillText( txts[idx],   0,   h/txts.length/2 * (1+2*idx) );
+            		ctx.fillText( txts[idx],   0,   minH * (1+2*idx) );
 				}
 				else if ( align == 'center' ){
-            		ctx.fillText( txts[idx],   w/2, h/txts.length/2 * (1+2*idx) );
+            		ctx.fillText( txts[idx],   w/2, minH * (1+2*idx) );
 				}
 				else if ( align == 'right' ){
-            		ctx.fillText( txts[idx],   w,   h/txts.length/2 * (1+2*idx) );
+            		ctx.fillText( txts[idx],   w,   minH * (1+2*idx) );
 				}
 			}
 

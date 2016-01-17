@@ -36,21 +36,6 @@
 				"isFolder":false,
 				"key":"resource/sky/cloudy_noon_UP.png",
 				"name":"cloudy_noon_UP.png"
-			},
-			{
-				"isFolder":false,
-				"key":"resource/chars/chars.jpg",
-				"name":"chars.jpg"
-			},
-			{
-				"isFolder":false,
-				"key":"resource/chars/chars.png",
-				"name":"chars.png"
-			},
-			{
-				"isFolder":false,
-				"key":"resource/white.jpg",
-				"name":"white.jpg"
 			}]
 		}
 	}

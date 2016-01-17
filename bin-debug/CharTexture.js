@@ -60,18 +60,19 @@ var aw;
             ctx.textBaseline = 'middle';
             var rgbas = rgba.split(";");
             var txts = txt.split("\n");
+            var minH = h / txts.length / 2;
             for (var idx = 0; idx < txts.length; idx++) {
                 if (idx + 1 <= rgbas.length && rgbas[idx].length > 3) {
                     ctx.fillStyle = rgbas[idx];
                 }
                 if (align == 'left') {
-                    ctx.fillText(txts[idx], 0, h / txts.length / 2 * (1 + 2 * idx));
+                    ctx.fillText(txts[idx], 0, minH * (1 + 2 * idx));
                 }
                 else if (align == 'center') {
-                    ctx.fillText(txts[idx], w / 2, h / txts.length / 2 * (1 + 2 * idx));
+                    ctx.fillText(txts[idx], w / 2, minH * (1 + 2 * idx));
                 }
                 else if (align == 'right') {
-                    ctx.fillText(txts[idx], w, h / txts.length / 2 * (1 + 2 * idx));
+                    ctx.fillText(txts[idx], w, minH * (1 + 2 * idx));
                 }
             }
             this._txtImgData = ctx.getImageData(0, 0, w, h);

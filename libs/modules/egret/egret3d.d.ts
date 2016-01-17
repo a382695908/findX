@@ -14415,7 +14415,7 @@ declare module egret3d {
      * @version Egret 3.0
      * @platform Web,Native
      */
-    class HUD {
+    class HUD extends Object3D {
         private static singleQuadData;
         private static singleQuadIndex;
         /**

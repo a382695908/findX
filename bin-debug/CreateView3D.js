@@ -1,8 +1,6 @@
 var CreateView3D = (function () {
-    function CreateView3D(width, height) {
+    function CreateView3D() {
         var _this = this;
-        if (width === void 0) { width = 800; }
-        if (height === void 0) { height = 600; }
         this._time = 0;
         this._delay = 0;
         this._timeDate = null;
@@ -10,7 +8,7 @@ var CreateView3D = (function () {
         this._view3D = null;
         this._viewPort = null;
         this._cameraCtl = null;
-        this._viewPort = new egret3d.Rectangle(0, 0, width, height);
+        this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth, document.body.clientHeight - 20);
         egret3d.Egret3DDrive.requstContext3D(DeviceUtil.getGPUMode, this._viewPort, function () { return _this.onInit3D(); });
     }
     CreateView3D.prototype.onInit3D = function () {

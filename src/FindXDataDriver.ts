@@ -9,7 +9,7 @@ module aw {
      */
     export class FindXDataDriver extends aw.GameDataDriver {
         protected _totalObjCnt:number = 12;// 物体总数
-        protected _XObjCnt:    number =  3;// 需要找到的目标物体数
+        protected _XObjCnt:    number =  2;// 需要找到的目标物体数
         protected _maxFaceCnt: number =  4;// 物体的最大面数
         protected _XFaceCnt:   number =  4;// 物体上有特殊字符的面数
 

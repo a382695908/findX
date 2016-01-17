@@ -23729,12 +23729,14 @@ var egret3d;
      * @version Egret 3.0
      * @platform Web,Native
      */
-    var HUD = (function () {
+    var HUD = (function (_super) {
+        __extends(HUD, _super);
         /**
         * @language zh_CN
         * 构造
         */
         function HUD() {
+            _super.call(this);
             /**
             * @language zh_CN
             * @private
@@ -23935,7 +23937,7 @@ var egret3d;
         ];
         HUD.singleQuadIndex = [0, 1, 2, 0, 2, 3];
         return HUD;
-    })();
+    })(egret3d.Object3D);
     egret3d.HUD = HUD;
     /**
     * @private
