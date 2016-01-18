@@ -8,7 +8,7 @@ var CreateView3D = (function () {
         this._view3D = null;
         this._viewPort = null;
         this._cameraCtl = null;
-        this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth, document.body.clientHeight - 20);
+        this._viewPort = new egret3d.Rectangle(0, 0, 600, 800);
         egret3d.Egret3DDrive.requstContext3D(DeviceUtil.getGPUMode, this._viewPort, function () { return _this.onInit3D(); });
     }
     CreateView3D.prototype.onInit3D = function () {
@@ -21,6 +21,26 @@ var CreateView3D = (function () {
         requestAnimationFrame(function () { return _this.onUpdate(); });
     };
     CreateView3D.prototype.onView3DInitComplete = function () {
+        var fimg = document.getElementById("t1");
+        var bimg = document.getElementById("t2");
+        var limg = document.getElementById("t3");
+        var rimg = document.getElementById("t4");
+        var uimg = document.getElementById("t5");
+        var dimg = document.getElementById("t6");
+        var front = new egret3d.TextureBase();
+        front.imageData = fimg;
+        var back = new egret3d.TextureBase();
+        back.imageData = bimg;
+        var left = new egret3d.TextureBase();
+        left.imageData = limg;
+        var right = new egret3d.TextureBase();
+        right.imageData = rimg;
+        var up = new egret3d.TextureBase();
+        up.imageData = uimg;
+        var down = new egret3d.TextureBase();
+        down.imageData = dimg;
+        var skyTexture = new egret3d.SkyTexture(front, back, left, right, up, down);
+        this._view3D.sky = new egret3d.Sky(skyTexture);
     };
     CreateView3D.prototype.onUpdate = function () {
         var _this = this;

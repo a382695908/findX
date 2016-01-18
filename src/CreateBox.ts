@@ -1,4 +1,4 @@
-class CreateBox extends CreateSky{
+class CreateBox extends CreateView3D{
     protected _dtDriver: aw.FindXDataDriver = null;
 
     protected _boxInfo : any = {};		 //实时操作的盒子存储

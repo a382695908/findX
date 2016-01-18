@@ -56,9 +56,6 @@ var CreateBox = (function (_super) {
         _super.prototype.onView3DInitComplete.call(this);
         confirm(this._dtDriver.startTips);
     };
-    CreateBox.prototype.interactiveOpt = function (e) {
-        console.log("mouse click:" + e);
-    };
     CreateBox.prototype.textureComplete = function () {
         var _this = this;
         egret3d.Input.instance.addListenerKeyClick(this.interactiveOpt);
@@ -231,5 +228,8 @@ var CreateBox = (function (_super) {
             this._boxInfo[id] = this._boxBak[id];
         }
     };
+    CreateBox.prototype.interactiveOpt = function (e) {
+        console.log("mouse click:" + e);
+    };
     return CreateBox;
-})(CreateSky);
+})(CreateView3D);

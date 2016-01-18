@@ -15,9 +15,8 @@
         "src/GameDataDriver.ts",
         "src/FindXDataDriver.ts",
         "src/CharTexture.ts",
-        "src/Main.ts",
         "src/CreateView3D.ts",
         "src/CreateBox.ts",
-        "src/CreateSky.ts"
+        "src/Main.ts"
     ]
 }
