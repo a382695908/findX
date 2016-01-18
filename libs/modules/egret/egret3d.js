@@ -24525,7 +24525,11 @@ var egret3d;
         */
         View3D.prototype.delHUN = function (hud) {
             var index = this._hudList.indexOf(hud);
-            this._hudList.splice(index, 1);
+            if (index >= 0)
+                this._hudList.splice(index, 1);
+        };
+        View3D.prototype.hasHUD = function (hud) {
+            return this._hudList.indexOf(hud) >= 0;
         };
         /**
         * @language zh_CN

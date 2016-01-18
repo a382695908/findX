@@ -14923,6 +14923,7 @@ declare module egret3d {
         * @platform Web,Native
         */
         delHUN(hud: HUD): void;
+        hasHUD(hud: HUD): boolean;
         /**
         * @language zh_CN
         * 增加wireframe进渲染列表

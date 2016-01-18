@@ -23,12 +23,12 @@ class CreateGame extends CreateBaseEnv{
 
 	// 交互信息的HUD(Head UP Display)
     protected _hudInter : aw.HUD;
-    protected _hudInterW: number = 128;
+    protected _hudInterW: number = 256;
     protected _hudInterH: number = 64;
     protected _hudInterFont: string = "16px 宋体";
     protected _hudInterAlign: string = "center";
     protected _hudInterColor: string = "rgba(255,0,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
-    protected _hudInterBgColor: string="rgba(200,200,200, 0.8)";
+    protected _hudInterBgColor: string="rgba(100,100,100, 0.5)";
     protected _hudInterFrmBgColor: string="rgba(0,0,0,1)";
     protected _hudInterFrmW: number=0;
 
@@ -147,13 +147,17 @@ class CreateGame extends CreateBaseEnv{
             this._hudInter = new aw.HUD();
             this._hudInter.SetCharTexture(this._hudInterW, this._hudInterH, tips, this._hudInterAlign, this._hudInterFont,
                                             this._hudInterColor, this._hudInterBgColor, this._hudInterFrmBgColor, this._hudInterFrmW);
-            this._view3D.addHUD(this._hudInter );
         }
         else{
             this._hudInter.UpdateTextureString( tips );
         }
 		this._hudInter.x = (this._view3D.width/2 - this._hudInter.width/2);
 		this._hudInter.y = (this._view3D.height/2 - this._hudInter.height/2);
+		if ( this._view3D.hasHUD( this._hudInter ) ){
+		}
+		else{
+            this._view3D.addHUD(this._hudInter );
+		}
     }
 
     protected UpdateBoxView(){
@@ -203,6 +207,10 @@ class CreateGame extends CreateBaseEnv{
         }
     }
 
+	protected HideInteractiveHUD() {
+		this._view3D.delHUN( this._hudInter );
+	}
+
 	protected restart() {
 		this._dtDriver.StartGame();
         for(let id in this._boxInfo ){
@@ -218,25 +226,31 @@ class CreateGame extends CreateBaseEnv{
 		switch ( self._dtDriver.dataState ){ // 操作并根据数据驱动的状态控制游戏进度选折
 		case aw.GameDataState.READY_GO:
             self._dtDriver.StartGame();
+			self.HideInteractiveHUD();
             break;
 		case aw.GameDataState.IN_RUN:
             // do nothing
             break;
 		case aw.GameDataState.IN_PAUSE:
             self._dtDriver.Resume();
+			self.HideInteractiveHUD();
             break;
 		case aw.GameDataState.USER_WIN:
             self._dtDriver.StageUp();
             self.restart()
+			self.HideInteractiveHUD();
 			break;
 		case aw.GameDataState.TIME_OVER:
             self.restart()
+			self.HideInteractiveHUD();
 			break;
 		case aw.GameDataState.NEVER_START:
             self.restart()
+			self.HideInteractiveHUD();
 			break;
 		default:
             self.restart()
+			self.HideInteractiveHUD();
 			return;
 		}
     }

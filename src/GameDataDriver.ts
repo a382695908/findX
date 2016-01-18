@@ -21,7 +21,7 @@
         protected _pauseTime : Date = null;     // 数据驱动暂停时间
         protected _resumeTime : Date = null;    // 数据驱动恢复时间
         protected _sleepSecnds10: number = 0;   // 数据驱动休眠时间秒数 * 10
-        protected _maxSeconds: number = 60;     // 数据驱动最大运行秒数
+        protected _maxSeconds: number = 20;     // 数据驱动最大运行秒数
         protected _lostSeconds10:number=  0;    // 数据驱动已经运行秒数 * 10
         protected _stage      : number=  0;     // 关卡
 
