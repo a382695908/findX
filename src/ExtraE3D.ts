@@ -1,10 +1,9 @@
 ﻿namespace aw {
-
      /**
       * @language zh_CN
      * @class aw.CharTexture
      * @classdesc
-     * 棋盘格纹理
+     * 字符纹理
      */
     export class CharTexture extends egret3d.TextureBase {
 
@@ -116,6 +115,12 @@
 
 
     // TODO: 优化效率，减少重复生成
+     /**
+      * @language zh_CN
+     * @class aw.HUD
+     * @classdesc
+     * 动态字符HUD
+     */
     export class HUD extends egret3d.HUD {
         private _txtrW: number = 32;
         private _txtrH: number = 32;

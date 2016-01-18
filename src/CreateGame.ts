@@ -49,7 +49,6 @@ class CreateGame extends CreateBaseEnv{
         this._depth  = this._viewPort.width;
 
         this._dtDriver = new aw.FindXDataDriver();
-		this._dtDriver.startGame();
     }
 
     public get dataDriver() :aw.FindXDataDriver {
@@ -59,13 +58,12 @@ class CreateGame extends CreateBaseEnv{
     protected onView3DInitComplete(): void {
         this.textureComplete();
         super.onView3DInitComplete();
-
-		confirm( this._dtDriver.startTips );
     }
+
     private textureComplete() {
 		// 全局的鼠标/触摸事件 --- 用于进度控制操作
-        egret3d.Input.instance.addListenerKeyClick( this.interactiveOpt );
-        egret3d.Input.instance.addTouchStartCallback(this.interactiveOpt );
+        egret3d.Input.instance.addListenerKeyClick( ( self:CreateGame ) => this.interactiveOpt( this ) );
+        egret3d.Input.instance.addTouchStartCallback( ( self:CreateGame ) => this.interactiveOpt( this ) );
 
 		//环境光 
         let lightGroup: egret3d.LightGroup = new egret3d.LightGroup();
@@ -158,48 +156,7 @@ class CreateGame extends CreateBaseEnv{
 		this._hudInter.y = (this._view3D.height/2 - this._hudInter.height/2);
     }
 
-    protected onUpdate(): void {
-        super.onUpdate();
-		// 数据计算的更新
-        this._dtDriver.Update(); 
-
-		// 根据数据驱动的结果，控制游戏进度选折
-        if ( !this._dtDriver.isRunning ){
-			switch ( this._dtDriver.dataState ){
-			case aw.GameDataState.USER_WIN:
-                this.updateInteractiveTips( this._dtDriver.winTips );
-            	alert( this._dtDriver.winTips );
-				break;
-			case aw.GameDataState.TIME_OVER:
-                this.updateInteractiveTips( this._dtDriver.failedTips );
-            	alert( this._dtDriver.failedTips );
-				break;
-			case aw.GameDataState.USER_FAILED:
-                this.updateInteractiveTips( this._dtDriver.failedTips );
-            	alert( this._dtDriver.failedTips );
-				break;
-			case aw.GameDataState.NEVER_START:
-                this.updateInteractiveTips( "Sorry， 未准备就绪!" );
-            	alert("Sorry， 未准备就绪!");
-				break;
-			default:
-                this.updateInteractiveTips( ":(， something wrong!" );
-            	alert(":(， something wrong!");
-				return;
-			}
-
-            this.updateInteractiveTips( this._dtDriver.startTips );
-			if (true === confirm( this._dtDriver.startTips ) ){
-				this.restart();
-				console.log("Start game again.");
-			}
-			else{
-				console.log("Give up play again, leave away.");
-			}
-            return;
-        }
-
-		// 更新盒子飞行
+    protected UpdateBoxView(){
         for(let id in this._boxInfo ){
             let bi = this._boxInfo[id];
             if ( bi == null ) continue;
@@ -222,8 +179,9 @@ class CreateGame extends CreateBaseEnv{
                 bi['moveZ'] = -bi['moveZ']
             }
         }
+    }
 
-		// 更新 分数，等级等暂时信息
+    protected UpdateShowInfo(){
 		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
 		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt})\n `
 						+ `计时:${restTime}\n 等级:${this._dtDriver.stage}`;
@@ -246,7 +204,7 @@ class CreateGame extends CreateBaseEnv{
     }
 
 	protected restart() {
-		this._dtDriver.startGame();
+		this._dtDriver.StartGame();
         for(let id in this._boxInfo ){
             let bi = this._boxInfo[id];
             if ( bi !== null ) continue;
@@ -254,8 +212,62 @@ class CreateGame extends CreateBaseEnv{
 		}
 	}
 
-    private interactiveOpt( e : KeyboardEvent) {
-        console.log(`mouse click:${e}`); 
+    //private interactiveOpt( e : KeyboardEvent, this:CreateGame) {
+    public interactiveOpt( self:CreateGame ) {
+        //console.log(`mouse click:${e}`); 
+		switch ( self._dtDriver.dataState ){ // 操作并根据数据驱动的状态控制游戏进度选折
+		case aw.GameDataState.READY_GO:
+            self._dtDriver.StartGame();
+            break;
+		case aw.GameDataState.IN_RUN:
+            // do nothing
+            break;
+		case aw.GameDataState.IN_PAUSE:
+            self._dtDriver.Resume();
+            break;
+		case aw.GameDataState.USER_WIN:
+            self._dtDriver.StageUp();
+            self.restart()
+			break;
+		case aw.GameDataState.TIME_OVER:
+            self.restart()
+			break;
+		case aw.GameDataState.NEVER_START:
+            self.restart()
+			break;
+		default:
+            self.restart()
+			return;
+		}
     }
 
+    protected onUpdate(): void {
+        super.onUpdate();
+        this._dtDriver.Update(); // 数据计算的更新
+
+		switch ( this._dtDriver.dataState ){ // 根据数据驱动的结果，控制游戏进度选折
+		case aw.GameDataState.READY_GO:
+            this.updateInteractiveTips( this._dtDriver.readyTips );
+            break;
+		case aw.GameDataState.IN_RUN:
+            this.UpdateBoxView();   // 更新盒子飞行
+            this.UpdateShowInfo();  // 更新 分数，等级等暂时信息
+            break;
+		case aw.GameDataState.IN_PAUSE:
+            this.updateInteractiveTips( this._dtDriver.pauseTips );
+            break;
+		case aw.GameDataState.USER_WIN:
+            this.updateInteractiveTips( this._dtDriver.winTips );
+			break;
+		case aw.GameDataState.TIME_OVER:
+            this.updateInteractiveTips( this._dtDriver.failedTips );
+			break;
+		case aw.GameDataState.NEVER_START:
+            this.updateInteractiveTips( "Sorry， 未准备就绪!" );
+			break;
+		default:
+            this.updateInteractiveTips( ":(， something wrong!" );
+			return;
+		}
+    }
 } 

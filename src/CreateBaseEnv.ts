@@ -11,7 +11,7 @@
 
     public constructor() {
         //this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight - 20);
-        this._viewPort = new egret3d.Rectangle(0, 0, 600, 800);
+        this._viewPort = new egret3d.Rectangle(0, 0, 300, 400);
         egret3d.Egret3DDrive.requstContext3D(DeviceUtil.getGPUMode, this._viewPort, () => this.onInit3D());
     }
 

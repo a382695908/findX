@@ -8,11 +8,11 @@
      */
     export enum GameDataState {
         NEVER_START,
+        READY_GO,
         IN_RUN,
         IN_PAUSE,
         TIME_OVER,
-        USER_WIN,
-        USER_FAILED
+        USER_WIN
     }
 
     export class GameDataDriver {
@@ -26,7 +26,7 @@
         protected _stage      : number=  0;     // 关卡
 
         constructor( startTime: Date = null ) {
-            this._driverState = GameDataState.IN_RUN;
+            this._driverState = GameDataState.READY_GO;
             this._startTime = null;
             this._pauseTime = null;
             this._resumeTime = null;
@@ -34,7 +34,7 @@
 			this._lostSeconds10 = 0;
         }
 
-        public startGame( startTime: Date = null ){
+        public StartGame( startTime: Date = null ){
             this._driverState = GameDataState.IN_RUN;
             if ( startTime == null ) { 
                 this._startTime = new Date();
@@ -75,17 +75,15 @@
         }
 
         public Update( ) {
-            if ( this._startTime == null ) {
-                console.log("Game data driver have not been started.");
-                return;
-            }
-
-            let now: Date = new Date();
-            this._lostSeconds10 = Math.floor( (now.getTime() - this._startTime.getTime() ) / 100 - this._sleepSecnds10 );
-            if ( this._lostSeconds10 > this._maxSeconds * 10 ){
-                this._driverState = GameDataState.TIME_OVER;
-            }
-        }
+			if ( this.isRunning ){
+         	   let now: Date = new Date();
+         	   this._lostSeconds10 = Math.floor( (now.getTime() - this._startTime.getTime() ) / 100 - this._sleepSecnds10 );
+         	   if ( this._lostSeconds10 > this._maxSeconds * 10 ){
+         	       this._driverState = GameDataState.TIME_OVER;
+		 	   	return;
+         	   }
+			}
+        }	
 
         public get startTime(): number {
             if ( this._startTime ){
