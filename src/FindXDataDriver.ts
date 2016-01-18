@@ -1,9 +1,8 @@
-
-module aw {
+namespace aw {
 
      /**
       * @language zh_CN
-     * @class aw.CharTexture
+     * @class aw.FindXDataDriver
      * @classdesc
      * 棋盘格纹理
      */

@@ -11,7 +11,7 @@ class CreateGame extends CreateBaseEnv{
     protected _depth  : number = 400;
 
 	// 展示信息的HUD(Head UP Display)
-    protected _hud : aw.HUD;
+    protected _hud : aw.HUD = null;
     protected _hudW: number = 128;
     protected _hudH: number = 128;
     protected _hudFont: string = "20px 宋体";
@@ -83,14 +83,14 @@ class CreateGame extends CreateBaseEnv{
             this._view3D.addChild3D(box);
 
             if ( this._xBoxIds.length < this._dtDriver.xObjCnt ){
-                aw.CharTexture.createCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsFind, 
+                aw.CharTexture.CreateCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsFind, 
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
                 this._xBoxIds.push( box.id );
             }
             else{
                 let n: number = Math.random() > 0.5 ? 1 : 0;
-                aw.CharTexture.createCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsPool[n], 
+                aw.CharTexture.CreateCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsPool[n], 
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
             }
@@ -131,37 +131,31 @@ class CreateGame extends CreateBaseEnv{
     }
 
     protected updateShowTips( tips:string ) {
-        if ( this._hud!= null ){
-            this._view3D.delHUN( this._hud);
-            this._hud= null;
+        if ( this._hud == null ){
+            this._hud = new aw.HUD();
+            this._hud.SetCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
+                                            this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
+            this._view3D.addHUD(this._hud );
         }
-        this._hud = new aw.HUD();
-		this._hud.width = this._hudW;
-		this._hud.height= this._hudH;
+        else{
+            this._hud.UpdateTextureString( tips );
+        }
 		this._hud.x = (this._view3D.width/2 - this._hud.width/2);
 		this._hud.y = 2;
-
-		let restTime: string = (this._dtDriver.maxSeconds - this._dtDriver.lostSeconds10/10).toFixed(1);
-        aw.CharTexture.createCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
-                                        this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
-        this._hud.texture = aw.CharTexture.texture;
-        this._view3D.addHUD(this._hud );
     }
 
     protected updateInteractiveTips( tips:string ) {
-        if ( this._hudInter != null ){
-            this._view3D.delHUN( this._hudInter );
-            this._hudInter = null;
+        if ( this._hudInter == null ){
+            this._hudInter = new aw.HUD();
+            this._hudInter.SetCharTexture(this._hudInterW, this._hudInterH, tips, this._hudInterAlign, this._hudInterFont,
+                                            this._hudInterColor, this._hudInterBgColor, this._hudInterFrmBgColor, this._hudInterFrmW);
+            this._view3D.addHUD(this._hudInter );
         }
-        this._hudInter = new aw.HUD();
-		this._hudInter.width = this._hudInterW;
-		this._hudInter.height= this._hudInterH;
+        else{
+            this._hudInter.UpdateTextureString( tips );
+        }
 		this._hudInter.x = (this._view3D.width/2 - this._hudInter.width/2);
 		this._hudInter.y = (this._view3D.height/2 - this._hudInter.height/2);
-        aw.CharTexture.createCharTexture(this._hudInterW, this._hudInterH, tips, this._hudInterAlign, this._hudInterFont,
-                                        this._hudInterColor, this._hudInterBgColor, this._hudInterFrmBgColor, this._hudInterFrmW);
-        this._hudInter.texture = aw.CharTexture.texture;
-        this._view3D.addHUD(this._hudInter );
     }
 
     protected onUpdate(): void {

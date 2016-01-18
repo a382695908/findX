@@ -1,4 +1,4 @@
-﻿module aw {
+﻿namespace aw {
 
      /**
       * @language zh_CN

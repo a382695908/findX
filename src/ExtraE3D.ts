@@ -1,4 +1,4 @@
-﻿module aw {
+﻿namespace aw {
 
      /**
       * @language zh_CN
@@ -11,7 +11,7 @@
         /**
          * @language zh_CN
          */
-        public static createCharTexture (w:number=32, h:number=32, txt: string="Test info.", align: string, font:string="60px 楷体", rgba:string="rgba(255,0,0,1)", 
+        public static CreateCharTexture (w:number=32, h:number=32, txt: string="Test info.", align: string, font:string="60px 楷体", rgba:string="rgba(255,0,0,1)", 
                                             bg_rgba:string="rgba(200,200,200,1)", frame_rgba:string="rgba(255,0,0,1)", frame_with:number=2) {
             CharTexture.texture = new CharTexture(w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_with);
             aw.CharTexture.texture.Upload(egret3d.Egret3DDrive.context3D);
@@ -115,8 +115,43 @@
     }
 
 
+    // TODO: 优化效率，减少重复生成
     export class HUD extends egret3d.HUD {
-        public ChangeTextureString( str: string ) {
+        private _txtrW: number = 32;
+        private _txtrH: number = 32;
+        private _txtrTxt: string = "白鹭";
+        private _txtrAlign: string = "center";
+        private _txtrFont: string = "24px 宋体";
+        private _txtrColor: string = "rgba(255,0,0,1)";
+        private _txtrBgColor: string = "rgba(0,0,0,0)";
+        private _txtrFrmColor: string = "rgba(255,0,0,1)";
+        private _txtrFrmW: number = 2;
+
+        public SetCharTexture(w:number=32, h:number=32, txt: string="Test info.", align: string, font:string="60px 楷体", rgba:string="rgba(255,0,0,1)", 
+                                            bg_rgba:string="rgba(200,200,200,1)", frame_rgba:string="rgba(255,0,0,1)", frame_with:number=2) {
+            this._txtrW = w;
+            this._txtrH = h;
+            this.width = w;
+            this.height = h;
+
+            this._txtrTxt = txt;
+            this._txtrAlign = align;
+            this._txtrFont = font;
+            this._txtrColor = rgba;
+            this._txtrBgColor = bg_rgba;
+            this._txtrFrmColor = frame_rgba;
+            this._txtrFrmW = frame_with;
+
+            aw.CharTexture.CreateCharTexture(this._txtrW, this._txtrH, this._txtrTxt, this._txtrAlign, this._txtrFont, 
+                                        this._txtrColor, this._txtrBgColor, this._txtrFrmColor, this._txtrFrmW);
+            this.texture = aw.CharTexture.texture;
+        }
+
+        public UpdateTextureString( str: string ) {
+            this._txtrTxt = str;
+            aw.CharTexture.CreateCharTexture(this._txtrW, this._txtrH, this._txtrTxt, this._txtrAlign, this._txtrFont, 
+                                        this._txtrColor, this._txtrBgColor, this._txtrFrmColor, this._txtrFrmW);
+            this.texture = aw.CharTexture.texture;
         }
     }
 }
