@@ -16,7 +16,7 @@
         "src/FindXDataDriver.ts",
         "src/CharTexture.ts",
         "src/CreateBaseEnv.ts",
-        "src/CreateBox.ts",
+        "src/CreateGame.ts",
         "src/Main.ts"
     ]
 }

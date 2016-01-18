@@ -7,7 +7,7 @@ var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
         _super.call(this);
-        new CreateBox();
+        new CreateGame();
     }
     return Main;
 })(egret.DisplayObjectContainer);

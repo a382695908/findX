@@ -6,7 +6,7 @@ var game_file_list = [
 	"libs/modules/egret/egret.native.js",
 	"bin-debug/CharTexture.js",
 	"bin-debug/CreateBaseEnv.js",
-	"bin-debug/CreateBox.js",
+	"bin-debug/CreateGame.js",
 	"bin-debug/GameDataDriver.js",
 	"bin-debug/FindXDataDriver.js",
 	"bin-debug/Main.js",

@@ -1,4 +1,4 @@
-class CreateBox extends CreateBaseEnv{
+class CreateGame extends CreateBaseEnv{
     protected _dtDriver: aw.FindXDataDriver = null;
 
     protected _boxInfo : any = {};		 //实时操作的盒子存储
