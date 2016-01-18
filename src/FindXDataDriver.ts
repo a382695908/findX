@@ -120,18 +120,15 @@ module aw {
 
         public updatePoints( ){
             if ( this._startTime == null ) {
-                this._running = false;
-                this._overReason = GameOverReason.NEVER_START;
+                this._driverState = GameDataState.NEVER_START;
                 return;
             }
             if ( this._XObjCnt <= this._pickedXCnt ){
-                this._running = false;
-                this._overReason = GameOverReason.USER_WIN;
+                this._driverState = GameDataState.USER_WIN;
                 return;
             }
             if ( this._maxSeconds * 10 <= this._lostSeconds10 ){
-                this._running = false;
-                this._overReason = GameOverReason.TIME_OVER;
+                this._driverState = GameDataState.TIME_OVER;
                 return;
             }
 

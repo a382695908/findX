@@ -172,20 +172,20 @@ class CreateGame extends CreateBaseEnv{
 
 		// 根据数据驱动的结果，控制游戏进度选折
         if ( !this._dtDriver.IsRunning ){
-			switch ( this._dtDriver.OverReason ){
-			case aw.GameOverReason.USER_WIN:
+			switch ( this._dtDriver.DataState ){
+			case aw.GameDataState.USER_WIN:
                 this.updateInteractiveTips( this._dtDriver.winTips );
             	alert( this._dtDriver.winTips );
 				break;
-			case aw.GameOverReason.TIME_OVER:
+			case aw.GameDataState.TIME_OVER:
                 this.updateInteractiveTips( this._dtDriver.failedTips );
             	alert( this._dtDriver.failedTips );
 				break;
-			case aw.GameOverReason.USER_FAILED:
+			case aw.GameDataState.USER_FAILED:
                 this.updateInteractiveTips( this._dtDriver.failedTips );
             	alert( this._dtDriver.failedTips );
 				break;
-			case aw.GameOverReason.NEVER_START:
+			case aw.GameDataState.NEVER_START:
                 this.updateInteractiveTips( "Sorry， 未准备就绪!" );
             	alert("Sorry， 未准备就绪!");
 				break;

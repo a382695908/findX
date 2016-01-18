@@ -6,57 +6,88 @@
      * @classdesc
      * 
      */
-    export enum GameOverReason {
+    export enum GameDataState {
         NEVER_START,
-        NOT_OVER,
+        IN_RUN,
+        IN_PAUSE,
         TIME_OVER,
         USER_WIN,
         USER_FAILED
     }
 
     export class GameDataDriver {
+        protected _driverState : GameDataState = GameDataState.NEVER_START;  // 数据驱动的状态
         protected _startTime : Date = null;     // 数据驱动开始时间    
-        protected _running : boolean   = false; // 数据驱动是否在运行
+        protected _pauseTime : Date = null;     // 数据驱动暂停时间
+        protected _resumeTime : Date = null;    // 数据驱动恢复时间
+        protected _sleepSecnds10: number = 0;   // 数据驱动休眠时间秒数 * 10
+
         protected _maxSeconds: number = 60;     // 数据驱动最大运行秒数
         protected _lostSeconds10:number=  0;    // 数据驱动已经运行秒数 * 10
 
         protected _level      : number=  0;     // 等级
         protected _points     : number=  0;     // 积分
 
-        protected _overReason : GameOverReason = GameOverReason.NEVER_START;
 
         constructor( startTime: Date = null ) {
+            this._driverState = GameDataState.IN_RUN;
+            this._startTime = null;
+            this._pauseTime = null;
+            this._resumeTime = null;
+            this._sleepSecnds10 = 0;
+			this._lostSeconds10 = 0;
         }
+
         public startGame( startTime: Date = null ){
+            this._driverState = GameDataState.IN_RUN;
             if ( startTime == null ) { 
                 this._startTime = new Date();
             }
             else{
                 this._startTime = startTime;
             } 
-            this._running = true;
-            this._overReason = GameOverReason.NOT_OVER;
+            this._pauseTime = null;
+            this._resumeTime = null;
+            this._sleepSecnds10 = 0;
 			this._lostSeconds10 = 0;
         }
 
-        public set OverReason( v : GameOverReason ){
-            this._overReason = v;
+        public set DataState( v : GameDataState ){
+            this._driverState = v;
         }
-        public get OverReason( ): GameOverReason {
-            return this._overReason;
+        public get DataState( ): GameDataState {
+            return this._driverState;
+        }
+
+        public Pause() {
+            if ( this._pauseTime == null ){
+                this._pauseTime = new Date();
+                this._driverState = GameDataState.IN_PAUSE;
+            }
+        }
+        public Resume() {
+            if ( this._pauseTime != null && this._resumeTime == null ){
+                this._resumeTime = new Date();
+                this._sleepSecnds10 += Math.floor( (this._resumeTime.getTime() - this._pauseTime.getTime()) / 100);
+                this._driverState = GameDataState.IN_RUN;
+                this._pauseTime = null;
+            }
         }
         
         public get IsRunning(): boolean {
-            return this._running;
+            return this._driverState === GameDataState.IN_RUN;
         }
 
         public update( ) {
-            if ( this._startTime == null ) return;
+            if ( this._startTime == null ) {
+                console.log("Game data driver have not been started.");
+                return;
+            }
+
             let now: Date = new Date();
-            this._lostSeconds10 = Math.floor( (now.getTime() - this._startTime.getTime() ) / 100 );
+            this._lostSeconds10 = Math.floor( (now.getTime() - this._startTime.getTime() ) / 100 - this._sleepSecnds10 );
             if ( this._lostSeconds10 > this._maxSeconds * 10 ){
-                this._running = false;
-                this._overReason = GameOverReason.TIME_OVER;
+                this._driverState = GameDataState.TIME_OVER;
             }
         }
 
@@ -79,8 +110,7 @@
         public set lostSeconds10(v: number) {
             this._lostSeconds10 = v;
             if ( this._lostSeconds10 >= this._maxSeconds * 10 ){
-                this._running = false;
-                this._overReason = GameOverReason.TIME_OVER;
+                this._driverState = GameDataState.TIME_OVER;
             }
         }
         public get lostSeconds10(): number {
