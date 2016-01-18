@@ -11,7 +11,7 @@ class CreateGame extends CreateBaseEnv{
     protected _depth  : number = 400;
 
 	// 展示信息的HUD(Head UP Display)
-    protected _hud : egret3d.HUD;
+    protected _hud : aw.HUD;
     protected _hudW: number = 128;
     protected _hudH: number = 128;
     protected _hudFont: string = "20px 宋体";
@@ -22,7 +22,7 @@ class CreateGame extends CreateBaseEnv{
     protected _hudFrmW: number=0;
 
 	// 交互信息的HUD(Head UP Display)
-    protected _hudInter : egret3d.HUD;
+    protected _hudInter : aw.HUD;
     protected _hudInterW: number = 128;
     protected _hudInterH: number = 64;
     protected _hudInterFont: string = "16px 宋体";
@@ -135,7 +135,7 @@ class CreateGame extends CreateBaseEnv{
             this._view3D.delHUN( this._hud);
             this._hud= null;
         }
-        this._hud = new egret3d.HUD();
+        this._hud = new aw.HUD();
 		this._hud.width = this._hudW;
 		this._hud.height= this._hudH;
 		this._hud.x = (this._view3D.width/2 - this._hud.width/2);
@@ -153,7 +153,7 @@ class CreateGame extends CreateBaseEnv{
             this._view3D.delHUN( this._hudInter );
             this._hudInter = null;
         }
-        this._hudInter = new egret3d.HUD();
+        this._hudInter = new aw.HUD();
 		this._hudInter.width = this._hudInterW;
 		this._hudInter.height= this._hudInterH;
 		this._hudInter.x = (this._view3D.width/2 - this._hudInter.width/2);

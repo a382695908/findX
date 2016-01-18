@@ -16,7 +16,7 @@ if [ $# -eq 0 ];then
     	cp -f ./bin-debug/src/* ./bin-debug/
     	cd bin-debug && rm -rf src
 	else
-		echo "Not found ./bin-debug/src"
+		: #echo "Not found ./bin-debug/src"
 	fi
 elif [ $# -eq 1 ];then
 	tsc --watch --diagnostics --listFiles --noEmitOnError --removeComments --outDir ./bin-debug/
@@ -24,7 +24,7 @@ elif [ $# -eq 1 ];then
     	cp -f ./bin-debug/src/* ./bin-debug/
     	cd bin-debug && rm -rf src
 	else
-		echo "Not found ./bin-debug/src"
+		: #echo "Not found ./bin-debug/src"
 	fi
 else
 	echo -e "\n$0 [f]\n"

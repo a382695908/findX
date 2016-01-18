@@ -23,9 +23,8 @@
         private _height: number = 32;
         private _pixelArray: Uint8Array;
         private _txt: string;
-        private _txtImgData: ImageData;
 
-        public GenTxtImg(w:number, h:number, txt: string, align: string, font:string, rgba:string, bg_rgba:string, frame_rgba:string, frame_with:number): ImageData {
+        public static GenTxtImg(w:number, h:number, txt: string, align: string, font:string, rgba:string, bg_rgba:string, frame_rgba:string, frame_with:number): ImageData {
             let cvs: HTMLCanvasElement = document.createElement("canvas");
             let ctx: CanvasRenderingContext2D = cvs.getContext("2d");
             cvs.width  = w; cvs.height = h;
@@ -62,8 +61,7 @@
 				}
 			}
 
-            this._txtImgData = ctx.getImageData(0, 0, w, h);
-            return this._txtImgData;
+            return ctx.getImageData(0, 0, w, h);
         }
 
 
@@ -75,9 +73,9 @@
             super();
 
             this._width = w; this._height= h; this._txt = txt;
-            this.GenTxtImg(this._width, this._height, this._txt, align, font, rgba, bg_rgba, frame_rgba, frame_with);
+            let txtImgData: ImageData = aw.CharTexture.GenTxtImg(this._width, this._height, this._txt, align, font, rgba, bg_rgba, frame_rgba, frame_with);
 
-            this.BuildCheckerboard();
+            this.BuildCheckerboard(txtImgData);
 
             this.mimapData = new Array<egret3d.MipmapData>();
             this.mimapData.push(new egret3d.MipmapData(this._pixelArray, this._width, this._height));
@@ -101,18 +99,24 @@
             }
         }
 
-        private BuildCheckerboard(): void {
-            if (!this._pixelArray && this._txtImgData) {
+        private BuildCheckerboard(txtImgData: ImageData = null): void {
+            if (!this._pixelArray && txtImgData) {
                 this._pixelArray = new Uint8Array(this._width * this._height * 4);
                 for (let y: number = 0; y < this._height  ; y++) {
                     for (let x: number = 0; x < this._width ; x++) {
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 0];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 1];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 2];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = this._txtImgData.data[(y * (this._width * 4) + x * 4) + 3];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = txtImgData.data[(y * (this._width * 4) + x * 4) + 0];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = txtImgData.data[(y * (this._width * 4) + x * 4) + 1];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = txtImgData.data[(y * (this._width * 4) + x * 4) + 2];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = txtImgData.data[(y * (this._width * 4) + x * 4) + 3];
                     }
                 }
             }
+        }
+    }
+
+
+    export class HUD extends egret3d.HUD {
+        public ChangeTextureString( str: string ) {
         }
     }
 }
