@@ -71,10 +71,10 @@ module aw {
             return this._failedTips;
         }
 
-        public set XObjCnt(v: number) {
+        public set xObjCnt(v: number) {
             this._XObjCnt = v;
         }
-        public get XObjCnt(): number {
+        public get xObjCnt(): number {
             return this._XObjCnt;
         }
 
@@ -85,10 +85,10 @@ module aw {
             return this._maxFaceCnt;
         }
 
-        public set XFaceCnt(v: number) {
+        public set xFaceCnt(v: number) {
             this._XFaceCnt = v;
         }
-        public get XFaceCnt(): number {
+        public get xFaceCnt(): number {
             return this._XFaceCnt;
         }
 
@@ -113,27 +113,9 @@ module aw {
             return this._pickedXCnt;
         }
 
-        public update( ){
+        public Update( ){
             if ( this._startTime == null ) return;
-            super.update( );
-        }
-
-        public updatePoints( ){
-            if ( this._startTime == null ) {
-                this._driverState = GameDataState.NEVER_START;
-                return;
-            }
-            if ( this._XObjCnt <= this._pickedXCnt ){
-                this._driverState = GameDataState.USER_WIN;
-                return;
-            }
-            if ( this._maxSeconds * 10 <= this._lostSeconds10 ){
-                this._driverState = GameDataState.TIME_OVER;
-                return;
-            }
-
-            this._points += Math.floor( (30 - this._pickedXCnt) *  (600 - this._lostSeconds10 ) / 10);
-            this._level = Math.ceil( this._points / 1600 );
+            super.Update( );
         }
     }
 }

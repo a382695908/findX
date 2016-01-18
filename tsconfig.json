@@ -12,11 +12,14 @@
     "files": [
         "libs/modules/egret/egret.d.ts",
         "libs/modules/egret/egret3d.d.ts",
+        "src/ExtraE3D.ts",
         "src/GameDataDriver.ts",
         "src/FindXDataDriver.ts",
-        "src/CharTexture.ts",
         "src/CreateBaseEnv.ts",
         "src/CreateGame.ts",
         "src/Main.ts"
+    ],
+    "exclude": [
+        "src/CharTexture.ts"
     ]
 }

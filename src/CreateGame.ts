@@ -82,7 +82,7 @@ class CreateGame extends CreateBaseEnv{
             box.material.lightGroup = lightGroup;
             this._view3D.addChild3D(box);
 
-            if ( this._xBoxIds.length < this._dtDriver.XObjCnt ){
+            if ( this._xBoxIds.length < this._dtDriver.xObjCnt ){
                 aw.CharTexture.createCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsFind, 
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
@@ -119,13 +119,12 @@ class CreateGame extends CreateBaseEnv{
 
 		// 进度信息
 		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
-		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.XObjCnt})\n `
-						+ `计时:${restTime}` 
-                        + `\n 等级:${this._dtDriver.level} \n 积分:${this._dtDriver.points}`;
+		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt})\n `
+						+ `计时:${restTime}\n 等级:${this._dtDriver.stage}`;
         this.updateShowTips( tips );
 
 		// 交互信息
-		let inter_tips:string = ` 请找出${this._dtDriver.XObjCnt}个 ${this._dtDriver.charsFind} 字符\n  触摸任意地方继续  `
+		let inter_tips:string = ` 请找出${this._dtDriver.xObjCnt}个 ${this._dtDriver.charsFind} 字符\n  触摸任意地方继续  `
         this.updateInteractiveTips( inter_tips);
 
         this._cameraCtl.setEyesLength(3500);
@@ -168,11 +167,11 @@ class CreateGame extends CreateBaseEnv{
     protected onUpdate(): void {
         super.onUpdate();
 		// 数据计算的更新
-        this._dtDriver.update(); 
+        this._dtDriver.Update(); 
 
 		// 根据数据驱动的结果，控制游戏进度选折
-        if ( !this._dtDriver.IsRunning ){
-			switch ( this._dtDriver.DataState ){
+        if ( !this._dtDriver.isRunning ){
+			switch ( this._dtDriver.dataState ){
 			case aw.GameDataState.USER_WIN:
                 this.updateInteractiveTips( this._dtDriver.winTips );
             	alert( this._dtDriver.winTips );
@@ -232,9 +231,8 @@ class CreateGame extends CreateBaseEnv{
 
 		// 更新 分数，等级等暂时信息
 		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
-		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.XObjCnt})\n `
-						+ `计时:${restTime}` 
-                        + `\n 等级:${this._dtDriver.level} \n 积分:${this._dtDriver.points}`;
+		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt})\n `
+						+ `计时:${restTime}\n 等级:${this._dtDriver.stage}`;
         this.updateShowTips( tips );
     }
 
@@ -247,7 +245,6 @@ class CreateGame extends CreateBaseEnv{
                 if ( e.currentTarget.id == this._xBoxIds[idx] ){
                     this._boxInfo[ e.currentTarget.id ] = null;
                     this._dtDriver.addPickedXCnt();
-                    this._dtDriver.updatePoints();
                     break;
                 }
             }

@@ -21,13 +21,9 @@
         protected _pauseTime : Date = null;     // 数据驱动暂停时间
         protected _resumeTime : Date = null;    // 数据驱动恢复时间
         protected _sleepSecnds10: number = 0;   // 数据驱动休眠时间秒数 * 10
-
         protected _maxSeconds: number = 60;     // 数据驱动最大运行秒数
         protected _lostSeconds10:number=  0;    // 数据驱动已经运行秒数 * 10
-
-        protected _level      : number=  0;     // 等级
-        protected _points     : number=  0;     // 积分
-
+        protected _stage      : number=  0;     // 关卡
 
         constructor( startTime: Date = null ) {
             this._driverState = GameDataState.IN_RUN;
@@ -52,10 +48,10 @@
 			this._lostSeconds10 = 0;
         }
 
-        public set DataState( v : GameDataState ){
+        public set dataState( v : GameDataState ){
             this._driverState = v;
         }
-        public get DataState( ): GameDataState {
+        public get dataState( ): GameDataState {
             return this._driverState;
         }
 
@@ -74,11 +70,11 @@
             }
         }
         
-        public get IsRunning(): boolean {
+        public get isRunning(): boolean {
             return this._driverState === GameDataState.IN_RUN;
         }
 
-        public update( ) {
+        public Update( ) {
             if ( this._startTime == null ) {
                 console.log("Game data driver have not been started.");
                 return;
@@ -117,18 +113,15 @@
             return this._lostSeconds10;
         }
  
-        public set level(v: number) {
-            this._level = v;
+        public StageUp():number {
+            this._stage++;
+            return this._stage;
         }
-        public get level(): number {
-            return this._level;
+        public set stage(v: number) {
+            this._stage = v;
         }
- 
-        public set points(v: number) {
-            this._points = v;
-        }
-        public get points(): number {
-            return this._points;
+        public get stage(): number {
+            return this._stage;
         }
     }
 }
