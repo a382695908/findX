@@ -232,4 +232,4 @@ var CreateBox = (function (_super) {
         console.log("mouse click:" + e);
     };
     return CreateBox;
-})(CreateView3D);
+})(CreateBaseEnv);

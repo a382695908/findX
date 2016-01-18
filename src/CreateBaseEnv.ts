@@ -1,4 +1,4 @@
-﻿class CreateView3D {
+﻿class CreateBaseEnv {
     protected _time: number = 0;
     protected _delay: number = 0;
     protected _timeDate: Date = null;
