@@ -63,8 +63,8 @@ class CreateGame extends CreateBaseEnv{
 
     private textureComplete() {
 		// 全局的鼠标/触摸事件 --- 用于进度控制操作
-        egret3d.Input.instance.addListenerKeyClick( ( self:CreateGame ) => this.interactiveOpt( this ) );
-        egret3d.Input.instance.addTouchStartCallback( ( self:CreateGame ) => this.interactiveOpt( this ) );
+        egret3d.Input.instance.addListenerKeyClick( (e:Event, self:CreateGame ) => this.interactiveOpt(e, this ) );
+        egret3d.Input.instance.addTouchStartCallback( (e:Event, self:CreateGame ) => this.interactiveOpt(e, this ) );
 
 		//环境光 
         this._lightGroup = new egret3d.LightGroup();
@@ -238,38 +238,39 @@ class CreateGame extends CreateBaseEnv{
 	}
 
     //private interactiveOpt( e : KeyboardEvent, this:CreateGame) {
-    public interactiveOpt( self:CreateGame ) {
-        //console.log(`mouse click:${e}`); 
-		switch ( self._dtDriver.dataState ){ // 操作并根据数据驱动的状态控制游戏进度选折
-		case aw.GameDataState.READY_GO:
-            self._dtDriver.StartGame();
-			self.HideInteractiveHUD();
-            break;
-		case aw.GameDataState.IN_RUN:
-            // do nothing
-            break;
-		case aw.GameDataState.IN_PAUSE:
-            self._dtDriver.Resume();
-			self.HideInteractiveHUD();
-            break;
-		case aw.GameDataState.USER_WIN:
-            // TODO: 根据等级重新生成盒子
-            self._dtDriver.StageUp();
-            self.restart()
-			self.HideInteractiveHUD();
-			break;
-		case aw.GameDataState.TIME_OVER:
-            self.restart()
-			self.HideInteractiveHUD();
-			break;
-		case aw.GameDataState.NEVER_START:
-            self.restart()
-			self.HideInteractiveHUD();
-			break;
-		default:
-            self.restart()
-			self.HideInteractiveHUD();
-			return;
+    public interactiveOpt(e:Event, self:CreateGame ) {
+		if ( `${e}` == '256' || (typeof e === "object" && 'touches' in e)) {
+			switch ( self._dtDriver.dataState ){ // 操作并根据数据驱动的状态控制游戏进度选折
+			case aw.GameDataState.READY_GO:
+        	    self._dtDriver.StartGame();
+				self.HideInteractiveHUD();
+        	    break;
+			case aw.GameDataState.IN_RUN:
+        	    // do nothing
+        	    break;
+			case aw.GameDataState.IN_PAUSE:
+        	    self._dtDriver.Resume();
+				self.HideInteractiveHUD();
+        	    break;
+			case aw.GameDataState.USER_WIN:
+        	    // TODO: 根据等级重新生成盒子
+        	    self._dtDriver.StageUp();
+        	    self.restart()
+				self.HideInteractiveHUD();
+				break;
+			case aw.GameDataState.TIME_OVER:
+        	    self.restart()
+				self.HideInteractiveHUD();
+				break;
+			case aw.GameDataState.NEVER_START:
+        	    self.restart()
+				self.HideInteractiveHUD();
+				break;
+			default:
+        	    self.restart()
+				self.HideInteractiveHUD();
+				return;
+			}
 		}
     }
 
