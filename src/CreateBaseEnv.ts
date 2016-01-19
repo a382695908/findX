@@ -10,8 +10,7 @@
     protected _boxTexture : egret3d.SkyTexture;
 
     public constructor() {
-        this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight - 20);
-        //this._viewPort = new egret3d.Rectangle(0, 0, 300, 400);
+        this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight);
         if ( document.getElementById("egret3D") ){
             document.getElementById("egret3D").style["pointer-events"] = "none";
         }
