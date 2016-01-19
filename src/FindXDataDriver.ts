@@ -55,8 +55,6 @@ namespace aw {
             this._readyTips = ` 请找到${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
             this._startTips = ` 请找到${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
             this._pauseTips = ` 暂停中，触摸/点击任意处继续... `;
-            this._winTips = ` 恭喜，你找到全部${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
-            this._failedTips = ` :(，你找到${this._pickedXCnt}个${this._charsFind} \n 点触继续... `;
 
             this.UpdateStageCtrData();
         }
@@ -135,6 +133,8 @@ namespace aw {
 
         public addPickedXCnt(v: number=1) {
             this._pickedXCnt += v;
+            this._winTips = ` 恭喜，你找到全部${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
+            this._failedTips = ` :(，你找到${this._pickedXCnt}个${this._charsFind} \n 点触继续... `;
         }
         public get pickedXCnt(): number {
             return this._pickedXCnt;

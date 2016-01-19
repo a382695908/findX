@@ -10,8 +10,9 @@
     protected _boxTexture : egret3d.SkyTexture;
 
     public constructor() {
-        //this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight - 20);
-        this._viewPort = new egret3d.Rectangle(0, 0, 300, 400);
+        this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight - 20);
+    
+        //this._viewPort = new egret3d.Rectangle(0, 0, 300, 400);
         egret3d.Egret3DDrive.requstContext3D(DeviceUtil.getGPUMode, this._viewPort, () => this.onInit3D());
     }
 
@@ -38,6 +39,10 @@
     }
 
     protected onLoadComplete(e: egret3d.Event3D): void {
+        //if ( document.getElementById("egret3D") != "undefined" ){
+            document.getElementById("egret3D").style["pointer-events"] = "none";
+        //}
+
         var sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_FR.png");
         var sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_BK.png");
         var sky_l: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_LF.png");
