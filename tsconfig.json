@@ -16,8 +16,7 @@
         "src/GameDataDriver.ts",
         "src/FindXDataDriver.ts",
         "src/CreateBaseEnv.ts",
-        "src/CreateGame.ts",
-        "src/Main.ts"
+        "src/CreateGame.ts"
     ],
     "exclude": [
         "src/CharTexture.ts"

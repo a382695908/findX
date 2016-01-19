@@ -303,3 +303,10 @@ class CreateGame extends CreateBaseEnv{
 		}
     }
 } 
+
+class Main extends egret.DisplayObjectContainer {
+    public constructor() {
+        super();
+        new CreateGame();
+    }
+}

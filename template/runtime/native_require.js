@@ -8,8 +8,7 @@ var game_file_list = [
 	"bin-debug/CreateBaseEnv.js",
 	"bin-debug/CreateGame.js",
 	"bin-debug/GameDataDriver.js",
-	"bin-debug/FindXDataDriver.js",
-	"bin-debug/Main.js",
+	"bin-debug/FindXDataDriver.js"
 	//----auto game_file_list end----
 ];
 

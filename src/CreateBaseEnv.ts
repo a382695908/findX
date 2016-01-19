@@ -11,11 +11,10 @@
 
     public constructor() {
         this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight - 20);
-        //if ( document.getElementById("egret3D") != "undefined" ){
-            document.getElementById("egret3D").style["pointer-events"] = "none";
-        //}
-    
         //this._viewPort = new egret3d.Rectangle(0, 0, 300, 400);
+        if ( document.getElementById("egret3D") ){
+            document.getElementById("egret3D").style["pointer-events"] = "none";
+        }
         egret3d.Egret3DDrive.requstContext3D(DeviceUtil.getGPUMode, this._viewPort, () => this.onInit3D());
     }
 
