@@ -40,7 +40,7 @@
 
             ctx.font = font;
             ctx.textAlign = align;
-            ctx.lineWidth =3;
+            ctx.lineWidth =4;
             ctx.textBaseline = 'middle';
             let rgbas: Array<string> = rgba.split(";");
 			let txts: Array<string> = txt.split("\n");
