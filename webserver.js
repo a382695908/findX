@@ -1,3 +1,6 @@
+/**
+   *  通过 node ./webserver.js 启动本服务
+*/
 var connect = require('connect');
 var serveStatic = require('serve-static');
 console.log("Web server http://localhost:8080/");

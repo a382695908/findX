@@ -14415,7 +14415,7 @@ declare module egret3d {
      * @version Egret 3.0
      * @platform Web,Native
      */
-    class HUD extends Object3D {
+    class HUD {
         private static singleQuadData;
         private static singleQuadIndex;
         /**
@@ -14905,6 +14905,7 @@ declare module egret3d {
         * @platform Web,Native
         */
         sphereSky: SphereSky;
+        hasHUD(hud: HUD): boolean;
         /**
         * @language zh_CN
         * 添加 HUD 到渲染列表中
@@ -14923,7 +14924,6 @@ declare module egret3d {
         * @platform Web,Native
         */
         delHUN(hud: HUD): void;
-        hasHUD(hud: HUD): boolean;
         /**
         * @language zh_CN
         * 增加wireframe进渲染列表
@@ -15055,6 +15055,7 @@ declare module egret3d {
         * @platform Web,Native
         */
         addChild3D(child3D: Object3D): void;
+        delChild3D(child3D: Object3D): void;
         /**
         * @language zh_CN
         * 渲染

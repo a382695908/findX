@@ -23729,14 +23729,12 @@ var egret3d;
      * @version Egret 3.0
      * @platform Web,Native
      */
-    var HUD = (function (_super) {
-        __extends(HUD, _super);
+    var HUD = (function () {
         /**
         * @language zh_CN
         * 构造
         */
         function HUD() {
-            _super.call(this);
             /**
             * @language zh_CN
             * @private
@@ -23937,7 +23935,7 @@ var egret3d;
         ];
         HUD.singleQuadIndex = [0, 1, 2, 0, 2, 3];
         return HUD;
-    })(egret3d.Object3D);
+    })();
     egret3d.HUD = HUD;
     /**
     * @private
@@ -24504,6 +24502,9 @@ var egret3d;
             enumerable: true,
             configurable: true
         });
+        View3D.prototype.hasHUD = function (hud) {
+            return this._hudList.indexOf(hud) >= 0;
+        };
         /**
         * @language zh_CN
         * 添加 HUD 到渲染列表中
@@ -24525,11 +24526,7 @@ var egret3d;
         */
         View3D.prototype.delHUN = function (hud) {
             var index = this._hudList.indexOf(hud);
-            if (index >= 0)
-                this._hudList.splice(index, 1);
-        };
-        View3D.prototype.hasHUD = function (hud) {
-            return this._hudList.indexOf(hud) >= 0;
+            this._hudList.splice(index, 1);
         };
         /**
         * @language zh_CN
@@ -24759,6 +24756,9 @@ var egret3d;
         */
         View3D.prototype.addChild3D = function (child3D) {
             this._scene.addChild(child3D);
+        };
+        View3D.prototype.delChild3D = function (child3D) {
+            this._scene.removeChild(child3D);
         };
         /**
         * @language zh_CN
