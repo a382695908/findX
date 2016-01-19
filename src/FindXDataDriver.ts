@@ -27,17 +27,17 @@ namespace aw {
         private _failedTips: string = "";
 
         private _stageCtr: any[] = [
-            {"ttCnt":  4, "xoCnt": 1, "tmLMT":  5, "mvSPD":  5, "rtSPD": 1, "mfCnt": 4, "xfCnt": 4, "cF": ["X" ], "cP": ["入", "人"] },
-            {"ttCnt":  6, "xoCnt": 1, "tmLMT": 13, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cF": ["白" ], "cP": ["白", "自"] },
-            {"ttCnt": 10, "xoCnt": 2, "tmLMT": 60, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cF": ["拔" ], "cP": ["拔", "拨"] },
-            {"ttCnt": 12, "xoCnt": 3, "tmLMT": 18, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cF": ["天" ], "cP": ["天", "夭"] },
-            {"ttCnt": 14, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cF": ["大" ], "cP": ["大", "犬"] },
-            {"ttCnt": 16, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["日" ], "cP": ["日", "曰"] },
-            {"ttCnt": 18, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["籍" ], "cP": ["籍", "藉"] },
-            {"ttCnt": 20, "xoCnt": 4, "tmLMT": 12, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["阡", "迁", "歼", "奸" ], "cP": ["阡", "迁", "歼", "奸"] },
-            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 12, "mvSPD":  8, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["慕", "幕", "墓", "暮", "蓦", "募" ], "cP": ["慕", "幕", "墓", "暮", "蓦", "募"] },
-            {"ttCnt": 26, "xoCnt": 4, "tmLMT": 12, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["稍", "梢", "捎" ], "cP": ["稍", "梢", "捎" ] },
-            {"ttCnt": 28, "xoCnt": 4, "tmLMT": 15, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["魏", "巍", "翼", "冀" ], "cP": ["魏", "巍", "翼", "冀"] }
+            {"ttCnt":  4, "xoCnt": 1, "tmLMT":  5, "mvSPD":  5, "rtSPD": 1, "mfCnt": 4, "xfCnt": 4, "cF": ["X" ],                                   "cP": ["入", "人"] },
+            {"ttCnt":  8, "xoCnt": 3, "tmLMT": 13, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cF": ["白", "自", "日", "目"],                 "cP": ["白", "自", "日", "目"] },
+            {"ttCnt": 10, "xoCnt": 2, "tmLMT": 60, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cF": ["拔", "拨" ],                            "cP": ["拔", "拨"] },
+            {"ttCnt": 12, "xoCnt": 3, "tmLMT": 18, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cF": ["天", "夭" ],                            "cP": ["天", "夭"] },
+            {"ttCnt": 14, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cF": ["大", "犬" ],                            "cP": ["大", "犬"] },
+            {"ttCnt": 16, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["日", "曰", "目" ],                      "cP": ["日", "曰", "目"] },
+            {"ttCnt": 18, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["籍", "藉" ],                            "cP": ["籍", "藉"] },
+            {"ttCnt": 20, "xoCnt": 4, "tmLMT": 12, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["阡", "迁", "歼", "奸" ],                "cP": ["阡", "迁", "歼", "奸"] },
+            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 12, "mvSPD":  8, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["慕", "幕", "墓", "暮", "蓦", "募" ],    "cP": ["慕", "幕", "墓", "暮", "蓦", "募"] },
+            {"ttCnt": 26, "xoCnt": 4, "tmLMT": 12, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["稍", "梢", "捎" ],                      "cP": ["稍", "梢", "捎" ] },
+            {"ttCnt": 28, "xoCnt": 4, "tmLMT": 15, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["魏", "巍", "翼", "冀" ],                "cP": ["魏", "巍", "翼", "冀"] }
         ];
 
         constructor( startTime: Date = null ) {
