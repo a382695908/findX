@@ -7,15 +7,15 @@ namespace aw {
      * 棋盘格纹理
      */
     export class FindXDataDriver extends aw.GameDataDriver {
-        protected _totalObjCnt:number = 12;// 物体总数
-        protected _XObjCnt:    number =  2;// 需要找到的目标物体数
+        protected _pickedXCnt: number =  0; // 当前已经拾取的目标物体数
+
+        protected _totalObjCnt:number =  4;// 物体总数
+        protected _XObjCnt:    number =  1;// 需要找到的目标物体数
         protected _maxFaceCnt: number =  4;// 物体的最大面数
         protected _XFaceCnt:   number =  4;// 物体上有特殊字符的面数
 
-        protected _moveSpeed:  number = 3; // 移动线速度
+        protected _moveSpeed:  number = 5; // 移动线速度
         protected _rotateSpeed:number = 1; // 移动转速
-
-        protected _pickedXCnt: number =  0; // 当前已经拾取的目标物体数
 
         private _charsFind: string = "X";   // 特殊字符
         private _charsPool: string[] = ["入", "人" ];  // 干扰字符
@@ -29,7 +29,7 @@ namespace aw {
         private _stageCtr: any[] = [
             {"ttCnt":  4, "xoCnt": 1, "tmLMT":  5, "mvSPD":  5, "rtSPD": 1, "mfCnt": 4, "xfCnt": 4, "cF": ["X" ], "cP": ["入", "人"] },
             {"ttCnt":  6, "xoCnt": 1, "tmLMT": 13, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cF": ["白" ], "cP": ["白", "自"] },
-            {"ttCnt": 10, "xoCnt": 2, "tmLMT": 15, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cF": ["拔" ], "cP": ["拔", "拨"] },
+            {"ttCnt": 10, "xoCnt": 2, "tmLMT": 60, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cF": ["拔" ], "cP": ["拔", "拨"] },
             {"ttCnt": 12, "xoCnt": 3, "tmLMT": 18, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cF": ["天" ], "cP": ["天", "夭"] },
             {"ttCnt": 14, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cF": ["大" ], "cP": ["大", "犬"] },
             {"ttCnt": 16, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["日" ], "cP": ["日", "曰"] },
@@ -43,20 +43,20 @@ namespace aw {
         constructor( startTime: Date = null ) {
             super( startTime );
             this._pickedXCnt = 0;
-            this._readyTips = ` 请找到${this._XObjCnt}个${this._charsFind} `;
-            this._startTips = ` 请找到${this._XObjCnt}个${this._charsFind} `;
+            this._readyTips = ` 请找到${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
+            this._startTips = ` 请找到${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
             this._pauseTips = ` 暂停中，触摸/点击任意处继续... `;
-            this._winTips = ` 恭喜，你找到全部${this._XObjCnt}个${this._charsFind} `;
-            this._failedTips = ` :(，你找到${this._pickedXCnt}个${this._charsFind} `;
+            this._winTips = ` 恭喜，你找到全部${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
+            this._failedTips = ` :(，你找到${this._pickedXCnt}个${this._charsFind} \n 点触继续... `;
         }
         public StartGame( startTime: Date = null ){
 			super.StartGame( startTime );
             this._pickedXCnt = 0;
-            this._readyTips = ` 请找到${this._XObjCnt}个${this._charsFind} `;
-            this._startTips = ` 请找到${this._XObjCnt}个${this._charsFind} `;
+            this._readyTips = ` 请找到${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
+            this._startTips = ` 请找到${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
             this._pauseTips = ` 暂停中，触摸/点击任意处继续... `;
-            this._winTips = ` 恭喜，你找到全部${this._XObjCnt}个${this._charsFind} `;
-            this._failedTips = ` :(，你找到${this._pickedXCnt}个${this._charsFind} `;
+            this._winTips = ` 恭喜，你找到全部${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
+            this._failedTips = ` :(，你找到${this._pickedXCnt}个${this._charsFind} \n 点触继续... `;
 
             this.UpdateStageCtrData();
         }

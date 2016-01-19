@@ -17,7 +17,7 @@
 
     export class GameDataDriver {
         protected _driverState : GameDataState = GameDataState.NEVER_START;  // 数据驱动的状态
-        protected _maxSeconds: number = 20;     // 数据驱动最大运行秒数
+        protected _maxSeconds: number =  5;     // 数据驱动最大运行秒数
         protected _startTime : Date = null;     // 数据驱动开始时间    
         protected _pauseTime : Date = null;     // 数据驱动暂停时间
         protected _resumeTime : Date = null;    // 数据驱动恢复时间
