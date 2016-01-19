@@ -22,28 +22,34 @@
         this._cameraCtl.setEyesLength(1000);
 
         this.onView3DInitComplete();
-        this._time = new Date().getTime();
-        requestAnimationFrame(() => this.onUpdate());
+
+        egret3d.AssetsManager.getInstance().setRootURL("resource/");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_BK.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_FR.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_LF.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_RT.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_UP.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_DN.png");
+        egret3d.AssetsManager.getInstance().addEventListener(egret3d.Event3D.EVENT_LOAD_COMPLETE,(e: egret3d.Event3D) => this.onLoadComplete(e));
+        egret3d.AssetsManager.getInstance().startLoad();
     }
 
     protected onView3DInitComplete(): void {
-        let fimg:HTMLImageElement = <HTMLImageElement>document.getElementById("t1");
-        let bimg:HTMLImageElement = <HTMLImageElement>document.getElementById("t2");
-        let limg:HTMLImageElement = <HTMLImageElement>document.getElementById("t3");
-        let rimg:HTMLImageElement = <HTMLImageElement>document.getElementById("t4");
-        let uimg:HTMLImageElement = <HTMLImageElement>document.getElementById("t5");
-        let dimg:HTMLImageElement = <HTMLImageElement>document.getElementById("t6");
+    }
 
-        let front:egret3d.TextureBase = new egret3d.TextureBase(); front.imageData= fimg;
-        let back:egret3d.TextureBase  = new egret3d.TextureBase(); back.imageData = bimg;
-        let left:egret3d.TextureBase  = new egret3d.TextureBase(); left.imageData = limg;
-        let right:egret3d.TextureBase = new egret3d.TextureBase(); right.imageData= rimg;
-        let up:egret3d.TextureBase    = new egret3d.TextureBase(); up.imageData   = uimg;
-        let down:egret3d.TextureBase  = new egret3d.TextureBase(); down.imageData = dimg;
-        let skyTexture: egret3d.SkyTexture = new egret3d.SkyTexture(front, back,
-                                                                    left, right,
-                                                                    up, down);
-        this._view3D.sky = new egret3d.Sky(skyTexture);
+    protected onLoadComplete(e: egret3d.Event3D): void {
+        var sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_FR.png");
+        var sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_BK.png");
+        var sky_l: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_LF.png");
+        var sky_r: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_RT.png");
+        var sky_u: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_UP.png");
+        var sky_d: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_DN.png");
+        var skyTexture: egret3d.SkyTexture = new egret3d.SkyTexture(sky_f,sky_b,sky_l,sky_r,sky_u,sky_d);
+        var sky: egret3d.Sky = new egret3d.Sky(skyTexture);
+        this._view3D.sky = sky;
+
+        this._time = new Date().getTime();
+        requestAnimationFrame(() => this.onUpdate());
     }
     
     protected onUpdate(): void {

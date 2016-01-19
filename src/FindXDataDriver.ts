@@ -27,10 +27,10 @@ namespace aw {
         private _failedTips: string = "";
 
         private _stageCtr: any[] = [
-            {"ttCnt":  4, "xoCnt": 1, "tmLMT":  2, "mvSPD":  5, "rtSPD": 1, "mfCnt": 4, "xfCnt": 4, "cF": ["X" ], "cP": ["入", "人"] },
-            {"ttCnt":  6, "xoCnt": 1, "tmLMT":  3, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cF": ["白" ], "cP": ["白", "自"] },
-            {"ttCnt": 10, "xoCnt": 2, "tmLMT":  5, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cF": ["拔" ], "cP": ["拔", "拨"] },
-            {"ttCnt": 12, "xoCnt": 3, "tmLMT":  8, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cF": ["天" ], "cP": ["天", "夭"] },
+            {"ttCnt":  4, "xoCnt": 1, "tmLMT":  5, "mvSPD":  5, "rtSPD": 1, "mfCnt": 4, "xfCnt": 4, "cF": ["X" ], "cP": ["入", "人"] },
+            {"ttCnt":  6, "xoCnt": 1, "tmLMT": 13, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cF": ["白" ], "cP": ["白", "自"] },
+            {"ttCnt": 10, "xoCnt": 2, "tmLMT": 15, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cF": ["拔" ], "cP": ["拔", "拨"] },
+            {"ttCnt": 12, "xoCnt": 3, "tmLMT": 18, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cF": ["天" ], "cP": ["天", "夭"] },
             {"ttCnt": 14, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cF": ["大" ], "cP": ["大", "犬"] },
             {"ttCnt": 16, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["日" ], "cP": ["日", "曰"] },
             {"ttCnt": 18, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["籍" ], "cP": ["籍", "藉"] },
@@ -178,7 +178,7 @@ namespace aw {
             if ( cIdx >= this._stageCtr[idx]["cF"].length ) cIdx = this._stageCtr[idx]["cF"].length - 1;
             this._charsFind   = this._stageCtr[idx]["cF"][cIdx]
             this._charsPool   = []; //this._stageCtr[idx]["cP"]
-            for(let c in this._stageCtr[idx]["cP"]) {
+            for(let c of this._stageCtr[idx]["cP"]) {
                 if ( c != this._charsFind ){ this._charsPool.push( c ); }
             }
         }

@@ -59,7 +59,6 @@ class CreateGame extends CreateBaseEnv{
 
     protected onView3DInitComplete(): void {
         this.textureComplete();
-        super.onView3DInitComplete();
     }
 
     private textureComplete() {
@@ -72,9 +71,8 @@ class CreateGame extends CreateBaseEnv{
         let directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
         directLight.diffuse = 0xAAAAAA;
         this._lightGroup.addDirectLight(directLight);
-
 		// 生成盒子
-        this.UpdateCharBox();
+        this.GenCharBox();
 
 		// 进度信息
 		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
@@ -89,7 +87,7 @@ class CreateGame extends CreateBaseEnv{
         this._cameraCtl.setEyesLength(3500);
     }
 
-    protected UpdateCharBox() {
+    protected GenCharBox() {
         for (let idx:number = 0; idx < this._dtDriver.totalObjCnt; ++idx){
             let box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
@@ -106,7 +104,7 @@ class CreateGame extends CreateBaseEnv{
                 this._xBoxIds.push( box.id );
             }
             else{
-                let n: number = Math.random() > 0.5 ? 1 : 0;
+                let n: number = Math.floor(Math.random() * this._dtDriver.charsPool.length);
                 aw.CharTexture.CreateCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsPool[n], 
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
@@ -220,11 +218,23 @@ class CreateGame extends CreateBaseEnv{
 
 	protected restart() {
 		this._dtDriver.StartGame();
-        for(let id in this._boxInfo ){
-            let bi = this._boxInfo[id];
-            if ( bi !== null ) continue;
-			this._boxInfo[id] = this._boxBak[id];
-		}
+        //for(let id in this._boxInfo ){
+        //    let bi = this._boxInfo[id];
+        //    if ( bi !== null ) continue;
+		//	this._boxInfo[id] = this._boxBak[id];
+		//}
+        for ( let id in this._boxBak){
+            if ( this._boxBak[id] != null ){
+                this._view3D.delChild3D( this._boxBak[id]['box'] );
+                delete this._boxBak[id];
+            }
+        }
+
+        this._boxInfo = {};
+        this._boxBak  = {};
+        this._xBoxIds = [];
+		// 生成盒子
+        this.GenCharBox();
 	}
 
     //private interactiveOpt( e : KeyboardEvent, this:CreateGame) {
