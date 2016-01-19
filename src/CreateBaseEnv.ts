@@ -11,6 +11,9 @@
 
     public constructor() {
         this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight - 20);
+        //if ( document.getElementById("egret3D") != "undefined" ){
+            document.getElementById("egret3D").style["pointer-events"] = "none";
+        //}
     
         //this._viewPort = new egret3d.Rectangle(0, 0, 300, 400);
         egret3d.Egret3DDrive.requstContext3D(DeviceUtil.getGPUMode, this._viewPort, () => this.onInit3D());
@@ -39,9 +42,6 @@
     }
 
     protected onLoadComplete(e: egret3d.Event3D): void {
-        //if ( document.getElementById("egret3D") != "undefined" ){
-            document.getElementById("egret3D").style["pointer-events"] = "none";
-        //}
 
         var sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_FR.png");
         var sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_BK.png");
