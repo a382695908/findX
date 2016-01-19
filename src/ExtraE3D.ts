@@ -46,6 +46,8 @@
 			let txts: Array<string> = txt.split("\n");
 			let minH : number = h/txts.length/2;
 			for(let idx:number = 0; idx < txts.length; idx++){
+                let txtW = ctx.measureText( txts[idx] ).width; // TODO： 根据文字宽度自动调整 纹理大小
+
                 if ( idx+1 <= rgbas.length && rgbas[idx].length > 3 ){
                     ctx.fillStyle = rgbas[idx];
                 }
