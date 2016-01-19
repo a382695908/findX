@@ -26,6 +26,20 @@ namespace aw {
         private _winTips: string = "";
         private _failedTips: string = "";
 
+        private _stageCtr: any[] = [
+            {"ttCnt":  4, "xoCnt": 1, "tmLMT":  2, "mvSPD":  5, "rtSPD": 1, "mfCnt": 4, "xfCnt": 4, "cF": ["X" ], "cP": ["入", "人"] },
+            {"ttCnt":  6, "xoCnt": 1, "tmLMT":  3, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cF": ["白" ], "cP": ["白", "自"] },
+            {"ttCnt": 10, "xoCnt": 2, "tmLMT":  5, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cF": ["拔" ], "cP": ["拔", "拨"] },
+            {"ttCnt": 12, "xoCnt": 3, "tmLMT":  8, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cF": ["天" ], "cP": ["天", "夭"] },
+            {"ttCnt": 14, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cF": ["大" ], "cP": ["大", "犬"] },
+            {"ttCnt": 16, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["日" ], "cP": ["日", "曰"] },
+            {"ttCnt": 18, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["籍" ], "cP": ["籍", "藉"] },
+            {"ttCnt": 20, "xoCnt": 4, "tmLMT": 12, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["阡", "迁", "歼", "奸" ], "cP": ["阡", "迁", "歼", "奸"] },
+            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 12, "mvSPD":  8, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["慕", "幕", "墓", "暮", "蓦", "募" ], "cP": ["慕", "幕", "墓", "暮", "蓦", "募"] },
+            {"ttCnt": 26, "xoCnt": 4, "tmLMT": 12, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["稍", "梢", "捎" ], "cP": ["稍", "梢", "捎" ] },
+            {"ttCnt": 28, "xoCnt": 4, "tmLMT": 15, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cF": ["魏", "巍", "翼", "冀" ], "cP": ["魏", "巍", "翼", "冀"] }
+        ];
+
         constructor( startTime: Date = null ) {
             super( startTime );
             this._pickedXCnt = 0;
@@ -43,6 +57,8 @@ namespace aw {
             this._pauseTips = ` 暂停中，触摸/点击任意处继续... `;
             this._winTips = ` 恭喜，你找到全部${this._XObjCnt}个${this._charsFind} `;
             this._failedTips = ` :(，你找到${this._pickedXCnt}个${this._charsFind} `;
+
+            this.UpdateStageCtrData();
         }
 
         public set totalObjCnt(v: number) {
@@ -134,6 +150,36 @@ namespace aw {
 			if ( this._pickedXCnt == this._XObjCnt ) {
                 this._driverState = GameDataState.USER_WIN;
                 return;
+            }
+        }
+
+        public StageUp(): number {
+            super.StageUp();
+            this.UpdateStageCtrData();
+
+            return this.stage;
+        }
+
+        private UpdateStageCtrData() {
+            let multi = Math.ceil( this.stage / this._stageCtr.length );
+            if (multi == 0 ) multi = 1;
+            let idx = this.stage % this._stageCtr.length;
+
+            this._totalObjCnt = multi * this._stageCtr[idx]["ttCnt"]
+            this._XObjCnt     = multi * this._stageCtr[idx]["xoCnt"]
+            this._maxFaceCnt  = multi * this._stageCtr[idx]["mfCnt"]
+            this._XFaceCnt    = multi * this._stageCtr[idx]["xfCnt"]
+            this._moveSpeed   = multi * this._stageCtr[idx]["mvSPD"]
+            this._rotateSpeed = multi * this._stageCtr[idx]["rtSPD"]
+
+            this.maxSeconds   = multi * this._stageCtr[idx]["tmLMT"]
+
+            let cIdx = multi - 1;
+            if ( cIdx >= this._stageCtr[idx]["cF"].length ) cIdx = this._stageCtr[idx]["cF"].length - 1;
+            this._charsFind   = this._stageCtr[idx]["cF"][cIdx]
+            this._charsPool   = []; //this._stageCtr[idx]["cP"]
+            for(let c in this._stageCtr[idx]["cP"]) {
+                if ( c != this._charsFind ){ this._charsPool.push( c ); }
             }
         }
     }

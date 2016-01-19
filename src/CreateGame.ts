@@ -42,6 +42,8 @@ class CreateGame extends CreateBaseEnv{
     protected _boxTxtureFrmBgColor: string="rgba(0,0,255,1)";
     protected _boxTxtureFrmW: number=3;
 
+    private _lightGroup: egret3d.LightGroup = null;
+
     public constructor() {
         super();
         this._width  = this._viewPort.width;
@@ -66,18 +68,35 @@ class CreateGame extends CreateBaseEnv{
         egret3d.Input.instance.addTouchStartCallback( ( self:CreateGame ) => this.interactiveOpt( this ) );
 
 		//环境光 
-        let lightGroup: egret3d.LightGroup = new egret3d.LightGroup();
+        this._lightGroup = new egret3d.LightGroup();
         let directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
         directLight.diffuse = 0xAAAAAA;
-        lightGroup.addDirectLight(directLight);
+        this._lightGroup.addDirectLight(directLight);
 
 		// 生成盒子
+        this.UpdateCharBox();
+
+		// 进度信息
+		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
+		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt})\n `
+						+ `计时:${restTime}\n 等级:${this._dtDriver.stage}`;
+        this.updateShowTips( tips );
+
+		// 交互信息
+		let inter_tips:string = ` 请找出${this._dtDriver.xObjCnt}个 ${this._dtDriver.charsFind} 字符\n  触摸任意地方继续  `
+        this.updateInteractiveTips( inter_tips);
+
+        this._cameraCtl.setEyesLength(3500);
+    }
+
+    protected UpdateCharBox() {
         for (let idx:number = 0; idx < this._dtDriver.totalObjCnt; ++idx){
             let box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
             box.addEventListener(egret3d.Event3D.MOUSE_CLICK, (e: egret3d.Event3D) => this.onPickupBox(e));
             box.addEventListener(egret3d.Event3D.TOUCH_START, (e: egret3d.Event3D) => this.onPickupBox(e));
-            box.material.lightGroup = lightGroup;
+            box.material.lightGroup = this._lightGroup;
+
             this._view3D.addChild3D(box);
 
             if ( this._xBoxIds.length < this._dtDriver.xObjCnt ){
@@ -114,18 +133,6 @@ class CreateGame extends CreateBaseEnv{
             this._boxInfo[box.id] = bi;
             this._boxBak[box.id]  = bi;
         }
-
-		// 进度信息
-		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
-		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt})\n `
-						+ `计时:${restTime}\n 等级:${this._dtDriver.stage}`;
-        this.updateShowTips( tips );
-
-		// 交互信息
-		let inter_tips:string = ` 请找出${this._dtDriver.xObjCnt}个 ${this._dtDriver.charsFind} 字符\n  触摸任意地方继续  `
-        this.updateInteractiveTips( inter_tips);
-
-        this._cameraCtl.setEyesLength(3500);
     }
 
     protected updateShowTips( tips:string ) {
@@ -236,6 +243,7 @@ class CreateGame extends CreateBaseEnv{
 			self.HideInteractiveHUD();
             break;
 		case aw.GameDataState.USER_WIN:
+            // TODO: 根据等级重新生成盒子
             self._dtDriver.StageUp();
             self.restart()
 			self.HideInteractiveHUD();
