@@ -1,5 +1,6 @@
 class CreateGame extends CreateBaseEnv{
     protected _dtDriver: aw.FindXDataDriver = null;
+    private _uiReady: boolean = false;
 
     protected _boxInfo : any = {};		 //实时操作的盒子存储
     protected _boxBak  : any = {};       //生产队盒子的原始备份
@@ -51,6 +52,7 @@ class CreateGame extends CreateBaseEnv{
         this._depth  = this._viewPort.width;
 
         this._dtDriver = new aw.FindXDataDriver();
+        this._uiReady = false;
     }
 
     public get dataDriver() :aw.FindXDataDriver {
@@ -91,8 +93,8 @@ class CreateGame extends CreateBaseEnv{
         for (let idx:number = 0; idx < this._dtDriver.totalObjCnt; ++idx){
             let box : egret3d.Mesh = new egret3d.Mesh(new egret3d.CubeGeometry(), new egret3d.TextureMaterial());
             box.mouseEnable = true;
-            box.addEventListener(egret3d.Event3D.MOUSE_CLICK, (e: egret3d.Event3D) => this.onPickupBox(e));
-            box.addEventListener(egret3d.Event3D.TOUCH_START, (e: egret3d.Event3D) => this.onPickupBox(e));
+            box.addEventListener(egret3d.Event3D.MOUSE_CLICK, (e: egret3d.Event3D) => this.OnPickupBox(e));
+            box.addEventListener(egret3d.Event3D.TOUCH_START, (e: egret3d.Event3D) => this.OnPickupBox(e));
             box.material.lightGroup = this._lightGroup;
 
             this._view3D.addChild3D(box);
@@ -166,26 +168,41 @@ class CreateGame extends CreateBaseEnv{
     }
 
     protected UpdateBoxView(){
-        for(let id in this._boxInfo ){
-            let bi = this._boxInfo[id];
-            if ( bi == null ) continue;
-
-            bi['box'].rotationX += bi['rotationX'];
-            bi['box'].rotationY += bi['rotationY'];
-            bi['box'].rotationZ += bi['rotationZ'];
-
-            bi['box'].x += bi['moveX'];
-            bi['box'].y += bi['moveY'];
-            bi['box'].z += bi['moveZ'];
-
-            if ( bi['box'].x < -this._width || bi['box'].x > this._width ){
-                bi['moveX'] = -bi['moveX']
+        if ( this._uiReady === false ){ // 初始化到空间乱序，避免一开始集中被批量选中
+            this._uiReady = true;
+            for(let id in this._boxInfo ){
+                let bi = this._boxInfo[id];
+                if ( bi == null ) continue;
+                bi['box'].rotationX = (Math.random()*2*Math.PI - Math.PI);
+                bi['box'].rotationY = (Math.random()*2*Math.PI - Math.PI);
+                bi['box'].rotationZ = (Math.random()*2*Math.PI - Math.PI);
+                bi['box'].x = (Math.random()*2 - 1) *  this._width;
+                bi['box'].y = (Math.random()*2 - 1) *  this._height;
+                bi['box'].z = (Math.random()*2 - 1) *  this._depth;
             }
-            if ( bi['box'].y < -this._height || bi['box'].y > this._height ){
-                bi['moveY'] = -bi['moveY']
-            }
-            if ( bi['box'].z < -this._depth || bi['box'].z > this._depth ){
-                bi['moveZ'] = -bi['moveZ']
+        }
+        else{
+            for(let id in this._boxInfo ){
+                let bi = this._boxInfo[id];
+                if ( bi == null ) continue;
+
+                bi['box'].rotationX += bi['rotationX'];
+                bi['box'].rotationY += bi['rotationY'];
+                bi['box'].rotationZ += bi['rotationZ'];
+
+                bi['box'].x += bi['moveX'];
+                bi['box'].y += bi['moveY'];
+                bi['box'].z += bi['moveZ'];
+
+                if ( bi['box'].x < -this._width || bi['box'].x > this._width ){
+                    bi['moveX'] = -bi['moveX']
+                }
+                if ( bi['box'].y < -this._height || bi['box'].y > this._height ){
+                    bi['moveY'] = -bi['moveY']
+                }
+                if ( bi['box'].z < -this._depth || bi['box'].z > this._depth ){
+                    bi['moveZ'] = -bi['moveZ']
+                }
             }
         }
     }
@@ -197,7 +214,8 @@ class CreateGame extends CreateBaseEnv{
         this.updateShowTips( tips );
     }
 
-    protected onPickupBox(e: egret3d.Event3D): void {
+    protected OnPickupBox(e: egret3d.Event3D): void {
+        if ( this._uiReady === false ) return;
         if ( this._boxInfo[ e.currentTarget.id ] == null ){
             //this._boxInfo[ e.currentTarget.id ] = this._boxBak[ e.currentTarget.id ];
         }
@@ -206,6 +224,7 @@ class CreateGame extends CreateBaseEnv{
                 if ( e.currentTarget.id == this._xBoxIds[idx] ){
                     this._boxInfo[ e.currentTarget.id ] = null;
                     this._dtDriver.addPickedXCnt();
+					this.UpdateShowInfo();
                     break;
                 }
             }
@@ -216,13 +235,10 @@ class CreateGame extends CreateBaseEnv{
 		this._view3D.delHUN( this._hudInter );
 	}
 
+    //重新开始游戏
 	protected restart() {
 		this._dtDriver.StartGame();
-        //for(let id in this._boxInfo ){
-        //    let bi = this._boxInfo[id];
-        //    if ( bi !== null ) continue;
-		//	this._boxInfo[id] = this._boxBak[id];
-		//}
+
         for ( let id in this._boxBak){
             if ( this._boxBak[id] != null ){
                 this._view3D.delChild3D( this._boxBak[id]['box'] );
@@ -233,11 +249,13 @@ class CreateGame extends CreateBaseEnv{
         this._boxInfo = {};
         this._boxBak  = {};
         this._xBoxIds = [];
+
 		// 生成盒子
         this.GenCharBox();
+        if ( this._uiReady === true ) this._uiReady = false;
 	}
 
-    //private interactiveOpt( e : KeyboardEvent, this:CreateGame) {
+    // 点触改变状态
     public interactiveOpt(e:Event, self:CreateGame ) {
 		if ( `${e}` == '256' || (typeof e === "object" && 'touches' in e)) {
 			switch ( self._dtDriver.dataState ){ // 操作并根据数据驱动的状态控制游戏进度选折
@@ -253,7 +271,6 @@ class CreateGame extends CreateBaseEnv{
 				self.HideInteractiveHUD();
         	    break;
 			case aw.GameDataState.USER_WIN:
-        	    // TODO: 根据等级重新生成盒子
         	    self._dtDriver.StageUp();
         	    self.restart()
 				self.HideInteractiveHUD();
@@ -274,10 +291,10 @@ class CreateGame extends CreateBaseEnv{
 		}
     }
 
+    // 根据状态刷新UI
     protected onUpdate(): void {
         super.onUpdate();
         this._dtDriver.Update(); // 数据计算的更新
-
 		switch ( this._dtDriver.dataState ){ // 根据数据驱动的结果，控制游戏进度选折
 		case aw.GameDataState.READY_GO:
             this.updateInteractiveTips( this._dtDriver.readyTips );
