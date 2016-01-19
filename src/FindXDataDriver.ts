@@ -133,8 +133,6 @@ namespace aw {
 
         public addPickedXCnt(v: number=1) {
             this._pickedXCnt += v;
-            this._winTips = ` 恭喜，你找到全部${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
-            this._failedTips = ` :(，你找到${this._pickedXCnt}个${this._charsFind} \n 点触继续... `;
         }
         public get pickedXCnt(): number {
             return this._pickedXCnt;
@@ -142,7 +140,6 @@ namespace aw {
 
         public Update( ){
             if ( this._startTime == null ) {
-         	    //this._driverState = GameDataState.NEVER_START;
          	    this._driverState = GameDataState.READY_GO;
                 return;
             }
@@ -151,6 +148,8 @@ namespace aw {
                 this._driverState = GameDataState.USER_WIN;
                 return;
             }
+            this._winTips = ` 恭喜，你找到全部${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
+            this._failedTips = ` :(，你找到${this._pickedXCnt}个${this._charsFind} \n 点触继续... `;
         }
 
         public StageUp(): number {
