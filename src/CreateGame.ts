@@ -79,7 +79,7 @@ class CreateGame extends CreateBaseEnv{
 		// 进度信息
 		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
 		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt})\n `
-						+ `计时:${restTime}\n 等级:${this._dtDriver.stage}`;
+						+ `计时:${restTime}\n 关卡:${this._dtDriver.stage}`;
         this.updateShowTips( tips );
 
 		// 交互信息
@@ -210,7 +210,7 @@ class CreateGame extends CreateBaseEnv{
     protected UpdateShowInfo(){
 		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
 		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt})\n `
-						+ `计时:${restTime}\n 等级:${this._dtDriver.stage}`;
+						+ `计时:${restTime}\n 关卡:${this._dtDriver.stage}`;
         this.updateShowTips( tips );
     }
 
