@@ -336,6 +336,7 @@ class CreateGame extends CreateBaseEnv{
             break;
 		case aw.GameDataState.USER_WIN:
             this.updateInteractiveTips( this._dtDriver.winTips );
+            this.UpdateBoxView();   // 更新盒子飞行
 			break;
 		case aw.GameDataState.TIME_OVER:
             this.updateInteractiveTips( this._dtDriver.failedTips );
