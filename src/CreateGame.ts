@@ -130,8 +130,77 @@ class CreateGame extends CreateBaseEnv{
             bi['box'].rotationY = bi['rotationY'];
             bi['box'].rotationZ = bi['rotationZ'];
 
+            bi['scaleX'] = 1;
+            bi['scaleY'] = 1;
+            bi['scaleZ'] = 1;
+            bi['box'].scaleX = bi['scaleX'];
+            bi['box'].scaleY = bi['scaleY'];
+            bi['box'].scaleZ = bi['scaleZ'];
+
             this._boxInfo[box.id] = bi;
             this._boxBak[box.id]  = bi;
+        }
+    }
+
+    protected UpdateBoxView(){
+        if ( this._uiReady === false ){ // 初始化到空间乱序，避免一开始集中被批量选中
+            this._uiReady = true;
+            for(let id in this._boxInfo ){
+                let bi = this._boxInfo[id];
+                if ( bi == null ) continue;
+                bi['box'].rotationX = (Math.random()*2*Math.PI - Math.PI);
+                bi['box'].rotationY = (Math.random()*2*Math.PI - Math.PI);
+                bi['box'].rotationZ = (Math.random()*2*Math.PI - Math.PI);
+                bi['box'].x = (Math.random()*2 - 1) *  this._width;
+                bi['box'].y = (Math.random()*2 - 1) *  this._height;
+                bi['box'].z = (Math.random()*2 - 1) *  this._depth;
+            }
+        }
+        else{
+            for(let id in this._boxInfo ){
+                let bi = this._boxInfo[id];
+                if ( bi === null ) {
+                    bi = this._boxBak[id];
+                    if (bi['box'].scaleX <= 0.0001 || bi['box'].scaleY <= 0.0001 || bi['box'].scaleZ <= 0.0001 ) {
+                        this._view3D.delChild3D( bi['box'] );
+                    }
+                    else{
+                        if (bi['box'].scaleX === 1 && bi['box'].scaleY === 1 && bi['box'].scaleZ === 1 ) {
+                            bi['scaleX'] = 1.1;
+                            bi['scaleY'] = 1.1;
+                            bi['scaleZ'] = 1.1;
+                        }
+                        else if (bi['box'].scaleX >= 4 || bi['box'].scaleY >= 4 || bi['box'].scaleZ >= 4 ) {
+                            bi['scaleX'] = 0.95;
+                            bi['scaleY'] = 0.95;
+                            bi['scaleZ'] = 0.95;
+                        }
+                        
+                        bi['box'].scaleX *= bi['scaleX'];
+                        bi['box'].scaleY *= bi['scaleY'];
+                        bi['box'].scaleZ *= bi['scaleZ'];
+                    }
+                }
+                else{
+                    bi['box'].rotationX += bi['rotationX'];
+                    bi['box'].rotationY += bi['rotationY'];
+                    bi['box'].rotationZ += bi['rotationZ'];
+
+                    bi['box'].x += bi['moveX'];
+                    bi['box'].y += bi['moveY'];
+                    bi['box'].z += bi['moveZ'];
+
+                    if ( bi['box'].x < -this._width || bi['box'].x > this._width ){
+                        bi['moveX'] = -bi['moveX']
+                    }
+                    if ( bi['box'].y < -this._height || bi['box'].y > this._height ){
+                        bi['moveY'] = -bi['moveY']
+                    }
+                    if ( bi['box'].z < -this._depth || bi['box'].z > this._depth ){
+                        bi['moveZ'] = -bi['moveZ']
+                    }
+                }
+            }
         }
     }
 
@@ -165,46 +234,6 @@ class CreateGame extends CreateBaseEnv{
 		else{
             this._view3D.addHUD(this._hudInter );
 		}
-    }
-
-    protected UpdateBoxView(){
-        if ( this._uiReady === false ){ // 初始化到空间乱序，避免一开始集中被批量选中
-            this._uiReady = true;
-            for(let id in this._boxInfo ){
-                let bi = this._boxInfo[id];
-                if ( bi == null ) continue;
-                bi['box'].rotationX = (Math.random()*2*Math.PI - Math.PI);
-                bi['box'].rotationY = (Math.random()*2*Math.PI - Math.PI);
-                bi['box'].rotationZ = (Math.random()*2*Math.PI - Math.PI);
-                bi['box'].x = (Math.random()*2 - 1) *  this._width;
-                bi['box'].y = (Math.random()*2 - 1) *  this._height;
-                bi['box'].z = (Math.random()*2 - 1) *  this._depth;
-            }
-        }
-        else{
-            for(let id in this._boxInfo ){
-                let bi = this._boxInfo[id];
-                if ( bi == null ) continue;
-
-                bi['box'].rotationX += bi['rotationX'];
-                bi['box'].rotationY += bi['rotationY'];
-                bi['box'].rotationZ += bi['rotationZ'];
-
-                bi['box'].x += bi['moveX'];
-                bi['box'].y += bi['moveY'];
-                bi['box'].z += bi['moveZ'];
-
-                if ( bi['box'].x < -this._width || bi['box'].x > this._width ){
-                    bi['moveX'] = -bi['moveX']
-                }
-                if ( bi['box'].y < -this._height || bi['box'].y > this._height ){
-                    bi['moveY'] = -bi['moveY']
-                }
-                if ( bi['box'].z < -this._depth || bi['box'].z > this._depth ){
-                    bi['moveZ'] = -bi['moveZ']
-                }
-            }
-        }
     }
 
     protected UpdateShowInfo(){
