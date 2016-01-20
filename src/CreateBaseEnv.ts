@@ -26,12 +26,12 @@
         this.onView3DInitComplete();
 
         egret3d.AssetsManager.getInstance().setRootURL("resource/");
-        egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_BK.png");
-        egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_FR.png");
-        egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_LF.png");
-        egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_RT.png");
-        //egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_UP.png"); // 只支持Y轴旋转，不需要顶／底纹理
-        //egret3d.AssetsManager.getInstance().addLoadTexture("sky/cloudy_noon_DN.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/bk.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/fr.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/lf.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/rt.png");
+        //egret3d.AssetsManager.getInstance().addLoadTexture("sky/up.png"); // 只支持Y轴旋转，不需要顶／底纹理
+        //egret3d.AssetsManager.getInstance().addLoadTexture("sky/dn.png");
         egret3d.AssetsManager.getInstance().addEventListener(egret3d.Event3D.EVENT_LOAD_COMPLETE,(e: egret3d.Event3D) => this.onLoadComplete(e));
         egret3d.AssetsManager.getInstance().startLoad();
     }
@@ -41,12 +41,12 @@
 
     protected onLoadComplete(e: egret3d.Event3D): void {
 
-        var sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_FR.png");
-        var sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_BK.png");
-        var sky_l: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_LF.png");
-        var sky_r: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_RT.png");
-        //var sky_u: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_UP.png"); // 只支持Y轴旋转，不需要顶／底纹理
-        //var sky_d: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/cloudy_noon_DN.png");
+        var sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/fr.png");
+        var sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/bk.png");
+        var sky_l: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/lf.png");
+        var sky_r: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/rt.png");
+        //var sky_u: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/up.png"); // 只支持Y轴旋转，不需要顶／底纹理
+        //var sky_d: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/dn.png");
         var skyTexture: egret3d.SkyTexture = new egret3d.SkyTexture(sky_f,sky_b,sky_l,sky_r,sky_l,sky_r);
         var sky: egret3d.Sky = new egret3d.Sky(skyTexture);
         this._view3D.sky = sky;
