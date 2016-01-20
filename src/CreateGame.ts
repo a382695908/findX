@@ -260,7 +260,7 @@ class CreateGame extends CreateBaseEnv{
 		if ( `${e}` == '256' || (typeof e === "object" && 'touches' in e)) {
 			switch ( self._dtDriver.dataState ){ // 操作并根据数据驱动的状态控制游戏进度选折
 			case aw.GameDataState.READY_GO:
-        	    self._dtDriver.StartGame();
+        	    self.restart()
 				self.HideInteractiveHUD();
         	    break;
 			case aw.GameDataState.IN_RUN:
@@ -271,9 +271,8 @@ class CreateGame extends CreateBaseEnv{
 				self.HideInteractiveHUD();
         	    break;
 			case aw.GameDataState.USER_WIN:
-        	    self._dtDriver.StageUp();
-        	    self.restart()
-				self.HideInteractiveHUD();
+                this._dtDriver.dataState = aw.GameDataState.READY_GO;
+                this.updateInteractiveTips( this._dtDriver.readyTips );
 				break;
 			case aw.GameDataState.TIME_OVER:
         	    self.restart()
@@ -313,10 +312,10 @@ class CreateGame extends CreateBaseEnv{
             this.updateInteractiveTips( this._dtDriver.failedTips );
 			break;
 		case aw.GameDataState.NEVER_START:
-            this.updateInteractiveTips( "Sorry， 未准备就绪!" );
+            this.updateInteractiveTips( " Sorry， 未准备就绪! " );
 			break;
 		default:
-            this.updateInteractiveTips( ":(， something wrong!" );
+            this.updateInteractiveTips( " :(， something wrong! " );
 			return;
 		}
     }

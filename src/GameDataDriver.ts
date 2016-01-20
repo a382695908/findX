@@ -111,7 +111,7 @@
             return this._lostSeconds10;
         }
  
-        public StageUp():number {
+        protected StageUp():number {
             this._stage++;
             return this._stage;
         }
