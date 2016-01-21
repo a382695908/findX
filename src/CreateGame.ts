@@ -13,26 +13,42 @@ class CreateGame extends CreateBaseEnv{
     protected _depth  : number = 400;
 
 	// 展示信息的HUD(Head UP Display)
-    protected _hud : aw.HUD = null;
-    protected _hudW: number = 128;
-    protected _hudH: number = 128;
-    protected _hudFont: string = "20px 宋体";
-    protected _hudAlign: string = "left";
-    protected _hudColor: string = "rgba(255,0,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
-    protected _hudBgColor: string="rgba(0,0,0,0)";
-    protected _hudFrmBgColor: string="rgba(0,0,0,0)";
-    protected _hudFrmW: number=0;
+    private _hud : aw.HUD = null;
+    private _hudW: number = 128;
+    private _hudH: number = 128;
+    private _hudFont: string = "20px 宋体";
+    private _hudAlign: string = "left";
+    private _hudColor: string = "rgba(255,0,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
+    private _hudBgColor: string="rgba(0,0,0,0)";
+    private _hudFrmBgColor: string="rgba(0,0,0,0)";
+    private _hudFrmW: number=0;
+
+    // 进度信息的HUD(Head Up Display)
+    private _hudPer : aw.ProgressHUD;
+    private _hudPerW: number = 128;
+    private _hudPerH: number = 8;
+    private _hudPerMulti: number = 100;
+    private _hudPerFixedCnt: number = 2;
+    private _hudPerColor: string = "rgba(255,0,0,0.5)";
+    private _hudPerBgColor: string = "rgba(100, 100, 100, 0.3)";
+    private _hudPerFrmColor: string = "rgba(255, 255, 0, 1)";
+    private _hudPerFrmW: number = 1;
+    private _hudPerTip: boolean = false;
+    private _hudPerTipColor: string = "rgba(255,0,0,1)";
+    private _hudPerTipAlign: string = "center";
+    private _hudPerTipFont: string = "24px 宋体";
 
 	// 交互信息的HUD(Head UP Display)
-    protected _hudInter : aw.HUD;
-    protected _hudInterW: number = 256;
-    protected _hudInterH: number = 64;
-    protected _hudInterFont: string = "24px 宋体";
-    protected _hudInterAlign: string = "center";
-    protected _hudInterColor: string = "rgba(0,255,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
-    protected _hudInterBgColor: string="rgba( 00, 00, 00, 0.8)";
-    protected _hudInterFrmBgColor: string="rgba(0,0,0,1)";
-    protected _hudInterFrmW: number=0;
+    private _hudInter : aw.HUD;
+    private _hudInterW: number = 256;
+    private _hudInterH: number = 64;
+    private _hudInterFont: string = "24px 宋体";
+    private _hudInterAlign: string = "center";
+    private _hudInterColor: string = "rgba(0,255,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
+    private _hudInterBgColor: string="rgba( 00, 00, 00, 0.8)";
+    private _hudInterFrmBgColor: string="rgba(0,0,0,1)";
+    private _hudInterFrmW: number=0;
+
 
 	//盒子上的字符纹理
     protected _boxTxtureW: number = 64;
@@ -209,43 +225,86 @@ class CreateGame extends CreateBaseEnv{
         }
     }
 
+    // 展示信息(文字和进度条)
+    protected UpdateShowInfo(){
+		let restTime: number = parseFloat((this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1));
+		let tips:string = ` 关卡:${this._dtDriver.stage} `
+                        + `\n 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt}) `
+						+ `\n 计时:${restTime}\n`;
+        this.updateShowTips( tips );
+        if ( restTime > this._dtDriver.maxSeconds * 0.8 ){
+            this._hudPerColor = "rgba(0,255,0,0.5)";
+        }
+        else if ( restTime > this._dtDriver.maxSeconds * 0.3 ){
+            this._hudPerColor = "rgba(255,255,0,0.5)";
+        }
+        else{
+            this._hudPerColor = "rgba(255,0,0,0.5)";
+        }
+        this.updateProgressBar( restTime, this._dtDriver.maxSeconds, this._hudPerTip);
+    }
+
+    // 展示进度条
+    protected updateProgressBar( up:number, down:number, tip: boolean=true ) {
+        if ( this._hudPer == null ){
+            this._hudPer = new aw.ProgressHUD();
+            this._hudPer.SetProgress(this._hudPerW, this._hudPerH, up, down, this._hudPerMulti, this._hudPerFixedCnt,
+                                            this._hudPerColor, this._hudPerBgColor, this._hudPerFrmColor, this._hudPerFrmW,
+                                        this._hudPerTip, this._hudPerTipColor, this._hudPerTipAlign, this._hudPerTipFont);
+		    this._hudPer.x = (this._view3D.width/2 - this._hudPer.width/2);
+            if ( this._hud == null){
+		        this._hudPer.y = 2;
+            }
+            else{
+		        this._hudPer.y = 2 + this._hudH + 2;
+            }
+
+            this._view3D.addHUD(this._hudPer );
+        }
+        else{
+            this._hudPer.UpdateProgress( up, down, this._hudPerColor, tip );
+        }
+    }
+
+    // 展示文字信息
     protected updateShowTips( tips:string ) {
         if ( this._hud == null ){
             this._hud = new aw.HUD();
             this._hud.SetCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
                                             this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
+		    this._hud.x = (this._view3D.width/2 - this._hud.width/2);
+            if (this._hudPer == null){
+		        this._hud.y = 2;
+            }
+            else{
+		        this._hud.y = 2 + this._hudPerH + 2;
+            }
+
             this._view3D.addHUD(this._hud );
         }
         else{
             this._hud.UpdateTextureString( tips );
         }
-		this._hud.x = (this._view3D.width/2 - this._hud.width/2);
-		this._hud.y = 2;
     }
 
+    // 交互信息
     protected updateInteractiveTips( tips:string ) {
         if ( this._hudInter == null ){
             this._hudInter = new aw.HUD();
             this._hudInter.SetCharTexture(this._hudInterW, this._hudInterH, tips, this._hudInterAlign, this._hudInterFont,
                                             this._hudInterColor, this._hudInterBgColor, this._hudInterFrmBgColor, this._hudInterFrmW);
+		    this._hudInter.x = (this._view3D.width/2 - this._hudInter.width/2);
+		    this._hudInter.y = (this._view3D.height/2 - this._hudInter.height/2);
         }
         else{
             this._hudInter.UpdateTextureString( tips );
         }
-		this._hudInter.x = (this._view3D.width/2 - this._hudInter.width/2);
-		this._hudInter.y = (this._view3D.height/2 - this._hudInter.height/2);
+
 		if ( this._view3D.hasHUD( this._hudInter ) ){
 		}
 		else{
             this._view3D.addHUD(this._hudInter );
 		}
-    }
-
-    protected UpdateShowInfo(){
-		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
-		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt})\n `
-						+ `计时:${restTime}\n 关卡:${this._dtDriver.stage}`;
-        this.updateShowTips( tips );
     }
 
     protected OnPickupBox(e: egret3d.Event3D): void {
@@ -348,7 +407,7 @@ class CreateGame extends CreateBaseEnv{
             break;
 		case aw.GameDataState.USER_WIN:
             this.updateInteractiveTips( this._dtDriver.winTips );
-            console.log("dead box cnt:" + this._deadBox["cnt"] + "; picked X cnt:" + this._dtDriver.pickedXCnt);
+            //console.log("dead box cnt:" + this._deadBox["cnt"] + "; picked X cnt:" + this._dtDriver.pickedXCnt);
             if (this._deadBox["cnt"] === this._dtDriver.pickedXCnt ){
                 ; // do nothing.
             }
