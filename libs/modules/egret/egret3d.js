@@ -24760,6 +24760,9 @@ var egret3d;
         View3D.prototype.delChild3D = function (child3D) {
             this._scene.removeChild(child3D);
         };
+        View3D.prototype.hasChild3D = function (child3D) {
+            return this._scene.childs.indexOf(child3D) >= 0;
+        };
         /**
         * @language zh_CN
         * 渲染

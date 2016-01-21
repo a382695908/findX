@@ -15056,6 +15056,7 @@ declare module egret3d {
         */
         addChild3D(child3D: Object3D): void;
         delChild3D(child3D: Object3D): void;
+        hasChild3D(child3D: Object3D): boolean;
         /**
         * @language zh_CN
         * 渲染

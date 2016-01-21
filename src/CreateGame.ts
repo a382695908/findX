@@ -2,9 +2,10 @@ class CreateGame extends CreateBaseEnv{
     protected _dtDriver: aw.FindXDataDriver = null;
     private _uiReady: boolean = false;
 
-    protected _boxInfo : any = {};		 //实时操作的盒子存储
-    protected _boxBak  : any = {};       //生产队盒子的原始备份
-    protected _xBoxIds : number[] = [];  //记录特殊字符，点击时比较判断
+    protected _boxInfo : any = {};		//实时操作的盒子存储
+    protected _boxBak  : any = {};      //生产队盒子的原始备份
+    protected _deadBox : any = {"cnt": 0, 'box':{} }; //记录已经拾取的对象
+    protected _xBoxIds : number[] = []; //记录特殊字符，点击时比较判断
 
 	// 盒子活动的空间大小
     protected _width  : number = 600;
@@ -161,24 +162,32 @@ class CreateGame extends CreateBaseEnv{
                 let bi = this._boxInfo[id];
                 if ( bi === null ) {
                     bi = this._boxBak[id];
-                    if (bi['box'].scaleX <= 0.0001 || bi['box'].scaleY <= 0.0001 || bi['box'].scaleZ <= 0.0001 ) {
-                        this._view3D.delChild3D( bi['box'] );
-                    }
-                    else{
-                        if (bi['box'].scaleX === 1 && bi['box'].scaleY === 1 && bi['box'].scaleZ === 1 ) {
-                            bi['scaleX'] = 1.1;
-                            bi['scaleY'] = 1.1;
-                            bi['scaleZ'] = 1.1;
+                    if ( this._view3D.hasChild3D(bi['box']) ) {
+                        if (bi['box'].scaleX <= 0.1 || bi['box'].scaleY <= 0.1 || bi['box'].scaleZ <= 0.1 ) {
+                            if (id in this._deadBox["box"] ){
+                            }
+                            else{
+                                this._deadBox["box"][id] = bi;
+                                this._deadBox["cnt"]++;
+                            }
+                            this._view3D.delChild3D( bi['box'] );
                         }
-                        else if (bi['box'].scaleX >= 4 || bi['box'].scaleY >= 4 || bi['box'].scaleZ >= 4 ) {
-                            bi['scaleX'] = 0.95;
-                            bi['scaleY'] = 0.95;
-                            bi['scaleZ'] = 0.95;
+                        else{
+                            if (bi['box'].scaleX === 1 && bi['box'].scaleY === 1 && bi['box'].scaleZ === 1 ) {
+                                bi['scaleX'] = 1.1;
+                                bi['scaleY'] = 1.1;
+                                bi['scaleZ'] = 1.1;
+                            }
+                            else if (bi['box'].scaleX >= 4 || bi['box'].scaleY >= 4 || bi['box'].scaleZ >= 4 ) {
+                                bi['scaleX'] = 0.9;
+                                bi['scaleY'] = 0.9;
+                                bi['scaleZ'] = 0.9;
+                            }
+                            
+                            bi['box'].scaleX *= bi['scaleX'];
+                            bi['box'].scaleY *= bi['scaleY'];
+                            bi['box'].scaleZ *= bi['scaleZ'];
                         }
-                        
-                        bi['box'].scaleX *= bi['scaleX'];
-                        bi['box'].scaleY *= bi['scaleY'];
-                        bi['box'].scaleZ *= bi['scaleZ'];
                     }
                 }
                 else{
@@ -251,7 +260,7 @@ class CreateGame extends CreateBaseEnv{
         else{
             for (let idx: number=0; idx < this._xBoxIds.length; idx++){
                 if ( e.currentTarget.id == this._xBoxIds[idx] ){
-                    this._boxInfo[ e.currentTarget.id ] = null;
+                    this._boxInfo[ e.currentTarget.id ]= null;
                     this._dtDriver.addPickedXCnt();
 					this.UpdateShowInfo();
                     break;
@@ -278,6 +287,7 @@ class CreateGame extends CreateBaseEnv{
         this._boxInfo = {};
         this._boxBak  = {};
         this._xBoxIds = [];
+        this._deadBox = {"cnt": 0, 'box':{} };
 
 		// 生成盒子
         this.GenCharBox();
@@ -336,7 +346,12 @@ class CreateGame extends CreateBaseEnv{
             break;
 		case aw.GameDataState.USER_WIN:
             this.updateInteractiveTips( this._dtDriver.winTips );
-            this.UpdateBoxView();   // 更新盒子飞行
+            console.log("dead box cnt:" + this._deadBox["cnt"] + "; picked X cnt:" + this._dtDriver.pickedXCnt);
+            if (this._deadBox["cnt"] === this._dtDriver.pickedXCnt ){
+            }
+            else{
+                this.UpdateBoxView();   // 更新盒子飞行
+            }
 			break;
 		case aw.GameDataState.TIME_OVER:
             this.updateInteractiveTips( this._dtDriver.failedTips );
