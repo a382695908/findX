@@ -27,10 +27,10 @@ class CreateGame extends CreateBaseEnv{
     protected _hudInter : aw.HUD;
     protected _hudInterW: number = 256;
     protected _hudInterH: number = 64;
-    protected _hudInterFont: string = "16px 宋体";
+    protected _hudInterFont: string = "24px 宋体";
     protected _hudInterAlign: string = "center";
-    protected _hudInterColor: string = "rgba(255,0,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
-    protected _hudInterBgColor: string="rgba(100,100,100, 0.5)";
+    protected _hudInterColor: string = "rgba(0,255,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
+    protected _hudInterBgColor: string="rgba( 00, 00, 00, 0.8)";
     protected _hudInterFrmBgColor: string="rgba(0,0,0,1)";
     protected _hudInterFrmW: number=0;
 
@@ -39,9 +39,9 @@ class CreateGame extends CreateBaseEnv{
     protected _boxTxtureH: number = 64;
     protected _boxTxtureFont: string = "60px 楷体";
     protected _boxTxtureAlign: string = "center";
-    protected _boxTxtureColor: string = "rgba(255,0,0,1)";
-    protected _boxTxtureBgColor: string="rgba(200,200,200,1)";
-    protected _boxTxtureFrmBgColor: string="rgba(0,0,255,1)";
+    protected _boxTxtureColor: string = "rgba(255,   0,   0, 1)";
+    protected _boxTxtureBgColor: string="rgba(250, 250, 250, 1)";
+    protected _boxTxtureFrmBgColor: string="rgba(   0,   0, 255,  1)";
     protected _boxTxtureFrmW: number=3;
 
     private _lightGroup: egret3d.LightGroup = null;
@@ -78,14 +78,10 @@ class CreateGame extends CreateBaseEnv{
         this.GenCharBox();
 
 		// 进度信息
-		let restTime: string = (this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1);
-		let tips:string = ` 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt})\n `
-						+ `计时:${restTime}\n 关卡:${this._dtDriver.stage}`;
-        this.updateShowTips( tips );
+        this.UpdateShowInfo();
 
 		// 交互信息
-		let inter_tips:string = ` 请找出${this._dtDriver.xObjCnt}个 ${this._dtDriver.charsFind} 字符\n  触摸任意地方继续  `
-        this.updateInteractiveTips( inter_tips);
+        this.updateInteractiveTips( this._dtDriver.readyTips );
 
         this._cameraCtl.setEyesLength(3500);
     }
@@ -97,7 +93,15 @@ class CreateGame extends CreateBaseEnv{
             box.addEventListener(egret3d.Event3D.MOUSE_CLICK, (e: egret3d.Event3D) => this.OnPickupBox(e));
             box.addEventListener(egret3d.Event3D.TOUCH_START, (e: egret3d.Event3D) => this.OnPickupBox(e));
             box.material.lightGroup = this._lightGroup;
-
+            box.x = 0;
+            box.y = 0;
+            box.z = -100;
+            box.rotationX = 0;
+            box.rotationY = 0;
+            box.rotationZ = 180;
+            box.scaleX = 1;
+            box.scaleY = 1;
+            box.scaleZ = 1;
             this._view3D.addChild3D(box);
 
             if ( this._xBoxIds.length < this._dtDriver.xObjCnt ){
@@ -122,21 +126,13 @@ class CreateGame extends CreateBaseEnv{
             if (bi['moveX']==0) {bi['moveX']= this._dtDriver.moveSpeed;};
             if (bi['moveY']==0) {bi['moveY']= this._dtDriver.moveSpeed;};
             if (bi['moveZ']==0) {bi['moveZ']= this._dtDriver.moveSpeed;};
-
             bi['rotationX'] = (Math.random()*2-1) * this._dtDriver.rotateSpeed;
             bi['rotationY'] = (Math.random()*2-1) * this._dtDriver.rotateSpeed;
             bi['rotationZ'] = (Math.random()*2-1) * this._dtDriver.rotateSpeed;
-
-            bi['box'].rotationX = bi['rotationX'];
-            bi['box'].rotationY = bi['rotationY'];
-            bi['box'].rotationZ = bi['rotationZ'];
-
             bi['scaleX'] = 1;
             bi['scaleY'] = 1;
             bi['scaleZ'] = 1;
-            bi['box'].scaleX = bi['scaleX'];
-            bi['box'].scaleY = bi['scaleY'];
-            bi['box'].scaleZ = bi['scaleZ'];
+
 
             this._boxInfo[box.id] = bi;
             this._boxBak[box.id]  = bi;
@@ -255,7 +251,7 @@ class CreateGame extends CreateBaseEnv{
     protected OnPickupBox(e: egret3d.Event3D): void {
         if ( this._uiReady === false ) return;
         if ( this._boxInfo[ e.currentTarget.id ] == null ){
-            //this._boxInfo[ e.currentTarget.id ] = this._boxBak[ e.currentTarget.id ];
+            // do nothing
         }
         else{
             for (let idx: number=0; idx < this._xBoxIds.length; idx++){
@@ -354,6 +350,7 @@ class CreateGame extends CreateBaseEnv{
             this.updateInteractiveTips( this._dtDriver.winTips );
             console.log("dead box cnt:" + this._deadBox["cnt"] + "; picked X cnt:" + this._dtDriver.pickedXCnt);
             if (this._deadBox["cnt"] === this._dtDriver.pickedXCnt ){
+                ; // do nothing.
             }
             else{
                 this.UpdateBoxView();   // 更新盒子飞行

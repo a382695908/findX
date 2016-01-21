@@ -43,24 +43,24 @@ namespace aw {
         constructor( startTime: Date = null ) {
             super( startTime );
             this._pickedXCnt = 0;
-            this._readyTips = ` 目标:${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
-            this._startTips = ` 目标:${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
-            this._pauseTips = ` 暂停中，触摸/点击任意处继续... `;
+            this._readyTips= `目标:${this._XObjCnt}个${this._charsFind}\n点触继续...`;
+            this._startTips = `目标:${this._XObjCnt}个${this._charsFind}\n点触开始... `;
+            this._pauseTips = `暂停中，触摸/点击任意处继续... `;
 
-            this._winTips = ` :) 通关 \n 点触继续${this.stage}关... `;
+            this._winTips = ` :) 通关\n点触继续${this.stage}关... `;
             let rest_cnt = this._XObjCnt - this._pickedXCnt;
-            this._failedTips = ` :(， 差${rest_cnt}个通关! \n 点触再玩... `;
+            this._failedTips = ` :(， 差${rest_cnt}个通关!\n点触再来... `;
         }
         public StartGame( startTime: Date = null ){
 			super.StartGame( startTime );
             this._pickedXCnt = 0;
-            this._readyTips = ` 目标:${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
-            this._startTips = ` 目标:${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
-            this._pauseTips = ` 暂停中，触摸/点击任意处继续... `;
+            this._readyTips = `目标:${this._XObjCnt}个${this._charsFind}\n点触继续... `;
+            this._startTips = `目标:${this._XObjCnt}个${this._charsFind}\n点触开始... `;
+            this._pauseTips = `暂停中，点触继续... `;
 
-            this._winTips = ` :) 通关 \n 点触继续${this.stage}关... `;
+            this._winTips = ` :) 通关\n点触继续${this.stage}关... `;
             let rest_cnt = this._XObjCnt - this._pickedXCnt;
-            this._failedTips = ` :(， 差${rest_cnt}个通关! \n 点触再玩... `;
+            this._failedTips = ` :(， 差${rest_cnt}个通关!\n点触再来... `;
 
             this.UpdateStageCtrData();
         }
@@ -153,13 +153,13 @@ namespace aw {
 			if ( this._pickedXCnt == this._XObjCnt ) {
                 this._driverState = GameDataState.USER_WIN;
         	    this.StageUp();
-                this._winTips  = ` :) 通关 \n 点触继续${this.stage}关... `;
-                this._readyTips= ` 目标:${this._XObjCnt}个${this._charsFind} \n 点触继续... `;
+                this._winTips  = ` :) 通关\n点触继续${this.stage}关... `;
+                this._readyTips= `目标:${this._XObjCnt}个${this._charsFind}\n点触继续...`;
                 return;
             }
             if ( this._driverState == GameDataState.TIME_OVER ){
                 let rest_cnt = this._XObjCnt - this._pickedXCnt;
-                this._failedTips = ` :(， 差${rest_cnt}个通关! \n 点触再玩... `;
+                this._failedTips = ` :(， 差${rest_cnt}个通关!\n点触再来... `;
             }
         }
 

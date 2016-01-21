@@ -135,7 +135,7 @@
         private _txtrFrmW: number = 2;
 
         public SetCharTexture(w:number=32, h:number=32, txt: string="Test info.", align: string, font:string="60px 楷体", rgba:string="rgba(255,0,0,1)", 
-                                            bg_rgba:string="rgba(200,200,200,1)", frame_rgba:string="rgba(255,0,0,1)", frame_with:number=2) {
+                                            bg_rgba:string="rgba(255,200,200,1)", frame_rgba:string="rgba(255,0,0,1)", frame_with:number=2) {
             this._txtrW = w;
             this._txtrH = h;
             this.width = w;
