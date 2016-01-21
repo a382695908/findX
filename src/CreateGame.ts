@@ -277,6 +277,14 @@ class CreateGame extends CreateBaseEnv{
 	protected restart() {
 		this._dtDriver.StartGame();
 
+        //this.ClearOldScene();
+
+		// 生成盒子
+        //this.GenCharBox();
+        if ( this._uiReady === true ) this._uiReady = false;
+	}
+
+    private ClearOldScene() {
         for ( let id in this._boxBak){
             if ( this._boxBak[id] != null ){
                 this._view3D.delChild3D( this._boxBak[id]['box'] );
@@ -288,11 +296,7 @@ class CreateGame extends CreateBaseEnv{
         this._boxBak  = {};
         this._xBoxIds = [];
         this._deadBox = {"cnt": 0, 'box':{} };
-
-		// 生成盒子
-        this.GenCharBox();
-        if ( this._uiReady === true ) this._uiReady = false;
-	}
+    }
 
     // 点触改变状态
     public interactiveOpt(e:Event, self:CreateGame ) {
@@ -310,6 +314,8 @@ class CreateGame extends CreateBaseEnv{
 				self.HideInteractiveHUD();
         	    break;
 			case aw.GameDataState.USER_WIN:
+                this.ClearOldScene();
+                this.GenCharBox();
                 this._dtDriver.dataState = aw.GameDataState.READY_GO;
                 this.updateInteractiveTips( this._dtDriver.readyTips );
 				break;
