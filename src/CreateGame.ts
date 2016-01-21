@@ -56,7 +56,7 @@ class CreateGame extends CreateBaseEnv{
     protected _boxTxtureFont: string = "60px 楷体";
     protected _boxTxtureAlign: string = "center";
     protected _boxTxtureColor: string = "rgba(255,   0,   0, 1)";
-    protected _boxTxtureBgColor: string="rgba(250, 250, 250, 1)";
+    protected _boxTxtureBgColor: string="rgba(0, 0,  0, 0)";
     protected _boxTxtureFrmBgColor: string="rgba(   0,   0, 255,  1)";
     protected _boxTxtureFrmW: number=3;
 
@@ -87,9 +87,12 @@ class CreateGame extends CreateBaseEnv{
 
 		//环境光 
         this._lightGroup = new egret3d.LightGroup();
-        let directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(100, 100, 100));
+        let directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(0.5, 1.0, 0.6));
         directLight.diffuse = 0xAAAAAA;
+        directLight.halfColor = 0XFFFFFF;
+        directLight.halfIntensity = 0.8;
         this._lightGroup.addDirectLight(directLight);
+
 		// 生成盒子
         this.GenCharBox();
 
@@ -108,7 +111,11 @@ class CreateGame extends CreateBaseEnv{
             box.mouseEnable = true;
             box.addEventListener(egret3d.Event3D.MOUSE_CLICK, (e: egret3d.Event3D) => this.OnPickupBox(e));
             box.addEventListener(egret3d.Event3D.TOUCH_START, (e: egret3d.Event3D) => this.OnPickupBox(e));
+
             box.material.lightGroup = this._lightGroup;
+            box.material.ambientPower = 0.5;
+            box.material.ambientColor = 0XAAAAAA;
+
             box.x = 0;
             box.y = 0;
             box.z = -100;

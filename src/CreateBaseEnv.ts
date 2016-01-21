@@ -8,6 +8,8 @@
     protected _cameraCtl: egret3d.LookAtController = null;
 
     protected _boxTexture : egret3d.SkyTexture;
+    protected _starTexture: egret3d.TextureBase = null;
+    protected _woodTexture: egret3d.TextureBase = null;
 
     public constructor() {
         this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight);
@@ -32,6 +34,8 @@
         egret3d.AssetsManager.getInstance().addLoadTexture("sky/rt.png");
         //egret3d.AssetsManager.getInstance().addLoadTexture("sky/up.png"); // 只支持Y轴旋转，不需要顶／底纹理
         //egret3d.AssetsManager.getInstance().addLoadTexture("sky/dn.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("star.jpg");
+        egret3d.AssetsManager.getInstance().addLoadTexture("wood.jpg");
         egret3d.AssetsManager.getInstance().addEventListener(egret3d.Event3D.EVENT_LOAD_COMPLETE,(e: egret3d.Event3D) => this.onLoadComplete(e));
         egret3d.AssetsManager.getInstance().startLoad();
     }
@@ -41,15 +45,18 @@
 
     protected onLoadComplete(e: egret3d.Event3D): void {
 
-        var sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/fr.png");
-        var sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/bk.png");
-        var sky_l: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/lf.png");
-        var sky_r: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/rt.png");
-        //var sky_u: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/up.png"); // 只支持Y轴旋转，不需要顶／底纹理
-        //var sky_d: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/dn.png");
-        var skyTexture: egret3d.SkyTexture = new egret3d.SkyTexture(sky_f,sky_b,sky_l,sky_r,sky_l,sky_r);
-        var sky: egret3d.Sky = new egret3d.Sky(skyTexture);
+        let sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/fr.png");
+        let sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/bk.png");
+        let sky_l: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/lf.png");
+        let sky_r: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/rt.png");
+        //let sky_u: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/up.png"); // 只支持Y轴旋转，不需要顶／底纹理
+        //let sky_d: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/dn.png");
+        let skyTexture: egret3d.SkyTexture = new egret3d.SkyTexture(sky_f,sky_b,sky_l,sky_r,sky_l,sky_r);
+        let sky: egret3d.Sky = new egret3d.Sky(skyTexture);
         this._view3D.sky = sky;
+
+        this._starTexture = egret3d.AssetsManager.getInstance().findTexture("wood.jpg");
+        this._woodTexture = egret3d.AssetsManager.getInstance().findTexture("star.jpg");
 
         this._time = new Date().getTime();
         requestAnimationFrame(() => this.onUpdate());
