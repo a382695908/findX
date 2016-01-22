@@ -2,50 +2,84 @@
 
     // 暂不支持 useMipmap
     export function MergeCharTexture( bgTxtr: egret3d.TextureBase, ftTxtr: aw.CharTexture ): egret3d.TextureBase {
-        let retTxtr: egret3d.TextureBase = bgTxtr;
+		if ( bgTxtr == null || ftTxtr == null ) { 
+			console.log( bgTxtr); 
+			console.log( ftTxtr); 
+			return;
+		};
         if ( bgTxtr.width==ftTxtr.width && bgTxtr.height==ftTxtr.height && ftTxtr.colorFormat==bgTxtr.colorFormat ) { 
             /// 目前仅支持 Egret3DDrive.ColorFormat_RGBA8888, 当前E3D源码里未对 TextureBase.colorFormat 赋值
             let bgImgDt: ImageData = null;
-
             if ( bgTxtr.imageData ) {  // 图片
+                egret3d.TextureUtil.regist( );
                 let cvs: HTMLCanvasElement = egret3d.TextureUtil.getTextureData( bgTxtr.imageData );
-                //bgImgDt = cvs.getImageData( 0, 0, bgTxtr.width, bgTxtr.height );
                 bgImgDt = cvs.getContext("2d").getImageData( 0, 0, bgTxtr.width, bgTxtr.height );
+				console.log("Background is image format texture");
             }
             else if ( bgTxtr.mimapData.length > 0 && bgTxtr.mimapData[0].width==ftTxtr.width && bgTxtr.mimapData[0].height==ftTxtr.height ) { // 内存像素
-                //bgImgDt.data  = bgTxtr.mimapData[0].data;
                 bgImgDt.width = bgTxtr.mimapData[0].width;
                 bgImgDt.height= bgTxtr.mimapData[0].height;
+                for (let y: number = 0; y < bgImgDt.width; y++) {
+                    for (let x: number = 0; x < bgImgDt.height; x++) {
+                        bgImgDt.data[(y * (bgImgDt.width * 4) + x * 4) + 0] = bgTxtr.mimapData[0].data[(y * (bgImgDt.width * 4) + x * 4) + 0];
+                        bgImgDt.data[(y * (bgImgDt.width * 4) + x * 4) + 1] = bgTxtr.mimapData[0].data[(y * (bgImgDt.width * 4) + x * 4) + 1];
+                        bgImgDt.data[(y * (bgImgDt.width * 4) + x * 4) + 2] = bgTxtr.mimapData[0].data[(y * (bgImgDt.width * 4) + x * 4) + 2];
+					}
+				}
+				console.log("Background is pixel format texture");
             }
             else{
                 console.log( "Unsurported backgrand texture." );
-                return retTxtr;
+                return bgTxtr;
             }
 
-            let ftImgDt:Uint8Array = ftTxtr.PixelArray();
-            if ( bgImgDt && ftImgDt && bgImgDt.length==ftImgDt.length ) {
-                for (let y: number = 0; y < bgTxtr.height; y++) {
+            let ftImgDt:Uint8Array = ftTxtr.PixelArray;
+            if ( bgImgDt && ftImgDt && bgImgDt.data.length==ftImgDt.length ) {
+				// merge texture image data
+                for (let y: number = 0; y < bgTxtr.width; y++) {
                     for (let x: number = 0; x < bgTxtr.height; x++) {
-                        bgImgDt[(y * (this._width * 4) + x * 4) + 0] += ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 3] / 255 * ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 0];
-                        bgImgDt[(y * (this._width * 4) + x * 4) + 1] += ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 3] / 255 * ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 1];
-                        bgImgDt[(y * (this._width * 4) + x * 4) + 2] += ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 3] / 255 * ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 2];
-                        //bgImgDt[(y * (this._width * 4) + x * 4) + 3] += ftImgDt[(y * (this._width * 4) + x * 4) + 3];
+                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+0] += ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+0];
+                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+1] += ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+1];
+                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+2] += ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+2];
+                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+3] = 255;
                     }
                 }
+				// change merged image data format( number[] to Uint8Array )
+				let tmpArray : Uint8Array = new Uint8Array(bgImgDt.width * bgImgDt.height * 4);
+                for (let y: number = 0; y < bgImgDt.width; y++) {
+                    for (let x: number = 0; x < bgImgDt.height; x++) {
+                        tmpArray[(y*(bgImgDt.width*4)+x*4)+0] = bgImgDt.data[(y*(ftTxtr.width*4)+x*4)+0];
+                        tmpArray[(y*(bgImgDt.width*4)+x*4)+1] = bgImgDt.data[(y*(ftTxtr.width*4)+x*4)+1];
+                        tmpArray[(y*(bgImgDt.width*4)+x*4)+2] = bgImgDt.data[(y*(ftTxtr.width*4)+x*4)+2];
+                        tmpArray[(y*(bgImgDt.width*4)+x*4)+3] = bgImgDt.data[(y*(ftTxtr.width*4)+x*4)+3];
+                    }
+                }
+
+				// Create texute
+            	let mimapData: Array<egret3d.MipmapData> = new Array<egret3d.MipmapData>();
+            	mimapData.push(new egret3d.MipmapData(tmpArray, bgImgDt.width, bgImgDt.height));
+        		let retTxtr: egret3d.TextureBase = new egret3d.ImageTexture(null);
+            	retTxtr.texture = egret3d.Egret3DDrive.context3D.creatTexture2D();
+            	retTxtr.texture.gpu_border = 0; 
+            	retTxtr.texture.gpu_internalformat = egret3d.InternalFormat.PixelArray;
+            	retTxtr.texture.gpu_colorformat = egret3d.Egret3DDrive.ColorFormat_RGBA8888;
+            	retTxtr.texture.mipmapDatas = mimapData;
+            	retTxtr.useMipmap = false;
+            	egret3d.Egret3DDrive.context3D.upLoadTextureData(0, retTxtr.texture);
+        		return retTxtr;
             }
             else{
                 let lg: string = `Background image data(${bgImgDt}) or front image data(${ftImgDt}) error.`;
                 console.log(lg);
                 if ( bgImgDt && ftImgDt ) {
-                    lg: string = `Background image data len ${bgImgDt.length} != front image data len ${ftImgDt.length}.`;
-                    console.log("Backgrou");
+                    lg = `Background image data len ${bgImgDt.data.length} != front image data len ${ftImgDt.length}.`;
                 }
             }
         }
         else{
             console.log("The two texture cannot be merged, because width, height, color format not same.");
         }
-        return retTxtr;
+        return bgTxtr;
     }
 
      /**
@@ -129,6 +163,20 @@
 
         }
 
+        private BuildCheckerboard(txtImgData: ImageData = null): void {
+            if (!this._pixelArray && txtImgData) {
+                this._pixelArray = new Uint8Array(this._width * this._height * 4);
+                for (let y: number = 0; y < this._height  ; y++) {
+                    for (let x: number = 0; x < this._width ; x++) {
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = txtImgData.data[(y * (this._width * 4) + x * 4) + 0];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = txtImgData.data[(y * (this._width * 4) + x * 4) + 1];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = txtImgData.data[(y * (this._width * 4) + x * 4) + 2];
+                        this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = txtImgData.data[(y * (this._width * 4) + x * 4) + 3];
+                    }
+                }
+            }
+        }
+
         /**
          * @language zh_CN
          * 上传贴图数据给GPU
@@ -143,20 +191,6 @@
                 this.texture.mipmapDatas = this.mimapData;
                 this.useMipmap = false;
                 context3D.upLoadTextureData(0, this.texture);
-            }
-        }
-
-        private BuildCheckerboard(txtImgData: ImageData = null): void {
-            if (!this._pixelArray && txtImgData) {
-                this._pixelArray = new Uint8Array(this._width * this._height * 4);
-                for (let y: number = 0; y < this._height  ; y++) {
-                    for (let x: number = 0; x < this._width ; x++) {
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 0] = txtImgData.data[(y * (this._width * 4) + x * 4) + 0];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 1] = txtImgData.data[(y * (this._width * 4) + x * 4) + 1];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 2] = txtImgData.data[(y * (this._width * 4) + x * 4) + 2];
-                        this._pixelArray[(y * (this._width * 4) + x * 4) + 3] = txtImgData.data[(y * (this._width * 4) + x * 4) + 3];
-                    }
-                }
             }
         }
 

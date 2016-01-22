@@ -51,14 +51,14 @@ class CreateGame extends CreateBaseEnv{
 
 
 	//盒子上的字符纹理
-    protected _boxTxtureW: number = 64;
-    protected _boxTxtureH: number = 64;
-    protected _boxTxtureFont: string = "60px 楷体";
+    protected _boxTxtureW: number = 128;
+    protected _boxTxtureH: number = 128;
+    protected _boxTxtureFont: string = "100px 楷体";
     protected _boxTxtureAlign: string = "center";
-    protected _boxTxtureColor: string = "rgba(255,   0,   0, 1)";
-    protected _boxTxtureBgColor: string="rgba(200, 200,  200, 1)";
+    protected _boxTxtureColor: string = "rgba(0,   255,   0, 1)";
+    protected _boxTxtureBgColor: string="rgba(230, 230,  230, 1)";
     protected _boxTxtureFrmBgColor: string="rgba(   0,   0, 255,  1)";
-    protected _boxTxtureFrmW: number=3;
+    protected _boxTxtureFrmW: number=2;
 
     private _lightGroup: egret3d.LightGroup = null;
 
@@ -113,8 +113,8 @@ class CreateGame extends CreateBaseEnv{
             box.addEventListener(egret3d.Event3D.TOUCH_START, (e: egret3d.Event3D) => this.OnPickupBox(e));
 
             box.material.lightGroup = this._lightGroup;
-            box.material.ambientPower = 0.5;
-            box.material.ambientColor = 0XAAAAAA;
+            box.material.ambientPower = 0.3;
+            box.material.ambientColor = 0X888888;
 
             box.x = 0;
             box.y = 0;
@@ -127,19 +127,41 @@ class CreateGame extends CreateBaseEnv{
             box.scaleZ = 1;
             this._view3D.addChild3D(box);
 
+			if ( this._woodTexture ) {
+            	this._boxTxtureBgColor = "rgba(220,220,220,0)";
+			}
+			else{
+            	this._boxTxtureBgColor = "rgba(220,220,220,1)";
+			}
             if ( this._xBoxIds.length < this._dtDriver.xObjCnt ){
                 aw.CharTexture.CreateCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsFind, 
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
                 this._xBoxIds.push( box.id );
+				console.log(`xObjCnt: ${this._dtDriver.xObjCnt}, xBoxIds: ${this._xBoxIds.length}, now char: ${this._dtDriver.charsFind}`);
             }
             else{
                 let n: number = Math.floor(Math.random() * this._dtDriver.charsPool.length);
                 aw.CharTexture.CreateCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsPool[n], 
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
+				console.log(`xObjCnt: ${this._dtDriver.xObjCnt}, xBoxIds: ${this._xBoxIds.length}, now char: ${this._dtDriver.charsPool[n]}`);
             }
-            box.material.diffuseTexture = aw.CharTexture.texture;
+			if ( this._woodTexture ) {
+            	let mergedTxtr: egret3d.TextureBase = aw.MergeCharTexture(this._woodTexture, aw.CharTexture.texture);
+				if ( mergedTxtr ) {
+            		box.material.diffuseTexture = mergedTxtr;
+					console.log("Use merged texture");
+				}
+				else{
+            		box.material.diffuseTexture = this._woodTexture;
+					console.log("Use single image texture");
+				}
+			}
+			else{
+            	box.material.diffuseTexture = aw.CharTexture.texture;
+					console.log("Use single char texture");
+			}
 
             let bi: any = {"box" : box, 'id': box.id, 'idx': idx };
 
