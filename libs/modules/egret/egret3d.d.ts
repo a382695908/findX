@@ -4527,6 +4527,41 @@ declare module egret3d {
 }
 declare module egret3d {
     /**
+     * @class egret3d.TextureUtil
+     * @private
+     * @classdesc
+     * TextureUtil
+     *
+     * @version Egret 3.0
+     * @platform Web,Native
+     * @includeExample texture/TextureUtil.ts
+     */
+    class TextureUtil {
+        private static context2D;
+        private static canvas2D;
+        /**
+         * @language zh_CN
+         * 获取纹理数据
+         * @private
+         * @param image
+         * @returns HTMLCanvasElement
+         */
+        static getTextureData(image: HTMLImageElement): HTMLCanvasElement;
+        /**
+         * @language zh_CN
+         * @private
+         */
+        static regist(): void;
+        /**
+         * @language zh_CN
+         * 生成MipMap
+         * @param source  未生成MipMap的MipmapData对象
+         */
+        static generateMipMaps(source: MipmapData): void;
+    }
+}
+declare module egret3d {
+    /**
      * @private
      * @language zh_CN
      * @class egret3d.IAnimation

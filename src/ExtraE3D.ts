@@ -1,4 +1,53 @@
 ﻿namespace aw {
+
+    // 暂不支持 useMipmap
+    export function MergeCharTexture( bgTxtr: egret3d.TextureBase, ftTxtr: aw.CharTexture ): egret3d.TextureBase {
+        let retTxtr: egret3d.TextureBase = bgTxtr;
+        if ( bgTxtr.width==ftTxtr.width && bgTxtr.height==ftTxtr.height && ftTxtr.colorFormat==bgTxtr.colorFormat ) { 
+            /// 目前仅支持 Egret3DDrive.ColorFormat_RGBA8888, 当前E3D源码里未对 TextureBase.colorFormat 赋值
+            let bgImgDt: ImageData = null;
+
+            if ( bgTxtr.imageData ) {  // 图片
+                let cvs: HTMLCanvasElement = egret3d.TextureUtil.getTextureData( bgTxtr.imageData );
+                //bgImgDt = cvs.getImageData( 0, 0, bgTxtr.width, bgTxtr.height );
+                bgImgDt = cvs.getContext("2d").getImageData( 0, 0, bgTxtr.width, bgTxtr.height );
+            }
+            else if ( bgTxtr.mimapData.length > 0 && bgTxtr.mimapData[0].width==ftTxtr.width && bgTxtr.mimapData[0].height==ftTxtr.height ) { // 内存像素
+                //bgImgDt.data  = bgTxtr.mimapData[0].data;
+                bgImgDt.width = bgTxtr.mimapData[0].width;
+                bgImgDt.height= bgTxtr.mimapData[0].height;
+            }
+            else{
+                console.log( "Unsurported backgrand texture." );
+                return retTxtr;
+            }
+
+            let ftImgDt:Uint8Array = ftTxtr.PixelArray();
+            if ( bgImgDt && ftImgDt && bgImgDt.length==ftImgDt.length ) {
+                for (let y: number = 0; y < bgTxtr.height; y++) {
+                    for (let x: number = 0; x < bgTxtr.height; x++) {
+                        bgImgDt[(y * (this._width * 4) + x * 4) + 0] += ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 3] / 255 * ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 0];
+                        bgImgDt[(y * (this._width * 4) + x * 4) + 1] += ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 3] / 255 * ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 1];
+                        bgImgDt[(y * (this._width * 4) + x * 4) + 2] += ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 3] / 255 * ftImgDt[(y * (ftTxtr.width * 4) + x * 4) + 2];
+                        //bgImgDt[(y * (this._width * 4) + x * 4) + 3] += ftImgDt[(y * (this._width * 4) + x * 4) + 3];
+                    }
+                }
+            }
+            else{
+                let lg: string = `Background image data(${bgImgDt}) or front image data(${ftImgDt}) error.`;
+                console.log(lg);
+                if ( bgImgDt && ftImgDt ) {
+                    lg: string = `Background image data len ${bgImgDt.length} != front image data len ${ftImgDt.length}.`;
+                    console.log("Backgrou");
+                }
+            }
+        }
+        else{
+            console.log("The two texture cannot be merged, because width, height, color format not same.");
+        }
+        return retTxtr;
+    }
+
      /**
       * @language zh_CN
      * @class aw.CharTexture
@@ -7,9 +56,6 @@
      */
     export class CharTexture extends egret3d.TextureBase {
 
-        /**
-         * @language zh_CN
-         */
         public static CreateCharTexture (w:number=32, h:number=32, txt: string="Test info.", align: string, font:string="60px 楷体", rgba:string="rgba(255,0,0,1)", 
                                             bg_rgba:string="rgba(200,200,200,1)", frame_rgba:string="rgba(255,0,0,1)", frame_width:number=2) {
             CharTexture.texture = new CharTexture(w, h, txt, align, font, rgba, bg_rgba, frame_rgba, frame_width);
@@ -20,7 +66,7 @@
 
         private _width: number = 32;
         private _height: number = 32;
-        private _pixelArray: Uint8Array;
+        private _pixelArray: Uint8Array = null;
         private _txt: string;
 
         public static GenTxtImg(w:number, h:number, txt: string, align: string, font:string, rgba:string, bg_rgba:string, frame_rgba:string, frame_width:number): ImageData {
@@ -76,7 +122,7 @@
             this._width = w; this._height= h; this._txt = txt;
             let txtImgData: ImageData = aw.CharTexture.GenTxtImg(this._width, this._height, this._txt, align, font, rgba, bg_rgba, frame_rgba, frame_width);
 
-            this.BuildCheckerboard(txtImgData);
+            this.BuildCheckerboard(txtImgData);  // 将图像数据写入 数组
 
             this.mimapData = new Array<egret3d.MipmapData>();
             this.mimapData.push(new egret3d.MipmapData(this._pixelArray, this._width, this._height));
@@ -113,13 +159,20 @@
                 }
             }
         }
+
+        public get PixelArray(): Uint8Array {
+            return this._pixelArray;
+        }
     }
 
+     /**
+      * @language zh_CN
+     * @class aw.CharTexture
+     * @classdesc
+     * 进度条纹理
+     */
     export class PercenterTexture extends egret3d.TextureBase {
 
-        /**
-         * @language zh_CN
-         */
         public static CreatePercentrTexture (w:number=8, h:number=64, up:number=1, down:number=2, multi:number=100, fixed_cnt:number=1, 
                                             rgba:string="rgba(255,0,0,1)", bg_rgba:string="rgba(200,200,200,1)", frame_rgba:string="rgba(255,0,0,1)", frame_width:number=2, 
                                             tip:boolean=true, tip_rgba:string="rgba(255,0,0,1)", align: string, font:string="60px 楷体") {
@@ -240,8 +293,11 @@
                 }
             }
         }
-    }
 
+        public get PixelArray(): Uint8Array {
+            return this._pixelArray;
+        }
+    }
 
     // TODO: 优化效率，减少重复生成
      /**
@@ -289,6 +345,12 @@
         }
     }
 
+     /**
+      * @language zh_CN
+     * @class aw.HUD
+     * @classdesc
+     * 进度条HUD
+     */
     export class ProgressHUD extends egret3d.HUD {
         private _txtrW: number = 32;
         private _txtrH: number = 32;
@@ -350,4 +412,5 @@
             this.texture = aw.PercenterTexture.texture;
         }
     }
+
 }
