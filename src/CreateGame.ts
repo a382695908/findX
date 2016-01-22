@@ -56,7 +56,7 @@ class CreateGame extends CreateBaseEnv{
     protected _boxTxtureFont: string = "60px 楷体";
     protected _boxTxtureAlign: string = "center";
     protected _boxTxtureColor: string = "rgba(255,   0,   0, 1)";
-    protected _boxTxtureBgColor: string="rgba(0, 0,  0, 0)";
+    protected _boxTxtureBgColor: string="rgba(200, 200,  200, 1)";
     protected _boxTxtureFrmBgColor: string="rgba(   0,   0, 255,  1)";
     protected _boxTxtureFrmW: number=3;
 
