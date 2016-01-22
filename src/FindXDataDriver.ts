@@ -28,7 +28,6 @@ namespace aw {
 
         private _stageCtr: any[] = [
             {"ttCnt":  4, "xoCnt": 1, "tmLMT":  5, "mvSPD":  5, "rtSPD": 1, "mfCnt": 4, "xfCnt": 4, "cP": ["X",  "入", "人"] },
-            {"ttCnt": 10, "xoCnt": 2, "tmLMT": 93, "mvSPD":  1, "rtSPD": 1, "mfCnt": 4, "xfCnt": 4, "cP": ["有", "温", "一"] },
             {"ttCnt":  8, "xoCnt": 3, "tmLMT": 13, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cP": ["白", "自", "日", "目"] },
             {"ttCnt": 10, "xoCnt": 2, "tmLMT": 60, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["天", "夭"] },
             {"ttCnt": 12, "xoCnt": 3, "tmLMT": 18, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cP": ["大", "犬"] },
