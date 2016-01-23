@@ -39,10 +39,9 @@
 				// merge texture image data
                 for (let y: number = 0; y < bgTxtr.width; y++) {
                     for (let x: number = 0; x < bgTxtr.height; x++) {
-                        let rnd: number = Math.floor(Math.random() * 200);
-                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+0] += rnd + ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+0];
-                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+1] += rnd + ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+1];
-                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+2] += rnd + ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+2];
+                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+0] += ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+0];
+                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+1] += ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+1];
+                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+2] += ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+2];
                         bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+3] = 255;
                     }
                 }

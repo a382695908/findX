@@ -5712,8 +5712,10 @@ var egret3d;
          * @returns HTMLCanvasElement
          */
         TextureUtil.getTextureData = function (image) {
-            var width = 1024; //image["width"];
-            var height = 1024; //image["height"];
+            //var width: number = 1024 ;//image["width"];
+            //var height: number = 1024  ;//image["height"];
+            var width = image.width; //image["width"];
+            var height = image.height; //image["height"];
             TextureUtil.canvas2D.width = width;
             TextureUtil.canvas2D.height = height;
             TextureUtil.context2D.clearRect(0, 0, width, height);
@@ -24582,9 +24584,6 @@ var egret3d;
             enumerable: true,
             configurable: true
         });
-        View3D.prototype.hasHUD = function (hud) {
-            return this._hudList.indexOf(hud) >= 0;
-        };
         /**
         * @language zh_CN
         * 添加 HUD 到渲染列表中
@@ -24606,7 +24605,11 @@ var egret3d;
         */
         View3D.prototype.delHUN = function (hud) {
             var index = this._hudList.indexOf(hud);
-            this._hudList.splice(index, 1);
+            if (index >= 0)
+                this._hudList.splice(index, 1);
+        };
+        View3D.prototype.hasHUD = function (hud) {
+            return this._hudList.indexOf(hud) >= 0;
         };
         /**
         * @language zh_CN
