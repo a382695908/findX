@@ -35,7 +35,7 @@
         //egret3d.AssetsManager.getInstance().addLoadTexture("sky/up.png"); // 只支持Y轴旋转，不需要顶／底纹理
         //egret3d.AssetsManager.getInstance().addLoadTexture("sky/dn.png");
         egret3d.AssetsManager.getInstance().addLoadTexture("star.jpg");
-        egret3d.AssetsManager.getInstance().addLoadTexture("wood.jpg");
+        egret3d.AssetsManager.getInstance().addLoadTexture("wood64.jpg");
         egret3d.AssetsManager.getInstance().addEventListener(egret3d.Event3D.EVENT_LOAD_COMPLETE,(e: egret3d.Event3D) => this.onLoadComplete(e));
         egret3d.AssetsManager.getInstance().startLoad();
     }
@@ -55,8 +55,8 @@
         let sky: egret3d.Sky = new egret3d.Sky(skyTexture);
         this._view3D.sky = sky;
 
-        this._starTexture = egret3d.AssetsManager.getInstance().findTexture("wood.jpg");
-        this._woodTexture = egret3d.AssetsManager.getInstance().findTexture("star.jpg");
+        this._woodTexture = egret3d.AssetsManager.getInstance().findTexture("wood64.jpg");
+        this._starTexture = egret3d.AssetsManager.getInstance().findTexture("star.jpg");
 
         this._time = new Date().getTime();
         requestAnimationFrame(() => this.onUpdate());

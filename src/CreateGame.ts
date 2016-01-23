@@ -51,9 +51,9 @@ class CreateGame extends CreateBaseEnv{
 
 
 	//盒子上的字符纹理
-    protected _boxTxtureW: number = 128;
-    protected _boxTxtureH: number = 128;
-    protected _boxTxtureFont: string = "100px 楷体";
+    protected _boxTxtureW: number = 64;
+    protected _boxTxtureH: number = 64;
+    protected _boxTxtureFont: string = "50px 楷体";
     protected _boxTxtureAlign: string = "center";
     protected _boxTxtureColor: string = "rgba(0,   255,   0, 1)";
     protected _boxTxtureBgColor: string="rgba(230, 230,  230, 1)";

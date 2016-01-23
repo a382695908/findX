@@ -24,6 +24,7 @@
                         bgImgDt.data[(y * (bgImgDt.width * 4) + x * 4) + 0] = bgTxtr.mimapData[0].data[(y * (bgImgDt.width * 4) + x * 4) + 0];
                         bgImgDt.data[(y * (bgImgDt.width * 4) + x * 4) + 1] = bgTxtr.mimapData[0].data[(y * (bgImgDt.width * 4) + x * 4) + 1];
                         bgImgDt.data[(y * (bgImgDt.width * 4) + x * 4) + 2] = bgTxtr.mimapData[0].data[(y * (bgImgDt.width * 4) + x * 4) + 2];
+                        bgImgDt.data[(y * (bgImgDt.width * 4) + x * 4) + 3] = bgTxtr.mimapData[0].data[(y * (bgImgDt.width * 4) + x * 4) + 3];
 					}
 				}
 				console.log("Background is pixel format texture");
@@ -38,9 +39,10 @@
 				// merge texture image data
                 for (let y: number = 0; y < bgTxtr.width; y++) {
                     for (let x: number = 0; x < bgTxtr.height; x++) {
-                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+0] += ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+0];
-                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+1] += ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+1];
-                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+2] += ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+2];
+                        let rnd: number = Math.floor(Math.random() * 200);
+                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+0] += rnd + ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+0];
+                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+1] += rnd + ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+1];
+                        bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+2] += rnd + ftImgDt[(y*(ftTxtr.width*4)+x*4)+3]/255 * ftImgDt[(y*(ftTxtr.width*4)+x*4)+2];
                         bgImgDt.data[(y*(bgImgDt.width*4)+x*4)+3] = 255;
                     }
                 }
@@ -58,17 +60,27 @@
 				// Create texute
             	let mimapData: Array<egret3d.MipmapData> = new Array<egret3d.MipmapData>();
             	mimapData.push(new egret3d.MipmapData(tmpArray, bgImgDt.width, bgImgDt.height));
-        		let retTxtr: egret3d.TextureBase = new egret3d.ImageTexture(null);
+        		let retTxtr: egret3d.TextureBase = new egret3d.CheckerboardTexture();
             	retTxtr.texture = egret3d.Egret3DDrive.context3D.creatTexture2D();
-            	retTxtr.texture.gpu_border = 0; 
-            	retTxtr.texture.gpu_internalformat = egret3d.InternalFormat.PixelArray;
-            	retTxtr.texture.gpu_colorformat = egret3d.Egret3DDrive.ColorFormat_RGBA8888;
-            	retTxtr.texture.mipmapDatas = mimapData;
-            	retTxtr.useMipmap = false;
-            	egret3d.Egret3DDrive.context3D.upLoadTextureData(0, retTxtr.texture);
-        		return retTxtr;
+                if ( retTxtr.texture ) {
+                    retTxtr.texture.width = bgTxtr.width;
+                    retTxtr.texture.height = bgTxtr.height;
+            	    retTxtr.texture.gpu_border = 0; 
+            	    retTxtr.texture.gpu_internalformat = egret3d.InternalFormat.PixelArray;
+            	    retTxtr.texture.gpu_colorformat = egret3d.Egret3DDrive.ColorFormat_RGBA8888;
+            	    retTxtr.texture.mipmapDatas = mimapData;
+            	    retTxtr.useMipmap = false;
+            	    egret3d.Egret3DDrive.context3D.upLoadTextureData(0, retTxtr.texture);
+                    console.log(`merged texute width: ${retTxtr.texture.width}, height: ${retTxtr.texture.height}`);
+        		    return retTxtr;
+                }
+                else {
+                    console.log("some thing error-wen create merged texture context3D.creatTexture2D().");
+        		    return bgTxtr;
+                }
             }
             else{
+                console.log("some thing error.");
                 let lg: string = `Background image data(${bgImgDt}) or front image data(${ftImgDt}) error.`;
                 console.log(lg);
                 if ( bgImgDt && ftImgDt ) {
