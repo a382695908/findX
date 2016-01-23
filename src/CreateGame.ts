@@ -89,8 +89,8 @@ class CreateGame extends CreateBaseEnv{
         this._lightGroup = new egret3d.LightGroup();
         let directLight: egret3d.DirectLight = new egret3d.DirectLight(new egret3d.Vector3D(0.5, 1.0, 0.6));
         directLight.diffuse = 0xAAAAAA;
-        directLight.halfColor = 0XFFFFFF;
-        directLight.halfIntensity = 0.8;
+        directLight.halfColor = 0XDDDDDD;
+        directLight.halfIntensity = 0.6;
         this._lightGroup.addDirectLight(directLight);
 
 		// 生成盒子
