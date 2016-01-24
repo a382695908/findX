@@ -25,7 +25,7 @@
         this._cameraCtl = new egret3d.LookAtController(this._view3D.camera3D, new egret3d.Object3D());
         this._cameraCtl.eyesPosition = new egret3d.Vector3D(0, 0, -this._view3D.width * 2);
         this._cameraCtl.lookAtPosition = new egret3d.Vector3D(0, 0, 0);
-        this._cameraCtl.setEyesLength(4000);
+        //this._cameraCtl.setEyesLength(4000);
 
         this.onView3DInitComplete();
 

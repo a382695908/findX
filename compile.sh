@@ -18,7 +18,7 @@ if [ $# -eq 0 ];then
 	else
 		: #echo "Not found ./bin-debug/src"
 	fi
-	#bash ./min_all.sh
+	bash ./min_all.sh
 elif [ $# -eq 1 ];then
 	#tsc --watch --diagnostics --listFiles --noEmitOnError --removeComments --outDir ./bin-debug/
 	tsc --diagnostics --listFiles --noEmitOnError --removeComments --outDir ./bin-debug/

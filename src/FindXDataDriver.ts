@@ -33,11 +33,11 @@ namespace aw {
             {"ttCnt": 12, "xoCnt": 3, "tmLMT": 15, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cP": ["大", "犬"] },
             {"ttCnt": 14, "xoCnt": 4, "tmLMT": 30, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cP": ["日", "曰", "目"] },
             {"ttCnt": 16, "xoCnt": 2, "tmLMT": 40, "mvSPD":  6, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["籍", "藉"] },
-            {"ttCnt": 18, "xoCnt": 4, "tmLMT": 20, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["拔", "拨"]},
+            {"ttCnt": 18, "xoCnt": 4, "tmLMT": 20, "mvSPD":  4, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["拔", "拨"]},
             {"ttCnt": 20, "xoCnt": 4, "tmLMT": 12, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["阡", "迁", "歼", "奸"] },
-            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 32, "mvSPD":  8, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["慕", "幕", "墓", "暮", "蓦", "募"] },
-            {"ttCnt": 26, "xoCnt": 4, "tmLMT": 12, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["稍", "梢", "捎" ] },
-            {"ttCnt": 28, "xoCnt": 4, "tmLMT": 25, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["魏", "巍", "翼", "冀"] }
+            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 32, "mvSPD":  5, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["慕", "幕", "墓", "暮", "蓦", "募"] },
+            {"ttCnt": 26, "xoCnt": 4, "tmLMT": 12, "mvSPD":  5, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["稍", "梢", "捎" ] },
+            {"ttCnt": 28, "xoCnt": 4, "tmLMT": 25, "mvSPD":  8, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["魏", "巍", "翼", "冀"] }
         ];
 
         constructor( startTime: Date = null ) {
@@ -47,9 +47,9 @@ namespace aw {
             this._startTips = `目标:${this._XObjCnt}个${this._charsFind}\n点触开始... `;
             this._pauseTips = `暂停中，触摸/点击任意处继续... `;
 
-            this._winTips = ` :) 通关\n点触继续${this.stage}关... `;
+            this._winTips = ` :) 过关\n点触继续${this.stage}关... `;
             let rest_cnt = this._XObjCnt - this._pickedXCnt;
-            this._failedTips = ` :(， 差${rest_cnt}个通关!\n点触再来... `;
+            this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
         }
         public StartGame( startTime: Date = null ){
 			console.log("Single total stage count:" + this._stageCtr.length);
@@ -59,9 +59,9 @@ namespace aw {
             this._startTips = `目标:${this._XObjCnt}个${this._charsFind}\n点触开始... `;
             this._pauseTips = `暂停中，点触继续... `;
 
-            this._winTips = ` :) 通关\n点触继续${this.stage}关... `;
+            this._winTips = ` :) 过关\n点触继续${this.stage}关... `;
             let rest_cnt = this._XObjCnt - this._pickedXCnt;
-            this._failedTips = ` :(， 差${rest_cnt}个通关!\n点触再来... `;
+            this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
 
             this.UpdateStageCtrData();
         }
@@ -154,13 +154,13 @@ namespace aw {
 			if ( this._pickedXCnt == this._XObjCnt && this._driverState == GameDataState.IN_RUN) {
                 this._driverState = GameDataState.USER_WIN;
         	    this.StageUp();
-                this._winTips  = ` :) 通关\n点触继续${this.stage}关... `;
+                this._winTips  = ` :) 过关\n点触继续${this.stage}关... `;
                 this._readyTips= `目标:${this._XObjCnt}个${this._charsFind}\n点触继续...`;
                 return;
             }
             if ( this._driverState == GameDataState.TIME_OVER ){
                 let rest_cnt = this._XObjCnt - this._pickedXCnt;
-                this._failedTips = ` :(， 差${rest_cnt}个通关!\n点触再来... `;
+                this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
             }
         }
 

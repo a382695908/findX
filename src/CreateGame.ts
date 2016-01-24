@@ -82,7 +82,7 @@ class CreateGame extends CreateBaseEnv{
     protected onView3DInitComplete(): void {
         this.textureComplete();
 
-        this._cameraCtl.setEyesLength( this._depth * 4);
+        this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/3 * 5);
     }
 
     private textureComplete() {
@@ -130,7 +130,7 @@ class CreateGame extends CreateBaseEnv{
             box.scaleZ = 1;
             this._view3D.addChild3D(box);
 
-			if ( this._woodTexture ) {
+			if ( this._woodTexture && this._starTexture ) {
             	this._boxTxtureBgColor = "rgba(220,220,220,0)";
 			}
 			else{
@@ -150,8 +150,14 @@ class CreateGame extends CreateBaseEnv{
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
 				//console.log(`xObjCnt: ${this._dtDriver.xObjCnt}, xBoxIds: ${this._xBoxIds.length}, now char: ${this._dtDriver.charsPool[n]}`);
             }
-			if ( this._woodTexture ) {
-            	let mergedTxtr: egret3d.TextureBase = aw.MergeCharTexture(this._woodTexture, aw.CharTexture.texture);
+			if ( this._woodTexture && this._starTexture ) {
+            	let mergedTxtr: egret3d.TextureBase = null;
+				if ( this.dataDriver.stage % 2 == 0 ) {
+            		mergedTxtr = aw.MergeCharTexture(this._woodTexture, aw.CharTexture.texture);
+				}
+				else{
+					mergedTxtr = aw.MergeCharTexture(this._starTexture, aw.CharTexture.texture);
+				}
 				if ( mergedTxtr ) {
             		box.material.diffuseTexture = mergedTxtr;
 					console.log("Use merged texture");
@@ -430,7 +436,6 @@ class CreateGame extends CreateBaseEnv{
 		switch ( this._dtDriver.dataState ){ // 根据数据驱动的结果，控制游戏进度选折
 		case aw.GameDataState.READY_GO:
             this.updateInteractiveTips( this._dtDriver.readyTips );
-            this.UpdateShowInfo();  // 更新 分数，等级等暂时信息
             break;
 		case aw.GameDataState.IN_RUN:
             this.UpdateBoxView();   // 更新盒子飞行

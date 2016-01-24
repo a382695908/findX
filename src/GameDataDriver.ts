@@ -120,7 +120,7 @@
             this._stage = v;
         }
         public get stage(): number {
-			console.log("get, now stage: " + this._stage);
+			//console.log("get, now stage: " + this._stage);
             return this._stage;
         }
     }
