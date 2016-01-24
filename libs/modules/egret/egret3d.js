@@ -5712,8 +5712,6 @@ var egret3d;
          * @returns HTMLCanvasElement
          */
         TextureUtil.getTextureData = function (image) {
-            //var width: number = 1024 ;//image["width"];
-            //var height: number = 1024  ;//image["height"];
             var width = image.width; //image["width"];
             var height = image.height; //image["height"];
             TextureUtil.canvas2D.width = width;
@@ -21377,6 +21375,14 @@ var egret3d;
                 if (this._lookAtObject)
                     this._lookAtObject = null;
                 this._lookAtPosition.copyFrom(val.add(this.lookAtOffset));
+                this.notifyUpdate();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(LookAtController.prototype, "eyesPosition", {
+            set: function (val) {
+                this._eyesPos.copyFrom(val);
                 this.notifyUpdate();
             },
             enumerable: true,

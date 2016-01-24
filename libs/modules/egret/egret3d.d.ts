@@ -13487,6 +13487,7 @@ declare module egret3d {
         * @platform Web,Native
         */
         lookAtPosition: Vector3D;
+        eyesPosition: Vector3D;
         /**
         * @language zh_CN
         *

@@ -11,6 +11,9 @@ class CreateGame extends CreateBaseEnv{
     protected _width  : number = 600;
     protected _height : number = 800;
     protected _depth  : number = 400;
+    protected _widthR : number = 0.8;
+    protected _heightR: number = 0.5;
+    protected _depthR : number = 0.6;
 
 	// 展示信息的HUD(Head UP Display)
     private _hud : aw.HUD = null;
@@ -78,6 +81,8 @@ class CreateGame extends CreateBaseEnv{
 
     protected onView3DInitComplete(): void {
         this.textureComplete();
+
+        this._cameraCtl.setEyesLength( this._depth * 4);
     }
 
     private textureComplete() {
@@ -101,8 +106,6 @@ class CreateGame extends CreateBaseEnv{
 
 		// 交互信息
         this.updateInteractiveTips( this._dtDriver.readyTips );
-
-        this._cameraCtl.setEyesLength(3500);
     }
 
     protected GenCharBox() {
@@ -185,6 +188,9 @@ class CreateGame extends CreateBaseEnv{
     }
 
     protected UpdateBoxView(){
+		let rW: number = this._widthR *  this._width;
+		let rH: number = this._heightR *  this._height;
+		let rD: number = this._depthR *  this._depth;
         if ( this._uiReady === false ){ // 初始化到空间乱序，避免一开始集中被批量选中
             this._uiReady = true;
             for(let id in this._boxInfo ){
@@ -193,9 +199,9 @@ class CreateGame extends CreateBaseEnv{
                 bi['box'].rotationX = (Math.random()*2*Math.PI - Math.PI);
                 bi['box'].rotationY = (Math.random()*2*Math.PI - Math.PI);
                 bi['box'].rotationZ = (Math.random()*2*Math.PI - Math.PI);
-                bi['box'].x = (Math.random()*2 - 1) *  this._width;
-                bi['box'].y = (Math.random()*2 - 1) *  this._height;
-                bi['box'].z = (Math.random()*2 - 1) *  this._depth;
+                bi['box'].x = rW * (Math.random()*2 - 1) ;
+                bi['box'].y = rH * (Math.random()*2 - 1);
+                bi['box'].z = rD * (Math.random()*2 - 1);
             }
         }
         else{
@@ -204,7 +210,7 @@ class CreateGame extends CreateBaseEnv{
                 if ( bi === null ) {
                     bi = this._boxBak[id];
                     if ( this._view3D.hasChild3D(bi['box']) ) {
-                        if (bi['box'].scaleX <= 0.1 || bi['box'].scaleY <= 0.1 || bi['box'].scaleZ <= 0.1 ) {
+                        if (bi['box'].scaleX <= 0.2 || bi['box'].scaleY <= 0.2 || bi['box'].scaleZ <= 0.2 ) {
                             if (id in this._deadBox["box"] ){
                             }
                             else{
@@ -240,13 +246,13 @@ class CreateGame extends CreateBaseEnv{
                     bi['box'].y += bi['moveY'];
                     bi['box'].z += bi['moveZ'];
 
-                    if ( bi['box'].x < -this._width || bi['box'].x > this._width ){
+                    if ( bi['box'].x < -rW || bi['box'].x > rW ){
                         bi['moveX'] = -bi['moveX']
                     }
-                    if ( bi['box'].y < -this._height || bi['box'].y > this._height ){
+                    if ( bi['box'].y < -rH || bi['box'].y > rH ){
                         bi['moveY'] = -bi['moveY']
                     }
-                    if ( bi['box'].z < -this._depth || bi['box'].z > this._depth ){
+                    if ( bi['box'].z < -rD || bi['box'].z > rD ){
                         bi['moveZ'] = -bi['moveZ']
                     }
                 }
