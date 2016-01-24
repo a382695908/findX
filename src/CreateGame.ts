@@ -17,9 +17,9 @@ class CreateGame extends CreateBaseEnv{
 
 	// 展示信息的HUD(Head UP Display)
     private _hud : aw.HUD = null;
-    private _hudW: number = 128;
-    private _hudH: number = 128;
-    private _hudFont: string = "20px 宋体";
+    private _hudW: number = 256;
+    private _hudH: number = 64;
+    private _hudFont: string = "20px 楷体";
     private _hudAlign: string = "left";
     private _hudColor: string = "rgba(255,0,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
     private _hudBgColor: string="rgba(0,0,0,0)";
@@ -28,7 +28,7 @@ class CreateGame extends CreateBaseEnv{
 
     // 进度信息的HUD(Head Up Display)
     private _hudPer : aw.ProgressHUD;
-    private _hudPerW: number = 128;
+    private _hudPerW: number = 256;
     private _hudPerH: number = 8;
     private _hudPerMulti: number = 100;
     private _hudPerFixedCnt: number = 2;
@@ -39,13 +39,13 @@ class CreateGame extends CreateBaseEnv{
     private _hudPerTip: boolean = false;
     private _hudPerTipColor: string = "rgba(255,0,0,1)";
     private _hudPerTipAlign: string = "center";
-    private _hudPerTipFont: string = "24px 宋体";
+    private _hudPerTipFont: string = "24px 楷体";
 
 	// 交互信息的HUD(Head UP Display)
     private _hudInter : aw.HUD;
     private _hudInterW: number = 256;
     private _hudInterH: number = 64;
-    private _hudInterFont: string = "24px 宋体";
+    private _hudInterFont: string = "24px 楷体";
     private _hudInterAlign: string = "center";
     private _hudInterColor: string = "rgba(0,255,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
     private _hudInterBgColor: string="rgba( 00, 00, 00, 0.8)";
@@ -56,7 +56,7 @@ class CreateGame extends CreateBaseEnv{
 	//盒子上的字符纹理
     protected _boxTxtureW: number = 64;
     protected _boxTxtureH: number = 64;
-    protected _boxTxtureFont: string = "50px 楷体";
+    protected _boxTxtureFont: string = "50px 宋体";
     protected _boxTxtureAlign: string = "center";
     protected _boxTxtureColor: string = "rgba(0,   255,   0, 1)";
     protected _boxTxtureBgColor: string="rgba(230, 230,  230, 1)";
@@ -141,14 +141,14 @@ class CreateGame extends CreateBaseEnv{
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
                 this._xBoxIds.push( box.id );
-				console.log(`xObjCnt: ${this._dtDriver.xObjCnt}, xBoxIds: ${this._xBoxIds.length}, now char: ${this._dtDriver.charsFind}`);
+				//console.log(`xObjCnt: ${this._dtDriver.xObjCnt}, xBoxIds: ${this._xBoxIds.length}, now char: ${this._dtDriver.charsFind}`);
             }
             else{
                 let n: number = Math.floor(Math.random() * this._dtDriver.charsPool.length);
                 aw.CharTexture.CreateCharTexture(this._boxTxtureW, this._boxTxtureH, this._dtDriver.charsPool[n], 
                                                 this._boxTxtureAlign, this._boxTxtureFont, this._boxTxtureColor, 
                                                 this._boxTxtureBgColor, this._boxTxtureFrmBgColor, this._boxTxtureFrmW);
-				console.log(`xObjCnt: ${this._dtDriver.xObjCnt}, xBoxIds: ${this._xBoxIds.length}, now char: ${this._dtDriver.charsPool[n]}`);
+				//console.log(`xObjCnt: ${this._dtDriver.xObjCnt}, xBoxIds: ${this._xBoxIds.length}, now char: ${this._dtDriver.charsPool[n]}`);
             }
 			if ( this._woodTexture ) {
             	let mergedTxtr: egret3d.TextureBase = aw.MergeCharTexture(this._woodTexture, aw.CharTexture.texture);
@@ -263,8 +263,8 @@ class CreateGame extends CreateBaseEnv{
     // 展示信息(文字和进度条)
     protected UpdateShowInfo(){
 		let restTime: number = parseFloat((this._dtDriver.maxSeconds-this._dtDriver.lostSeconds10/10).toFixed(1));
-		let tips:string = ` 关卡:${this._dtDriver.stage} `
-                        + `\n 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt}) `
+		if ( restTime < 0 ) restTime = 0.0;
+		let tips:string = ` 关卡:${this._dtDriver.stage} 目标:${this._dtDriver.charsFind}(${this._dtDriver.pickedXCnt}/${this._dtDriver.xObjCnt}) `
 						+ `\n 计时:${restTime}\n`;
         this.updateShowTips( tips );
         if ( restTime > this._dtDriver.maxSeconds * 0.8 ){
@@ -344,6 +344,7 @@ class CreateGame extends CreateBaseEnv{
 
     protected OnPickupBox(e: egret3d.Event3D): void {
         if ( this._uiReady === false ) return;
+        if ( ! this._dtDriver.isRunning ) return;
         if ( this._boxInfo[ e.currentTarget.id ] == null ){
             // do nothing
         }
@@ -366,11 +367,6 @@ class CreateGame extends CreateBaseEnv{
     //重新开始游戏
 	protected restart() {
 		this._dtDriver.StartGame();
-
-        //this.ClearOldScene();
-
-		// 生成盒子
-        //this.GenCharBox();
         if ( this._uiReady === true ) this._uiReady = false;
 	}
 
@@ -410,8 +406,10 @@ class CreateGame extends CreateBaseEnv{
                 this.updateInteractiveTips( this._dtDriver.readyTips );
 				break;
 			case aw.GameDataState.TIME_OVER:
-        	    self.restart()
-				self.HideInteractiveHUD();
+                this.ClearOldScene();
+                this.GenCharBox();
+                this._dtDriver.dataState = aw.GameDataState.READY_GO;
+                this.updateInteractiveTips( this._dtDriver.readyTips );
 				break;
 			case aw.GameDataState.NEVER_START:
         	    self.restart()
@@ -432,6 +430,7 @@ class CreateGame extends CreateBaseEnv{
 		switch ( this._dtDriver.dataState ){ // 根据数据驱动的结果，控制游戏进度选折
 		case aw.GameDataState.READY_GO:
             this.updateInteractiveTips( this._dtDriver.readyTips );
+            this.UpdateShowInfo();  // 更新 分数，等级等暂时信息
             break;
 		case aw.GameDataState.IN_RUN:
             this.UpdateBoxView();   // 更新盒子飞行

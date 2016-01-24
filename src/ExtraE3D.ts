@@ -3,8 +3,8 @@
     // 暂不支持 useMipmap
     export function MergeCharTexture( bgTxtr: egret3d.TextureBase, ftTxtr: aw.CharTexture ): egret3d.TextureBase {
 		if ( bgTxtr == null || ftTxtr == null ) { 
-			console.log( bgTxtr); 
-			console.log( ftTxtr); 
+			console.error( bgTxtr); 
+			console.error( ftTxtr); 
 			return;
 		};
         if ( bgTxtr.width==ftTxtr.width && bgTxtr.height==ftTxtr.height && ftTxtr.colorFormat==bgTxtr.colorFormat ) { 
@@ -14,7 +14,7 @@
                 egret3d.TextureUtil.regist( );
                 let cvs: HTMLCanvasElement = egret3d.TextureUtil.getTextureData( bgTxtr.imageData );
                 bgImgDt = cvs.getContext("2d").getImageData( 0, 0, bgTxtr.width, bgTxtr.height );
-				console.log("Background is image format texture");
+				//console.log("Background is image format texture");
             }
             else if ( bgTxtr.mimapData.length > 0 && bgTxtr.mimapData[0].width==ftTxtr.width && bgTxtr.mimapData[0].height==ftTxtr.height ) { // 内存像素
                 bgImgDt.width = bgTxtr.mimapData[0].width;
@@ -27,10 +27,10 @@
                         bgImgDt.data[(y * (bgImgDt.width * 4) + x * 4) + 3] = bgTxtr.mimapData[0].data[(y * (bgImgDt.width * 4) + x * 4) + 3];
 					}
 				}
-				console.log("Background is pixel format texture");
+				//console.log("Background is pixel format texture");
             }
             else{
-                console.log( "Unsurported backgrand texture." );
+                console.error( "Unsurported backgrand texture." );
                 return bgTxtr;
             }
 
@@ -70,25 +70,25 @@
             	    retTxtr.texture.mipmapDatas = mimapData;
             	    retTxtr.useMipmap = false;
             	    egret3d.Egret3DDrive.context3D.upLoadTextureData(0, retTxtr.texture);
-                    console.log(`merged texute width: ${retTxtr.texture.width}, height: ${retTxtr.texture.height}`);
+                    //console.log(`merged texute width: ${retTxtr.texture.width}, height: ${retTxtr.texture.height}`);
         		    return retTxtr;
                 }
                 else {
-                    console.log("some thing error-wen create merged texture context3D.creatTexture2D().");
+                    console.error("some thing error-wen create merged texture context3D.creatTexture2D().");
         		    return bgTxtr;
                 }
             }
             else{
-                console.log("some thing error.");
+                console.error("some thing error.");
                 let lg: string = `Background image data(${bgImgDt}) or front image data(${ftImgDt}) error.`;
-                console.log(lg);
+                console.error(lg);
                 if ( bgImgDt && ftImgDt ) {
                     lg = `Background image data len ${bgImgDt.data.length} != front image data len ${ftImgDt.length}.`;
                 }
             }
         }
         else{
-            console.log("The two texture cannot be merged, because width, height, color format not same.");
+            console.error("The two texture cannot be merged, because width, height, color format not same.");
         }
         return bgTxtr;
     }

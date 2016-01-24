@@ -28,16 +28,16 @@ namespace aw {
 
         private _stageCtr: any[] = [
             {"ttCnt":  4, "xoCnt": 1, "tmLMT":  5, "mvSPD":  5, "rtSPD": 1, "mfCnt": 4, "xfCnt": 4, "cP": ["X",  "入", "人"] },
-            {"ttCnt":  8, "xoCnt": 3, "tmLMT": 13, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cP": ["白", "自", "日", "目"] },
-            {"ttCnt": 10, "xoCnt": 2, "tmLMT": 60, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["天", "夭"] },
-            {"ttCnt": 12, "xoCnt": 3, "tmLMT": 18, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cP": ["大", "犬"] },
-            {"ttCnt": 14, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cP": ["日", "曰", "目"] },
-            {"ttCnt": 16, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["籍", "藉"] },
-            {"ttCnt": 18, "xoCnt": 4, "tmLMT": 10, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["拔", "拨"]},
+            {"ttCnt":  8, "xoCnt": 3, "tmLMT": 12, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cP": ["白", "自", "日", "目"] },
+            {"ttCnt": 10, "xoCnt": 2, "tmLMT": 20, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["天", "夭"] },
+            {"ttCnt": 12, "xoCnt": 3, "tmLMT": 15, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cP": ["大", "犬"] },
+            {"ttCnt": 14, "xoCnt": 4, "tmLMT": 30, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cP": ["日", "曰", "目"] },
+            {"ttCnt": 16, "xoCnt": 2, "tmLMT": 40, "mvSPD":  6, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["籍", "藉"] },
+            {"ttCnt": 18, "xoCnt": 4, "tmLMT": 20, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["拔", "拨"]},
             {"ttCnt": 20, "xoCnt": 4, "tmLMT": 12, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["阡", "迁", "歼", "奸"] },
-            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 12, "mvSPD":  8, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["慕", "幕", "墓", "暮", "蓦", "募"] },
+            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 32, "mvSPD":  8, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["慕", "幕", "墓", "暮", "蓦", "募"] },
             {"ttCnt": 26, "xoCnt": 4, "tmLMT": 12, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["稍", "梢", "捎" ] },
-            {"ttCnt": 28, "xoCnt": 4, "tmLMT": 15, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["魏", "巍", "翼", "冀"] }
+            {"ttCnt": 28, "xoCnt": 4, "tmLMT": 25, "mvSPD": 10, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["魏", "巍", "翼", "冀"] }
         ];
 
         constructor( startTime: Date = null ) {
@@ -52,6 +52,7 @@ namespace aw {
             this._failedTips = ` :(， 差${rest_cnt}个通关!\n点触再来... `;
         }
         public StartGame( startTime: Date = null ){
+			console.log("Single total stage count:" + this._stageCtr.length);
 			super.StartGame( startTime );
             this._pickedXCnt = 0;
             this._readyTips = `目标:${this._XObjCnt}个${this._charsFind}\n点触继续... `;
@@ -150,7 +151,7 @@ namespace aw {
                 return;
             }
             super.Update( );
-			if ( this._pickedXCnt == this._XObjCnt ) {
+			if ( this._pickedXCnt == this._XObjCnt && this._driverState == GameDataState.IN_RUN) {
                 this._driverState = GameDataState.USER_WIN;
         	    this.StageUp();
                 this._winTips  = ` :) 通关\n点触继续${this.stage}关... `;
@@ -172,7 +173,7 @@ namespace aw {
         private UpdateStageCtrData() {
             let multi = Math.ceil( this.stage / this._stageCtr.length );
             if (multi == 0 ) multi = 1;
-            let idx = this.stage % this._stageCtr.length;
+            let idx = (this.stage-1) % this._stageCtr.length;
 
             this._totalObjCnt = multi * this._stageCtr[idx]["ttCnt"]
             this._XObjCnt     = multi * this._stageCtr[idx]["xoCnt"]
