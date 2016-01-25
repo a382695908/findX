@@ -6,6 +6,7 @@
     protected _view3D: egret3d.View3D = null;
     protected _viewPort: egret3d.Rectangle = null;
     protected _cameraCtl: egret3d.LookAtController = null;
+    //protected _cameraCtl: egret3d.HoverController = null;
 
     protected _boxTexture : egret3d.SkyTexture;
     protected _starTexture: egret3d.TextureBase = null;
@@ -15,7 +16,8 @@
         this.initView();
         egret3d.AssetsManager.getInstance().addEventListener(egret3d.Event3D.EVENT_LOAD_PROGRESS, (e: egret3d.Event3D) => this.progress(e));
 
-        this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight);
+        //this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight);
+        this._viewPort = new egret3d.Rectangle(0, 0, window.innerWidth, window.innerHeight);
         egret3d.Egret3DDrive.requstContext3D(DeviceUtil.getGPUMode, this._viewPort, () => this.onInit3D());
     }
 
@@ -114,10 +116,12 @@
         this._view3D = new egret3d.View3D(this._viewPort);
 
         this._cameraCtl = new egret3d.LookAtController(this._view3D.camera3D, new egret3d.Object3D());
-        this._cameraCtl.eyesPosition = new egret3d.Vector3D(0, 0, -this._view3D.width * 2);
+        //this._cameraCtl.eyesPosition = new egret3d.Vector3D(0, 0, -this._view3D.width * 2);
         this._cameraCtl.lookAtPosition = new egret3d.Vector3D(0, 0, 0);
-        //this._cameraCtl.setEyesLength(4000);
+        this._cameraCtl.setEyesLength(4000);
 
+        //this._cameraCtl = new egret3d.HoverController(this._view3D.camera3D,null,0,30);
+        //this._cameraCtl.distance = 1500;
 
         egret3d.AssetsManager.getInstance().setRootURL("resource/");
         egret3d.AssetsManager.getInstance().addLoadTexture("sky/bk.png");
@@ -172,7 +176,7 @@
 
         this._cameraCtl.update();
 
-        this._view3D.renden(this._time, this._delay);
+        this._view3D.update(this._time, this._delay);
 
         requestAnimationFrame(() => this.onUpdate());
     }
