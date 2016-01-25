@@ -145,6 +145,7 @@
 
     protected onLoadComplete(e: egret3d.Event3D): void {
         setTimeout(this.removeLoadingBar, 1000);
+	
 
         let sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/fr.png");
         let sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/bk.png");
@@ -161,6 +162,9 @@
         this._starTexture = egret3d.AssetsManager.getInstance().findTexture("star64.jpg");
 
         this.onView3DInitComplete();
+
+		let div = document.getElementById("place_holder");
+		div.style.overflow = "block";
 
         this._time = new Date().getTime();
         requestAnimationFrame(() => this.onUpdate());

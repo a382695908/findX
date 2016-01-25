@@ -36,9 +36,12 @@
         meta.setAttribute('content', 'width=device-width, initial-scale=' + (2 / window.devicePixelRatio) + ', user-scalable=no');
     }
     </script>
+    <style>
+        div#place_holder.egret-player {overflow: block;};
+    </style>
 </head>
 <body style="pointer-event:none;">
-    <div style="margin:auto;width:100%;height:0%;" class="egret-player"
+    <div id="place_holder" style="margin:auto;width:100%;height:0%;overflow:block;" class="egret-player"
          data-entry-class="Main"
          data-orientation="portrait"
          data-scale-mode="showAll"
@@ -52,6 +55,8 @@
     </div>
     <script>
 		egret.runEgret();
+		var div = document.getElementById("place_holder");
+		div.style.overflow = "block";
     </script>
 </body>
 </html>
