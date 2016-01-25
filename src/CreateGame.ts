@@ -367,7 +367,7 @@ class CreateGame extends CreateBaseEnv{
     }
 
 	protected HideInteractiveHUD() {
-		this._view3D.delHUN( this._hudInter );
+		this._view3D.delHUD( this._hudInter );
 	}
 
     //重新开始游戏
