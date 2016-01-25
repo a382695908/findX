@@ -80,6 +80,7 @@ class CreateGame extends CreateBaseEnv{
     }
 
     protected onView3DInitComplete(): void {
+        console.log("Create Game onView3DInitComplete()...");
         this.textureComplete();
 
         this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/3 * 5);
