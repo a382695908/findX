@@ -16,8 +16,7 @@
         this.initView();
         egret3d.AssetsManager.getInstance().addEventListener(egret3d.Event3D.EVENT_LOAD_PROGRESS, (e: egret3d.Event3D) => this.progress(e));
 
-        //this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight);
-        this._viewPort = new egret3d.Rectangle(0, 0, window.innerWidth, window.innerHeight);
+        this._viewPort = new egret3d.Rectangle(0, 0, document.body.clientWidth ,document.body.clientHeight);
         egret3d.Egret3DDrive.requstContext3D(DeviceUtil.getGPUMode, this._viewPort, () => this.onInit3D());
     }
 
@@ -25,7 +24,7 @@
         let ui = document.getElementById("mask");
         if ( ui ) {
             console.log("Remove loading mask ok.");
-            //document.body.style.backgroundColor = "#000000";
+            document.body.style.backgroundColor = "#000000";
             document.body.removeChild(ui);
 
             if ( document.getElementById("egret3D") ){
@@ -36,6 +35,7 @@
             console.warn("Loading mask was not there.");
         }
     }
+
     private progress(e: egret3d.Event3D) {
         let loading = document.getElementById("loading");
         let progressDiv = document.getElementById("loadingtiao");
@@ -116,9 +116,9 @@
         this._view3D = new egret3d.View3D(this._viewPort);
 
         this._cameraCtl = new egret3d.LookAtController(this._view3D.camera3D, new egret3d.Object3D());
-        //this._cameraCtl.eyesPosition = new egret3d.Vector3D(0, 0, -this._view3D.width * 2);
+        this._cameraCtl.eyesPosition = new egret3d.Vector3D(0, 0, -this._view3D.width * 2);
         this._cameraCtl.lookAtPosition = new egret3d.Vector3D(0, 0, 0);
-        this._cameraCtl.setEyesLength(4000);
+        //this._cameraCtl.setEyesLength(3000);
 
         //this._cameraCtl = new egret3d.HoverController(this._view3D.camera3D,null,0,30);
         //this._cameraCtl.distance = 1500;
@@ -162,9 +162,6 @@
         this._starTexture = egret3d.AssetsManager.getInstance().findTexture("star64.jpg");
 
         this.onView3DInitComplete();
-
-		let div = document.getElementById("place_holder");
-		div.style.overflow = "block";
 
         this._time = new Date().getTime();
         requestAnimationFrame(() => this.onUpdate());
