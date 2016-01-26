@@ -82,7 +82,8 @@ class CreateGame extends CreateBaseEnv{
     protected onView3DInitComplete(): void {
         this.textureComplete();
 
-        this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/3 * 5);
+        //this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/3 );
+        this._cameraCtl.setEyesLength(3000);
         console.log("textureComplete...");
     }
 
@@ -255,6 +256,17 @@ class CreateGame extends CreateBaseEnv{
                     bi['box'].x += bi['moveX'];
                     bi['box'].y += bi['moveY'];
                     bi['box'].z += bi['moveZ'];
+                    //if ( this._camera3D.isVisibleToCamera( bi['box'] ) ) {
+                    //}
+                    //else{
+                    //    bi['moveX'] = -bi['moveX']
+                    //    bi['moveY'] = -bi['moveY']
+                    //    bi['moveZ'] = -bi['moveZ']
+                    //}
+
+                    //var v3 = bi['box'].getScreenPosition( this._camera3D );
+                    //if ( v3 ) {
+                    //}
 
                     if ( bi['box'].x < -rW || bi['box'].x > rW ){
                         bi['moveX'] = -bi['moveX']

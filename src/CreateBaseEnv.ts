@@ -5,12 +5,14 @@
     protected _timeStart:Date = new Date();
     protected _view3D: egret3d.View3D = null;
     protected _viewPort: egret3d.Rectangle = null;
+    protected _camera3D: egret3d.Camera3D = null;
     protected _cameraCtl: egret3d.LookAtController = null;
     //protected _cameraCtl: egret3d.HoverController = null;
 
     protected _boxTexture : egret3d.SkyTexture;
     protected _starTexture: egret3d.TextureBase = null;
     protected _woodTexture: egret3d.TextureBase = null;
+    protected _resizeTime: number = -1;
 
     public constructor() {
         this.initView();
@@ -112,13 +114,37 @@
 
     }
 
+    protected onResize() {
+        if(this._resizeTime == -1) {
+            this._resizeTime = setTimeout(() => this.setResize(),300);
+        }
+    }
+
+    private setResize() {
+        clearTimeout(this._resizeTime);
+        this._resizeTime = -1;
+        this._view3D.resize(0,0, document.body.clientWidth, document.body.clientHeight);
+
+        var w = document.body.clientWidth;
+
+        var mask = document.getElementById("mask");
+        if(mask) {
+            var div = document.getElementById("loading");
+            div.style.width = w * 0.5 + "px";
+            div.style.top = "40%";
+            div.style.left = (w - w * 0.5) * 0.5 + "px";
+        }
+    }
+
     protected onInit3D(): void {
-        this._view3D = new egret3d.View3D(this._viewPort);
+        this._camera3D = new egret3d.Camera3D(egret3d.CameraType.perspective);
+        this._view3D = new egret3d.View3D(this._viewPort, this._camera3D);
+        window.addEventListener("resize",() => this.onResize());
 
         this._cameraCtl = new egret3d.LookAtController(this._view3D.camera3D, new egret3d.Object3D());
-        this._cameraCtl.eyesPosition = new egret3d.Vector3D(0, 0, -this._view3D.width * 2);
+        //this._cameraCtl.eyesPosition = new egret3d.Vector3D(0, 0, -this._view3D.width * 2);
         this._cameraCtl.lookAtPosition = new egret3d.Vector3D(0, 0, 0);
-        //this._cameraCtl.setEyesLength(3000);
+        this._cameraCtl.setEyesLength(3000);
 
         //this._cameraCtl = new egret3d.HoverController(this._view3D.camera3D,null,0,30);
         //this._cameraCtl.distance = 1500;
