@@ -87,6 +87,15 @@ class CreateGame extends CreateBaseEnv{
         console.log("textureComplete...");
     }
 
+    protected Resize(w: number, h: number) {
+        this._width  = w;
+        this._height = h;
+        this._depth  = w
+		if (this._hud) this._hud.x    = (this._width/2 - this._hud.width/2);
+		if (this._hudPer) this._hudPer.x = (this._width/2 - this._hudPer.width/2);
+		if (this._hudInter) this._hudInter.x = (this._width/2 - this._hudInter.width/2);
+    } 
+
     private textureComplete() {
 		// 全局的鼠标/触摸事件 --- 用于进度控制操作
         egret3d.Input.instance.addListenerKeyClick( (e:Event, self:CreateGame ) => this.interactiveOpt(e, this ) );
@@ -308,7 +317,7 @@ class CreateGame extends CreateBaseEnv{
             this._hudPer.SetProgress(this._hudPerW, this._hudPerH, up, down, this._hudPerMulti, this._hudPerFixedCnt,
                                             this._hudPerColor, this._hudPerBgColor, this._hudPerFrmColor, this._hudPerFrmW,
                                         this._hudPerTip, this._hudPerTipColor, this._hudPerTipAlign, this._hudPerTipFont);
-		    this._hudPer.x = (this._view3D.width/2 - this._hudPer.width/2);
+		    this._hudPer.x = (this._width/2 - this._hudPer.width/2);
             if ( this._hud == null){
 		        this._hudPer.y = 2;
             }
@@ -329,7 +338,7 @@ class CreateGame extends CreateBaseEnv{
             this._hud = new aw.HUD();
             this._hud.SetCharTexture(this._hudW, this._hudH, tips, this._hudAlign, this._hudFont,
                                             this._hudColor, this._hudBgColor, this._hudFrmBgColor, this._hudFrmW);
-		    this._hud.x = (this._view3D.width/2 - this._hud.width/2);
+		    this._hud.x = (this._width/2 - this._hud.width/2);
             if (this._hudPer == null){
 		        this._hud.y = 2;
             }
@@ -350,7 +359,7 @@ class CreateGame extends CreateBaseEnv{
             this._hudInter = new aw.HUD();
             this._hudInter.SetCharTexture(this._hudInterW, this._hudInterH, tips, this._hudInterAlign, this._hudInterFont,
                                             this._hudInterColor, this._hudInterBgColor, this._hudInterFrmBgColor, this._hudInterFrmW);
-		    this._hudInter.x = (this._view3D.width/2 - this._hudInter.width/2);
+		    this._hudInter.x = (this._width/2 - this._hudInter.width/2);
 		    this._hudInter.y = (this._view3D.height/2 - this._hudInter.height/2);
         }
         else{

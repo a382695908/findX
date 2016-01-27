@@ -124,6 +124,7 @@
         clearTimeout(this._resizeTime);
         this._resizeTime = -1;
         this._view3D.resize(0,0, document.body.clientWidth, document.body.clientHeight);
+        this.Resize(document.body.clientWidth, document.body.clientHeight);
 
         var w = document.body.clientWidth;
 
@@ -135,6 +136,7 @@
             div.style.left = (w - w * 0.5) * 0.5 + "px";
         }
     }
+    protected Resize(w: number, h: number ) {}; // 用于子类重载，实现业务层的UI变动
 
     protected onInit3D(): void {
         this._camera3D = new egret3d.Camera3D(egret3d.CameraType.perspective);
