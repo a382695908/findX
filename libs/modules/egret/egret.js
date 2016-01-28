@@ -1142,7 +1142,7 @@ var egret;
          * 设置x坐标
          */
         p.$setX = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             var m = this.$DisplayObject[6 /* matrix */];
             if (value == m.tx) {
                 return false;
@@ -1192,7 +1192,7 @@ var egret;
          * 设置y坐标
          */
         p.$setY = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             var m = this.$DisplayObject[6 /* matrix */];
             if (value == m.ty) {
                 return false;
@@ -1238,7 +1238,7 @@ var egret;
          * 设置水平缩放值
          */
         p.$setScaleX = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             var values = this.$DisplayObject;
             if (value == values[0 /* scaleX */]) {
                 return false;
@@ -1283,7 +1283,7 @@ var egret;
          * 设置垂直缩放值
          */
         p.$setScaleY = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             if (value == this.$DisplayObject[1 /* scaleY */]) {
                 return false;
             }
@@ -1327,7 +1327,7 @@ var egret;
             return this.$DisplayObject[4 /* rotation */];
         };
         p.$setRotation = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             value = clampRotation(value);
             var values = this.$DisplayObject;
             if (value == values[4 /* rotation */]) {
@@ -1362,7 +1362,7 @@ var egret;
          * @param value
          */
         p.$setSkewX = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             var values = this.$DisplayObject;
             if (value == values[16 /* skewXdeg */]) {
                 return false;
@@ -1395,7 +1395,7 @@ var egret;
          * @param value
          */
         p.$setSkewY = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             var values = this.$DisplayObject;
             if (value == values[17 /* skewYdeg */]) {
                 return false;
@@ -1586,7 +1586,7 @@ var egret;
          * @returns
          */
         p.$setAnchorOffsetX = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             if (value == this.$DisplayObject[12 /* anchorOffsetX */]) {
                 return false;
             }
@@ -1623,7 +1623,7 @@ var egret;
          * @returns
          */
         p.$setAnchorOffsetY = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             if (value == this.$DisplayObject[13 /* anchorOffsetY */]) {
                 return false;
             }
@@ -1756,7 +1756,7 @@ var egret;
          * @param value
          */
         p.$setAlpha = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             if (value == this.$alpha) {
                 return false;
             }
@@ -3391,7 +3391,7 @@ var egret;
          */
         function blendModeToNumber(blendMode) {
             var num = blendModeNumber[blendMode];
-            return egret.sys.isUndefined(num) ? 0 : num;
+            return num === undefined ? 0 : num;
         }
         sys.blendModeToNumber = blendModeToNumber;
         /**
@@ -3400,7 +3400,7 @@ var egret;
          */
         function numberToBlendMode(blendMode) {
             var str = blendModeString[blendMode];
-            return egret.sys.isUndefined(str) ? "normal" : str;
+            return str === undefined ? "normal" : str;
         }
         sys.numberToBlendMode = numberToBlendMode;
     })(sys = egret.sys || (egret.sys = {}));
@@ -4011,7 +4011,7 @@ var egret;
          * 子项有可能会被cache而导致标记失效。重写此方法,以便在赋值时对子项深度遍历标记脏区域
          */
         p.$setAlpha = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             if (value == this.$alpha) {
                 return false;
             }
@@ -6934,10 +6934,10 @@ var egret;
         p.createTexture = function (name, bitmapX, bitmapY, bitmapWidth, bitmapHeight, offsetX, offsetY, textureWidth, textureHeight) {
             if (offsetX === void 0) { offsetX = 0; }
             if (offsetY === void 0) { offsetY = 0; }
-            if (egret.sys.isUndefined(textureWidth)) {
+            if (textureWidth === void 0) {
                 textureWidth = offsetX + bitmapWidth;
             }
-            if (egret.sys.isUndefined(textureHeight)) {
+            if (textureHeight === void 0) {
                 textureHeight = offsetY + bitmapHeight;
             }
             var texture = new egret.Texture();
@@ -9948,6 +9948,20 @@ var egret;
          * @platform Web,Native
          */
         TouchEvent.TOUCH_END = "touchEnd";
+        /**
+         * @language en_US
+         * Dispatched when an event of some kind occurred that canceled the touch.
+         * Such as the eui.Scroller will dispatch 'TOUCH_CANCEL' when it start move, the 'TOUCH_END' and 'TOUCH_TAP' will not be triggered.
+         * @version Egret 3.0.1
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 由于某个事件取消了触摸时触发。比如 eui.Scroller 在开始滚动后会触发 'TOUCH_CANCEL' 事件，不再触发后续的 'TOUCH_END' 和 'TOUCH_TAP' 事件
+         * @version Egret 3.0.1
+         * @platform Web,Native
+         */
+        TouchEvent.TOUCH_CANCEL = "touchcancel";
         /**
          * @language en_US
          * Dispatched when the user lifts the point of contact over the same DisplayObject instance on which the contact
@@ -13738,68 +13752,6 @@ var egret;
 //////////////////////////////////////////////////////////////////////////////////////
 var egret;
 (function (egret) {
-    var sys;
-    (function (sys) {
-        /**
-         * @private
-         * @param value
-         * @returns
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        function isUndefined(value) {
-            return typeof value === "undefined";
-        }
-        sys.isUndefined = isUndefined;
-        /**
-         * @private
-         * @param value
-         * @returns
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        function getNumber(value) {
-            if (DEBUG) {
-                if (isNaN(value)) {
-                    egret.sys.tr(1013);
-                }
-            }
-            return +value || 0;
-            ;
-        }
-        sys.getNumber = getNumber;
-    })(sys = egret.sys || (egret.sys = {}));
-})(egret || (egret = {}));
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (c) 2014-2015, Egret Technology Inc.
-//  All rights reserved.
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the Egret nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
-//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-//////////////////////////////////////////////////////////////////////////////////////
-var egret;
-(function (egret) {
     /**
      * @private
      * OrientationMode 类为舞台初始旋转模式提供值。
@@ -14093,13 +14045,13 @@ var egret;
                     console.log.apply(console, toArray(arguments));
                 };
             }
-            fpsStyle = sys.isUndefined(styles) ? {} : styles;
+            fpsStyle = styles ? {} : styles;
             showLog = !!showLog;
             this.showFPS = !!showFPS;
             this.showLog = showLog;
             if (!this.fpsDisplay) {
-                var x = sys.isUndefined(styles["x"]) ? 0 : styles["x"];
-                var y = sys.isUndefined(styles["y"]) ? 0 : styles["y"];
+                var x = styles["x"] === undefined ? 0 : styles["x"];
+                var y = styles["y"] === undefined ? 0 : styles["y"];
                 fpsDisplay = this.fpsDisplay = new FPS(this.stage, showFPS, showLog, logFilter, styles);
                 fpsDisplay.x = x;
                 fpsDisplay.y = y;
@@ -14213,20 +14165,20 @@ var egret;
                 this.shape = new egret.Shape();
                 this.addChild(this.shape);
                 var textField = new egret.TextField();
-                textField.size = egret.sys.isUndefined(this.styles["size"]) ? 24 : parseInt(this.styles["size"]);
+                textField.size = this.styles["size"] === undefined ? 24 : parseInt(this.styles["size"]);
                 this.addChild(textField);
                 this.textField = textField;
-                textField.textColor = egret.sys.isUndefined(this.styles["textColor"]) ? 0x00c200 : parseInt(this.styles["textColor"]);
+                textField.textColor = this.styles["textColor"] === undefined ? 0x00c200 : parseInt(this.styles["textColor"]);
                 textField.fontFamily = "monospace";
                 textField.x = 10;
                 textField.y = 10;
                 var textField = new egret.TextField();
                 this.infoText = textField;
                 this.addChild(textField);
-                textField.textColor = egret.sys.isUndefined(this.styles["textColor"]) ? 0x00c200 : parseInt(this.styles["textColor"]);
+                textField.textColor = this.styles["textColor"] === undefined ? 0x00c200 : parseInt(this.styles["textColor"]);
                 textField.fontFamily = "monospace";
                 textField.x = 10;
-                textField.size = egret.sys.isUndefined(this.styles["size"]) ? 12 : this.styles["size"] / 2;
+                textField.size = this.styles["size"] === undefined ? 12 : this.styles["size"] / 2;
                 textField.y = 10;
             };
             FPSImpl.prototype.update = function (drawCalls, dirtyRatio, costDirty, costRender, costTicker) {
@@ -15899,13 +15851,13 @@ var egret;
                     var c = this.charList[str];
                     if (c) {
                         var sourceH = c.sourceH;
-                        if (egret.sys.isUndefined(sourceH)) {
+                        if (sourceH === undefined) {
                             var h = c.h;
                             if (h === undefined) {
                                 h = 0;
                             }
                             var offY = c.offY;
-                            if (egret.sys.isUndefined(offY)) {
+                            if (offY === undefined) {
                                 offY = 0;
                             }
                             sourceH = h + offY;
@@ -16987,34 +16939,6 @@ var egret;
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (c) 2014-2015, Egret Technology Inc.
-//  All rights reserved.
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the Egret nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
-//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-//////////////////////////////////////////////////////////////////////////////////////
 var egret;
 (function (egret) {
     /**
@@ -17280,6 +17204,34 @@ var egret;
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (c) 2014-2015, Egret Technology Inc.
+//  All rights reserved.
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the Egret nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
+//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//////////////////////////////////////////////////////////////////////////////////////
 var egret;
 (function (egret) {
 })(egret || (egret = {}));
@@ -17485,7 +17437,7 @@ var egret;
             }
         );
         p.$setSize = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             var values = this.$TextField;
             if (values[0 /* fontSize */] == value) {
                 return false;
@@ -17508,7 +17460,7 @@ var egret;
             // * @private
             // */
             //public set fontSize(value:number) {
-            //    value = egret.sys.getNumber(value);
+            //    value = +value || 0;
             //
             //    var values = this.$TextField;
             //    if (values[sys.TextKeys.fontSize] == value) {
@@ -17685,7 +17637,7 @@ var egret;
             }
         );
         p.$setLineSpacing = function (value) {
-            value = egret.sys.getNumber(value);
+            value = +value || 0;
             var values = this.$TextField;
             if (values[1 /* lineSpacing */] == value)
                 return false;
@@ -18530,6 +18482,8 @@ var egret;
             this.$getLinesArr();
             var w = !isNaN(this.$TextField[3 /* textFieldWidth */]) ? this.$TextField[3 /* textFieldWidth */] : this.$TextField[5 /* textWidth */];
             var h = !isNaN(this.$TextField[4 /* textFieldHeight */]) ? this.$TextField[4 /* textFieldHeight */] : egret.TextFieldUtils.$getTextHeight(self);
+            w = Math.ceil(w) + 2; //+2 是为了解决脏区域的问题
+            h = Math.ceil(h) + 2;
             bounds.setTo(0, 0, w, h);
         };
         /**
@@ -20616,626 +20570,6 @@ var egret;
 var egret;
 (function (egret) {
     /**
-     * @language en_US
-     * Logger is an entrance for the log processing module of the engine
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    /**
-     * @language zh_CN
-     * Logger是引擎的日志处理模块入口
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    var Logger = (function () {
-        function Logger() {
-        }
-        var d = __define,c=Logger,p=c.prototype;
-        d(Logger, "logLevel",undefined
-            /**
-             * @language en_US
-             * Set the current need to open the log level. Grade level are: ALL <DEBUG <INFO <WARN <ERROR <OFF<br/>
-             * This feature is only in DEBUG mode to take effect. <br/>
-             * <Ul>
-             * <Li> Logger.ALL - all levels of log can be printed out. </ li>
-             * <Li> Logger.DEBUG - print debug, info, log, warn, error. </ li>
-             * <Li> Logger.INFO - print info, log, warn, error. </ li>
-             * <Li> Logger.WARN - can print warn, error. </ li>
-             * <Li> Logger.ERROR - You can print error. </ li>
-             * <Li> Logger.OFF - all closed. </ li>
-             * </ Ul>
-             *param LogType from this level to start printing.
-             * @version Egret 2.4
-             * @platform Web,Native
-             */
-            /**
-             * @language zh_CN
-             * 设置当前需要开启的log级别。级别等级分别为：ALL < DEBUG < INFO < WARN < ERROR < OFF<br/>
-             * 此功能只在 DEBUG 模式下才生效。<br/>
-             * <ul>
-             * <li>Logger.ALL -- 所有等级的log都可以打印出来。</li>
-             * <li>Logger.DEBUG -- 可以打印debug、info、log、warn、error。</li>
-             * <li>Logger.INFO -- 可以打印info、log、warn、error。</li>
-             * <li>Logger.WARN -- 可以打印warn、error。</li>
-             * <li>Logger.ERROR -- 可以打印error。</li>
-             * <li>Logger.OFF -- 全部关闭。</li>
-             * </ul>
-             * @param logType 从这个等级开始打印。
-             * @version Egret 2.4
-             * @platform Web,Native
-             */
-            ,function (logType) {
-            }
-        );
-        /**
-         * @language en_US
-         * open all
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 全开
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        Logger.ALL = "all";
-        /**
-         * @language en_US
-         * level: DEBUG
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 等级为 DEBUG
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        Logger.DEBUG = "debug";
-        /**
-         * @language en_US
-         * level: INFO
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 等级为 INFO
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        Logger.INFO = "info";
-        /**
-         * @language en_US
-         * level: WARN
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 等级为 WARN
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        Logger.WARN = "warn";
-        /**
-         * @language en_US
-         * level: ERROR
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 等级为 ERROR
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        Logger.ERROR = "error";
-        /**
-         * @language en_US
-         * close all
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 全关
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        Logger.OFF = "off";
-        return Logger;
-    })();
-    egret.Logger = Logger;
-    egret.registerClass(Logger,'egret.Logger');
-})(egret || (egret = {}));
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (c) 2014-2015, Egret Technology Inc.
-//  All rights reserved.
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the Egret nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
-//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-//////////////////////////////////////////////////////////////////////////////////////
-var egret;
-(function (egret) {
-    /**
-     * @version Egret 2.4
-     * @platform Web,Native
-     */
-    var NumberUtils = (function () {
-        function NumberUtils() {
-        }
-        var d = __define,c=NumberUtils,p=c.prototype;
-        /**
-         * @language en_US
-         * Judge whether it is a numerical value
-         * @param value Parameter that needs to be judged
-         * @returns
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 判断是否是数值
-         * @param value 需要判断的参数
-         * @returns
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        NumberUtils.isNumber = function (value) {
-            return typeof (value) === "number" && !isNaN(value);
-        };
-        /**
-         * @language en_US
-         * Obtain the approximate sin value of the corresponding angle value
-         * @param value {number} Angle value
-         * @returns {number} sin value
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 得到对应角度值的sin近似值
-         * @param value {number} 角度值
-         * @returns {number} sin值
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        NumberUtils.sin = function (value) {
-            var valueFloor = Math.floor(value);
-            var valueCeil = valueFloor + 1;
-            var resultFloor = NumberUtils.sinInt(valueFloor);
-            var resultCeil = NumberUtils.sinInt(valueCeil);
-            return (value - valueFloor) * resultCeil + (valueCeil - value) * resultFloor;
-        };
-        /**
-         * @private
-         *
-         * @param value
-         * @returns
-         */
-        NumberUtils.sinInt = function (value) {
-            value = value % 360;
-            if (value < 0) {
-                value += 360;
-            }
-            if (value < 90) {
-                return egret_sin_map[value];
-            }
-            if (value < 180) {
-                return egret_cos_map[value - 90];
-            }
-            if (value < 270) {
-                return -egret_sin_map[value - 180];
-            }
-            return -egret_cos_map[value - 270];
-        };
-        /**
-         * @language en_US
-         * Obtain the approximate cos value of the corresponding angle value
-         * @param value {number} Angle value
-         * @returns {number} cos value
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 得到对应角度值的cos近似值
-         * @param value {number} 角度值
-         * @returns {number} cos值
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        NumberUtils.cos = function (value) {
-            var valueFloor = Math.floor(value);
-            var valueCeil = valueFloor + 1;
-            var resultFloor = NumberUtils.cosInt(valueFloor);
-            var resultCeil = NumberUtils.cosInt(valueCeil);
-            return (value - valueFloor) * resultCeil + (valueCeil - value) * resultFloor;
-        };
-        /**
-         * @private
-         *
-         * @param value
-         * @returns
-         */
-        NumberUtils.cosInt = function (value) {
-            value = value % 360;
-            if (value < 0) {
-                value += 360;
-            }
-            if (value < 90) {
-                return egret_cos_map[value];
-            }
-            if (value < 180) {
-                return -egret_sin_map[value - 90];
-            }
-            if (value < 270) {
-                return -egret_cos_map[value - 180];
-            }
-            return egret_sin_map[value - 270];
-        };
-        return NumberUtils;
-    })();
-    egret.NumberUtils = NumberUtils;
-    egret.registerClass(NumberUtils,'egret.NumberUtils');
-})(egret || (egret = {}));
-var egret_sin_map = {};
-var egret_cos_map = {};
-var DEG_TO_RAD = Math.PI / 180;
-for (var NumberUtils_i = 0; NumberUtils_i <= 90; NumberUtils_i++) {
-    egret_sin_map[NumberUtils_i] = Math.sin(NumberUtils_i * DEG_TO_RAD);
-    egret_cos_map[NumberUtils_i] = Math.cos(NumberUtils_i * DEG_TO_RAD);
-}
-//对未提供bind的浏览器实现bind机制
-if (!Function.prototype.bind) {
-    Function.prototype.bind = function (oThis) {
-        if (typeof this !== "function") {
-            // closest thing possible to the ECMAScript 5 internal IsCallable function
-            egret.$error(1029);
-        }
-        var aArgs = Array.prototype.slice.call(arguments, 1), fToBind = this, fNOP = function () {
-        }, fBound = function () {
-            return fToBind.apply(this instanceof fNOP && oThis
-                ? this
-                : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
-        };
-        fNOP.prototype = this.prototype;
-        fBound.prototype = new fNOP();
-        return fBound;
-    };
-}
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (c) 2014-2015, Egret Technology Inc.
-//  All rights reserved.
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the Egret nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
-//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-//////////////////////////////////////////////////////////////////////////////////////
-var egret;
-(function (egret) {
-    /**
-     * @language en_US
-     * The Timer class is the interface to timers, which let you run code on a specified time sequence. Use the start()
-     * method to start a timer. Add an event listener for the timer event to set up code to be run on the timer interval.<br/>
-     * You can create Timer objects to run once or repeat at specified intervals to execute code on a schedule. Depending
-     * on the framerate or the runtime environment (available memory and other factors), the runtime may dispatchEvent events at
-     * slightly offset intervals.
-     * @see egret.TimerEvent
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @includeExample egret/utils/Timer.ts
-     */
-    /**
-     * @language zh_CN
-     * Timer 类是计时器的接口，它使您能按指定的时间序列运行代码。
-     * 使用 start() 方法来启动计时器。为 timer 事件添加事件侦听器，以便将代码设置为按计时器间隔运行。
-     * 可以创建 Timer 对象以运行一次或按指定间隔重复运行，从而按计划执行代码。
-     * 根据 Egret 的帧速率或运行时环境（可用内存和其他因素），运行时调度事件的间隔可能稍有不同。
-     * @see egret.TimerEvent
-     * @version Egret 2.4
-     * @platform Web,Native
-     * @includeExample egret/utils/Timer.ts
-     */
-    var Timer = (function (_super) {
-        __extends(Timer, _super);
-        /**
-         * @language en_US
-         * Constructs a new Timer object with the specified delay and repeatCount states.
-         * @param delay The delay between timer events, in milliseconds. A delay lower than 20 milliseconds is not recommended.
-         * Timer frequency is limited to 60 frames per second, meaning a delay lower than 16.6 milliseconds causes runtime problems.
-         * @param repeatCount Specifies the number of repetitions. If zero, the timer repeats indefinitely.If nonzero,
-         * the timer runs the specified number of times and then stops.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 使用指定的 delay 和 repeatCount 状态构造新的 Timer 对象。
-         * @param delay 计时器事件间的延迟（以毫秒为单位）。建议 delay 不要低于 20 毫秒。计时器频率不得超过 60 帧/秒，这意味着低于 16.6 毫秒的延迟可导致出现运行时问题。
-         * @param repeatCount 指定重复次数。如果为零，则计时器将持续不断重复运行。如果不为 0，则将运行计时器，运行次数为指定的次数，然后停止。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        function Timer(delay, repeatCount) {
-            if (repeatCount === void 0) { repeatCount = 0; }
-            _super.call(this);
-            /**
-             * @private
-             */
-            this._delay = 0;
-            /**
-             * @private
-             */
-            this._currentCount = 0;
-            /**
-             * @private
-             */
-            this._running = false;
-            /**
-             * @private
-             */
-            this.updateInterval = 1000;
-            /**
-             * @private
-             */
-            this.lastCount = 1000;
-            this.delay = delay;
-            this.repeatCount = +repeatCount | 0;
-        }
-        var d = __define,c=Timer,p=c.prototype;
-        d(p, "delay"
-            /**
-             * @language en_US
-             * The delay between timer events, in milliseconds. A delay lower than 20 milliseconds is not recommended.<br/>
-             * Note: Timer frequency is limited to 60 frames per second, meaning a delay lower than 16.6 milliseconds causes runtime problems.
-             * @version Egret 2.4
-             * @platform Web,Native
-             */
-            /**
-             * @language zh_CN
-             * 计时器事件间的延迟（以毫秒为单位）。如果在计时器正在运行时设置延迟间隔，则计时器将按相同的 repeatCount 迭代重新启动。<br/>
-             * 注意：建议 delay 不要低于 20 毫秒。计时器频率不得超过 60 帧/秒，这意味着低于 16.6 毫秒的延迟可导致出现运行时问题。
-             * @version Egret 2.4
-             * @platform Web,Native
-             */
-            ,function () {
-                return this._delay;
-            }
-            ,function (value) {
-                //value = +value||0;
-                if (value < 1) {
-                    value = 1;
-                }
-                if (this._delay == value) {
-                    return;
-                }
-                this._delay = value;
-                this.lastCount = this.updateInterval = Math.round(60 * value);
-            }
-        );
-        d(p, "currentCount"
-            /**
-             * @language en_US
-             * The total number of times the timer has fired since it started at zero. If the timer has been reset, only the fires since the reset are counted.
-             * @version Egret 2.4
-             * @platform Web,Native
-             */
-            /**
-             * @language zh_CN
-             * 计时器从 0 开始后触发的总次数。如果已重置了计时器，则只会计入重置后的触发次数。
-             * @version Egret 2.4
-             * @platform Web,Native
-             */
-            ,function () {
-                return this._currentCount;
-            }
-        );
-        d(p, "running"
-            /**
-             * @language en_US
-             * The timer's current state; true if the timer is running, otherwise false.
-             * @version Egret 2.4
-             * @platform Web,Native
-             */
-            /**
-             * @language zh_CN
-             * 计时器的当前状态；如果计时器正在运行，则为 true，否则为 false。
-             * @version Egret 2.4
-             * @platform Web,Native
-             */
-            ,function () {
-                return this._running;
-            }
-        );
-        /**
-         * @language en_US
-         * Stops the timer, if it is running, and sets the currentCount property back to 0, like the reset button of a stopwatch.
-         * Then, when start() is called, the timer instance runs for the specified number of repetitions, as set by the repeatCount value.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 如果计时器正在运行，则停止计时器，并将 currentCount 属性设回为 0，这类似于秒表的重置按钮。然后，在调用 start() 后，将运行计时器实例，运行次数为指定的重复次数（由 repeatCount 值设置）。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        p.reset = function () {
-            this.stop();
-            this._currentCount = 0;
-        };
-        /**
-         * @language en_US
-         * Starts the timer, if it is not already running.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 如果计时器尚未运行，则启动计时器。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        p.start = function () {
-            if (this._running)
-                return;
-            this.lastCount = this.updateInterval;
-            egret.sys.$ticker.$startTick(this.$update, this);
-            this._running = true;
-        };
-        /**
-         * @language en_US
-         * Stops the timer. When start() is called after stop(), the timer instance runs for the remaining number of
-         * repetitions, as set by the repeatCount property.
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        /**
-         * @language zh_CN
-         * 停止计时器。如果在调用 stop() 后调用 start()，则将继续运行计时器实例，运行次数为剩余的 重复次数（由 repeatCount 属性设置）。
-         * @version Egret 2.4
-         * @platform Web,Native
-         */
-        p.stop = function () {
-            if (!this._running)
-                return;
-            egret.stopTick(this.$update, this);
-            this._running = false;
-        };
-        /**
-         * @private
-         * Ticker以60FPS频率刷新此方法
-         */
-        p.$update = function (timeStamp) {
-            this.lastCount -= 1000;
-            if (this.lastCount > 0) {
-                return false;
-            }
-            this.lastCount += this.updateInterval;
-            this._currentCount++;
-            var complete = (this.repeatCount > 0 && this._currentCount >= this.repeatCount);
-            egret.TimerEvent.dispatchTimerEvent(this, egret.TimerEvent.TIMER);
-            if (complete) {
-                this.stop();
-                egret.TimerEvent.dispatchTimerEvent(this, egret.TimerEvent.TIMER_COMPLETE);
-            }
-            return false;
-        };
-        return Timer;
-    })(egret.EventDispatcher);
-    egret.Timer = Timer;
-    egret.registerClass(Timer,'egret.Timer');
-    if (DEBUG) {
-        egret.$markReadOnly(Timer, "currentCount");
-        egret.$markReadOnly(Timer, "running");
-    }
-})(egret || (egret = {}));
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (c) 2014-2015, Egret Technology Inc.
-//  All rights reserved.
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the Egret nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
-//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-//////////////////////////////////////////////////////////////////////////////////////
-var egret;
-(function (egret) {
-})(egret || (egret = {}));
-//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (c) 2014-2015, Egret Technology Inc.
-//  All rights reserved.
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the Egret nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
-//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-//////////////////////////////////////////////////////////////////////////////////////
-var egret;
-(function (egret) {
-    /**
      * @private
      */
     egret.$callLaterFunctionList = [];
@@ -21923,6 +21257,348 @@ var egret;
 (function (egret) {
     /**
      * @language en_US
+     * Logger is an entrance for the log processing module of the engine
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    /**
+     * @language zh_CN
+     * Logger是引擎的日志处理模块入口
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    var Logger = (function () {
+        function Logger() {
+        }
+        var d = __define,c=Logger,p=c.prototype;
+        d(Logger, "logLevel",undefined
+            /**
+             * @language en_US
+             * Set the current need to open the log level. Grade level are: ALL <DEBUG <INFO <WARN <ERROR <OFF<br/>
+             * This feature is only in DEBUG mode to take effect. <br/>
+             * <Ul>
+             * <Li> Logger.ALL - all levels of log can be printed out. </ li>
+             * <Li> Logger.DEBUG - print debug, info, log, warn, error. </ li>
+             * <Li> Logger.INFO - print info, log, warn, error. </ li>
+             * <Li> Logger.WARN - can print warn, error. </ li>
+             * <Li> Logger.ERROR - You can print error. </ li>
+             * <Li> Logger.OFF - all closed. </ li>
+             * </ Ul>
+             *param LogType from this level to start printing.
+             * @version Egret 2.4
+             * @platform Web,Native
+             */
+            /**
+             * @language zh_CN
+             * 设置当前需要开启的log级别。级别等级分别为：ALL < DEBUG < INFO < WARN < ERROR < OFF<br/>
+             * 此功能只在 DEBUG 模式下才生效。<br/>
+             * <ul>
+             * <li>Logger.ALL -- 所有等级的log都可以打印出来。</li>
+             * <li>Logger.DEBUG -- 可以打印debug、info、log、warn、error。</li>
+             * <li>Logger.INFO -- 可以打印info、log、warn、error。</li>
+             * <li>Logger.WARN -- 可以打印warn、error。</li>
+             * <li>Logger.ERROR -- 可以打印error。</li>
+             * <li>Logger.OFF -- 全部关闭。</li>
+             * </ul>
+             * @param logType 从这个等级开始打印。
+             * @version Egret 2.4
+             * @platform Web,Native
+             */
+            ,function (logType) {
+            }
+        );
+        /**
+         * @language en_US
+         * open all
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 全开
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        Logger.ALL = "all";
+        /**
+         * @language en_US
+         * level: DEBUG
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 等级为 DEBUG
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        Logger.DEBUG = "debug";
+        /**
+         * @language en_US
+         * level: INFO
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 等级为 INFO
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        Logger.INFO = "info";
+        /**
+         * @language en_US
+         * level: WARN
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 等级为 WARN
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        Logger.WARN = "warn";
+        /**
+         * @language en_US
+         * level: ERROR
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 等级为 ERROR
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        Logger.ERROR = "error";
+        /**
+         * @language en_US
+         * close all
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 全关
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        Logger.OFF = "off";
+        return Logger;
+    })();
+    egret.Logger = Logger;
+    egret.registerClass(Logger,'egret.Logger');
+})(egret || (egret = {}));
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (c) 2014-2015, Egret Technology Inc.
+//  All rights reserved.
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the Egret nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
+//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//////////////////////////////////////////////////////////////////////////////////////
+var egret;
+(function (egret) {
+    /**
+     * @version Egret 2.4
+     * @platform Web,Native
+     */
+    var NumberUtils = (function () {
+        function NumberUtils() {
+        }
+        var d = __define,c=NumberUtils,p=c.prototype;
+        /**
+         * @language en_US
+         * Judge whether it is a numerical value
+         * @param value Parameter that needs to be judged
+         * @returns
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 判断是否是数值
+         * @param value 需要判断的参数
+         * @returns
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        NumberUtils.isNumber = function (value) {
+            return typeof (value) === "number" && !isNaN(value);
+        };
+        /**
+         * @language en_US
+         * Obtain the approximate sin value of the corresponding angle value
+         * @param value {number} Angle value
+         * @returns {number} sin value
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 得到对应角度值的sin近似值
+         * @param value {number} 角度值
+         * @returns {number} sin值
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        NumberUtils.sin = function (value) {
+            var valueFloor = Math.floor(value);
+            var valueCeil = valueFloor + 1;
+            var resultFloor = NumberUtils.sinInt(valueFloor);
+            var resultCeil = NumberUtils.sinInt(valueCeil);
+            return (value - valueFloor) * resultCeil + (valueCeil - value) * resultFloor;
+        };
+        /**
+         * @private
+         *
+         * @param value
+         * @returns
+         */
+        NumberUtils.sinInt = function (value) {
+            value = value % 360;
+            if (value < 0) {
+                value += 360;
+            }
+            if (value < 90) {
+                return egret_sin_map[value];
+            }
+            if (value < 180) {
+                return egret_cos_map[value - 90];
+            }
+            if (value < 270) {
+                return -egret_sin_map[value - 180];
+            }
+            return -egret_cos_map[value - 270];
+        };
+        /**
+         * @language en_US
+         * Obtain the approximate cos value of the corresponding angle value
+         * @param value {number} Angle value
+         * @returns {number} cos value
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 得到对应角度值的cos近似值
+         * @param value {number} 角度值
+         * @returns {number} cos值
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        NumberUtils.cos = function (value) {
+            var valueFloor = Math.floor(value);
+            var valueCeil = valueFloor + 1;
+            var resultFloor = NumberUtils.cosInt(valueFloor);
+            var resultCeil = NumberUtils.cosInt(valueCeil);
+            return (value - valueFloor) * resultCeil + (valueCeil - value) * resultFloor;
+        };
+        /**
+         * @private
+         *
+         * @param value
+         * @returns
+         */
+        NumberUtils.cosInt = function (value) {
+            value = value % 360;
+            if (value < 0) {
+                value += 360;
+            }
+            if (value < 90) {
+                return egret_cos_map[value];
+            }
+            if (value < 180) {
+                return -egret_sin_map[value - 90];
+            }
+            if (value < 270) {
+                return -egret_cos_map[value - 180];
+            }
+            return egret_sin_map[value - 270];
+        };
+        return NumberUtils;
+    })();
+    egret.NumberUtils = NumberUtils;
+    egret.registerClass(NumberUtils,'egret.NumberUtils');
+})(egret || (egret = {}));
+var egret_sin_map = {};
+var egret_cos_map = {};
+var DEG_TO_RAD = Math.PI / 180;
+for (var NumberUtils_i = 0; NumberUtils_i <= 90; NumberUtils_i++) {
+    egret_sin_map[NumberUtils_i] = Math.sin(NumberUtils_i * DEG_TO_RAD);
+    egret_cos_map[NumberUtils_i] = Math.cos(NumberUtils_i * DEG_TO_RAD);
+}
+//对未提供bind的浏览器实现bind机制
+if (!Function.prototype.bind) {
+    Function.prototype.bind = function (oThis) {
+        if (typeof this !== "function") {
+            // closest thing possible to the ECMAScript 5 internal IsCallable function
+            egret.$error(1029);
+        }
+        var aArgs = Array.prototype.slice.call(arguments, 1), fToBind = this, fNOP = function () {
+        }, fBound = function () {
+            return fToBind.apply(this instanceof fNOP && oThis
+                ? this
+                : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
+        };
+        fNOP.prototype = this.prototype;
+        fBound.prototype = new fNOP();
+        return fBound;
+    };
+}
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (c) 2014-2015, Egret Technology Inc.
+//  All rights reserved.
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the Egret nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
+//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//////////////////////////////////////////////////////////////////////////////////////
+var egret;
+(function (egret) {
+    /**
+     * @language en_US
      * Register and start a timer,which will notify the callback method at a rate of 60 FPS ,and pass the current time stamp as parameters.<br/>
      * Note: After the registration,it will notify the callback method continuously,you can call the stopTick () method to stop it.
      * @param callBack the call back method. the timeStamp parameter of this method represents the number of milliseconds
@@ -22037,6 +21713,253 @@ var egret;
 var egret;
 (function (egret) {
     /**
+     * @language en_US
+     * The Timer class is the interface to timers, which let you run code on a specified time sequence. Use the start()
+     * method to start a timer. Add an event listener for the timer event to set up code to be run on the timer interval.<br/>
+     * You can create Timer objects to run once or repeat at specified intervals to execute code on a schedule. Depending
+     * on the framerate or the runtime environment (available memory and other factors), the runtime may dispatchEvent events at
+     * slightly offset intervals.
+     * @see egret.TimerEvent
+     * @version Egret 2.4
+     * @platform Web,Native
+     * @includeExample egret/utils/Timer.ts
+     */
+    /**
+     * @language zh_CN
+     * Timer 类是计时器的接口，它使您能按指定的时间序列运行代码。
+     * 使用 start() 方法来启动计时器。为 timer 事件添加事件侦听器，以便将代码设置为按计时器间隔运行。
+     * 可以创建 Timer 对象以运行一次或按指定间隔重复运行，从而按计划执行代码。
+     * 根据 Egret 的帧速率或运行时环境（可用内存和其他因素），运行时调度事件的间隔可能稍有不同。
+     * @see egret.TimerEvent
+     * @version Egret 2.4
+     * @platform Web,Native
+     * @includeExample egret/utils/Timer.ts
+     */
+    var Timer = (function (_super) {
+        __extends(Timer, _super);
+        /**
+         * @language en_US
+         * Constructs a new Timer object with the specified delay and repeatCount states.
+         * @param delay The delay between timer events, in milliseconds. A delay lower than 20 milliseconds is not recommended.
+         * Timer frequency is limited to 60 frames per second, meaning a delay lower than 16.6 milliseconds causes runtime problems.
+         * @param repeatCount Specifies the number of repetitions. If zero, the timer repeats indefinitely.If nonzero,
+         * the timer runs the specified number of times and then stops.
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 使用指定的 delay 和 repeatCount 状态构造新的 Timer 对象。
+         * @param delay 计时器事件间的延迟（以毫秒为单位）。建议 delay 不要低于 20 毫秒。计时器频率不得超过 60 帧/秒，这意味着低于 16.6 毫秒的延迟可导致出现运行时问题。
+         * @param repeatCount 指定重复次数。如果为零，则计时器将持续不断重复运行。如果不为 0，则将运行计时器，运行次数为指定的次数，然后停止。
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        function Timer(delay, repeatCount) {
+            if (repeatCount === void 0) { repeatCount = 0; }
+            _super.call(this);
+            /**
+             * @private
+             */
+            this._delay = 0;
+            /**
+             * @private
+             */
+            this._currentCount = 0;
+            /**
+             * @private
+             */
+            this._running = false;
+            /**
+             * @private
+             */
+            this.updateInterval = 1000;
+            /**
+             * @private
+             */
+            this.lastCount = 1000;
+            this.delay = delay;
+            this.repeatCount = +repeatCount | 0;
+        }
+        var d = __define,c=Timer,p=c.prototype;
+        d(p, "delay"
+            /**
+             * @language en_US
+             * The delay between timer events, in milliseconds. A delay lower than 20 milliseconds is not recommended.<br/>
+             * Note: Timer frequency is limited to 60 frames per second, meaning a delay lower than 16.6 milliseconds causes runtime problems.
+             * @version Egret 2.4
+             * @platform Web,Native
+             */
+            /**
+             * @language zh_CN
+             * 计时器事件间的延迟（以毫秒为单位）。如果在计时器正在运行时设置延迟间隔，则计时器将按相同的 repeatCount 迭代重新启动。<br/>
+             * 注意：建议 delay 不要低于 20 毫秒。计时器频率不得超过 60 帧/秒，这意味着低于 16.6 毫秒的延迟可导致出现运行时问题。
+             * @version Egret 2.4
+             * @platform Web,Native
+             */
+            ,function () {
+                return this._delay;
+            }
+            ,function (value) {
+                //value = +value||0;
+                if (value < 1) {
+                    value = 1;
+                }
+                if (this._delay == value) {
+                    return;
+                }
+                this._delay = value;
+                this.lastCount = this.updateInterval = Math.round(60 * value);
+            }
+        );
+        d(p, "currentCount"
+            /**
+             * @language en_US
+             * The total number of times the timer has fired since it started at zero. If the timer has been reset, only the fires since the reset are counted.
+             * @version Egret 2.4
+             * @platform Web,Native
+             */
+            /**
+             * @language zh_CN
+             * 计时器从 0 开始后触发的总次数。如果已重置了计时器，则只会计入重置后的触发次数。
+             * @version Egret 2.4
+             * @platform Web,Native
+             */
+            ,function () {
+                return this._currentCount;
+            }
+        );
+        d(p, "running"
+            /**
+             * @language en_US
+             * The timer's current state; true if the timer is running, otherwise false.
+             * @version Egret 2.4
+             * @platform Web,Native
+             */
+            /**
+             * @language zh_CN
+             * 计时器的当前状态；如果计时器正在运行，则为 true，否则为 false。
+             * @version Egret 2.4
+             * @platform Web,Native
+             */
+            ,function () {
+                return this._running;
+            }
+        );
+        /**
+         * @language en_US
+         * Stops the timer, if it is running, and sets the currentCount property back to 0, like the reset button of a stopwatch.
+         * Then, when start() is called, the timer instance runs for the specified number of repetitions, as set by the repeatCount value.
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 如果计时器正在运行，则停止计时器，并将 currentCount 属性设回为 0，这类似于秒表的重置按钮。然后，在调用 start() 后，将运行计时器实例，运行次数为指定的重复次数（由 repeatCount 值设置）。
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        p.reset = function () {
+            this.stop();
+            this._currentCount = 0;
+        };
+        /**
+         * @language en_US
+         * Starts the timer, if it is not already running.
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 如果计时器尚未运行，则启动计时器。
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        p.start = function () {
+            if (this._running)
+                return;
+            this.lastCount = this.updateInterval;
+            egret.sys.$ticker.$startTick(this.$update, this);
+            this._running = true;
+        };
+        /**
+         * @language en_US
+         * Stops the timer. When start() is called after stop(), the timer instance runs for the remaining number of
+         * repetitions, as set by the repeatCount property.
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        /**
+         * @language zh_CN
+         * 停止计时器。如果在调用 stop() 后调用 start()，则将继续运行计时器实例，运行次数为剩余的 重复次数（由 repeatCount 属性设置）。
+         * @version Egret 2.4
+         * @platform Web,Native
+         */
+        p.stop = function () {
+            if (!this._running)
+                return;
+            egret.stopTick(this.$update, this);
+            this._running = false;
+        };
+        /**
+         * @private
+         * Ticker以60FPS频率刷新此方法
+         */
+        p.$update = function (timeStamp) {
+            this.lastCount -= 1000;
+            if (this.lastCount > 0) {
+                return false;
+            }
+            this.lastCount += this.updateInterval;
+            this._currentCount++;
+            var complete = (this.repeatCount > 0 && this._currentCount >= this.repeatCount);
+            egret.TimerEvent.dispatchTimerEvent(this, egret.TimerEvent.TIMER);
+            if (complete) {
+                this.stop();
+                egret.TimerEvent.dispatchTimerEvent(this, egret.TimerEvent.TIMER_COMPLETE);
+            }
+            return false;
+        };
+        return Timer;
+    })(egret.EventDispatcher);
+    egret.Timer = Timer;
+    egret.registerClass(Timer,'egret.Timer');
+    if (DEBUG) {
+        egret.$markReadOnly(Timer, "currentCount");
+        egret.$markReadOnly(Timer, "running");
+    }
+})(egret || (egret = {}));
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (c) 2014-2015, Egret Technology Inc.
+//  All rights reserved.
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the Egret nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
+//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//////////////////////////////////////////////////////////////////////////////////////
+var egret;
+(function (egret) {
+    /**
      * @language zh_CN
      * 转换 Image，Canvas，Video 为 Egret 框架内使用的 BitmapData 对象。
      * @param data 需要转换的对象，包括HTMLImageElement|HTMLCanvasElement|HTMLVideoElement
@@ -22119,4 +22042,35 @@ var egret;
         return "#" + color;
     }
     egret.toColorString = toColorString;
+})(egret || (egret = {}));
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (c) 2014-2015, Egret Technology Inc.
+//  All rights reserved.
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the Egret nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
+//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//////////////////////////////////////////////////////////////////////////////////////
+var egret;
+(function (egret) {
 })(egret || (egret = {}));
