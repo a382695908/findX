@@ -43,6 +43,9 @@
                     cvses[idx].parentNode.removeChild(cvses[idx]);
                 }
             }
+
+            let div = document.getElementsByClassName("egret-player");
+			div[0]['style']['height'] = "100%";	
         }
         else{
             console.warn("Loading mask was not there.");
