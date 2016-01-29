@@ -29,8 +29,18 @@
             document.body.style.backgroundColor = "#000000";
             document.body.removeChild(ui);
 
-            if ( document.getElementById("egret3D") ){
-                document.getElementById("egret3D").style["pointer-events"] = "none";
+
+            let cvses = document.getElementsByTagName("canvas");
+            for(let idx = 0; idx < cvses.length; idx++ ) {
+                //if ( document.getElementById("egret3D") ){
+                if ( cvses[idx].getAttribute('id') == "egret3D" ){
+                    document.getElementById("egret3D").style["pointer-events"] = "none";
+                }
+                else{
+                    cvses[idx].parentNode.removeChild(cvses[idx]);
+                    console.log("remove:");
+                    console.log(cvses[idx]);
+                }
             }
         }
         else{

@@ -82,8 +82,8 @@ class CreateGame extends CreateBaseEnv{
     protected onView3DInitComplete(): void {
         this.textureComplete();
 
-        //this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/3 );
-        this._cameraCtl.setEyesLength(3000);
+        if (this._cameraCtl) this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/1.0 );
+        //this._cameraCtl.setEyesLength(3000);
         console.log("textureComplete...");
     }
 
@@ -94,6 +94,7 @@ class CreateGame extends CreateBaseEnv{
 		if (this._hud) this._hud.x    = (this._width/2 - this._hud.width/2);
 		if (this._hudPer) this._hudPer.x = (this._width/2 - this._hudPer.width/2);
 		if (this._hudInter) this._hudInter.x = (this._width/2 - this._hudInter.width/2);
+        if (this._cameraCtl) this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/1.0 );
     } 
 
     private textureComplete() {
