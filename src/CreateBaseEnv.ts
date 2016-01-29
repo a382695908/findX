@@ -25,10 +25,11 @@
     public removeLoadingBar(){
         let ui = document.getElementById("mask");
         if ( ui ) {
-            console.log("Remove loading mask ok.");
             document.body.style.backgroundColor = "#000000";
+            console.log("remove:");
+            console.log(ui);
             document.body.removeChild(ui);
-
+            console.log("Remove loading mask ok.");
 
             let cvses = document.getElementsByTagName("canvas");
             for(let idx = 0; idx < cvses.length; idx++ ) {
@@ -37,9 +38,9 @@
                     document.getElementById("egret3D").style["pointer-events"] = "none";
                 }
                 else{
-                    cvses[idx].parentNode.removeChild(cvses[idx]);
                     console.log("remove:");
                     console.log(cvses[idx]);
+                    cvses[idx].parentNode.removeChild(cvses[idx]);
                 }
             }
         }
