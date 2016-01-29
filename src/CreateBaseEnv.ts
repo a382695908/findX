@@ -162,10 +162,10 @@
         //this._cameraCtl.distance = 1500;
 
         egret3d.AssetsManager.getInstance().setRootURL("resource/");
-        egret3d.AssetsManager.getInstance().addLoadTexture("sky/bk.png");
-        egret3d.AssetsManager.getInstance().addLoadTexture("sky/fr.png");
-        egret3d.AssetsManager.getInstance().addLoadTexture("sky/lf.png");
-        egret3d.AssetsManager.getInstance().addLoadTexture("sky/rt.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/3/bk.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/3/fr.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/3/lf.png");
+        egret3d.AssetsManager.getInstance().addLoadTexture("sky/3/rt.png");
         //egret3d.AssetsManager.getInstance().addLoadTexture("sky/up.png"); // 只支持Y轴旋转，不需要顶／底纹理
         //egret3d.AssetsManager.getInstance().addLoadTexture("sky/dn.png");
         egret3d.AssetsManager.getInstance().addLoadTexture("star64.jpg");
@@ -185,10 +185,10 @@
         setTimeout(this.removeLoadingBar, 1000);
 	
 
-        let sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/fr.png");
-        let sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/bk.png");
-        let sky_l: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/lf.png");
-        let sky_r: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/rt.png");
+        let sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/3/fr.png");
+        let sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/3/bk.png");
+        let sky_l: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/3/lf.png");
+        let sky_r: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/3/rt.png");
         // 只支持Y轴旋转，不需要顶／底纹理
         //let sky_u: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/up.png"); 
         //let sky_d: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/dn.png");
