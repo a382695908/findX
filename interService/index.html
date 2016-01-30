@@ -1,10 +1,15 @@
 <html>
 <head>
-    <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         $(function(){
             var iosocket = io.connect();
+
+            iosocket.on('news', function () {
+				console.log(data);
+				iosocket.emit('my other event', {my: 'data' });
+			});
   
             iosocket.on('connect', function () {
                 $('#incomingChatMessages').append($('<li>Connected</li>'));
