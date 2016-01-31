@@ -154,6 +154,7 @@
 
     protected onInit3D(): void {
         this._camera3D = new egret3d.Camera3D(egret3d.CameraType.perspective);
+        this._camera3D.fieldOfView = 65;
         this._view3D = new egret3d.View3D(this._viewPort, this._camera3D);
         window.addEventListener("resize",() => this.onResize());
 
