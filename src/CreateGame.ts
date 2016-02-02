@@ -48,7 +48,7 @@ class CreateGame extends CreateBaseEnv{
     private _hudInterFont: string = "24px 楷体";
     private _hudInterAlign: string = "center";
     private _hudInterColor: string = "rgba(0,255,0,1);rgba(255,255,0,1);rgba(0,255,0,1);rgba(0,0,255,1)";
-    private _hudInterBgColor: string="rgba( 00, 00, 00, 0.8)";
+    private _hudInterBgColor: string="rgba( 0, 88, 0, 0.8)";
     private _hudInterFrmBgColor: string="rgba(0,0,0,1)";
     private _hudInterFrmW: number=0;
 
