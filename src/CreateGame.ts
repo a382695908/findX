@@ -73,6 +73,42 @@ class CreateGame extends CreateBaseEnv{
 
         this._dtDriver = new aw.FindXDataDriver();
         this._uiReady = false;
+//////////////////////////////////////////
+// 微信接口
+        let bodyConfig: BodyConfig = new BodyConfig();
+        bodyConfig.appId = "wx74751108b881f39c";
+        bodyConfig.debug = true;
+        /// ... 其他的配置属性赋值
+        /// 通过config接口注入权限验证配置
+        if(wx) {
+            wx.config(bodyConfig);
+            wx.ready(function() {
+            /// 在这里调用微信相关功能的 API
+///-------------------------------------------
+                wx.onMenuShareAppMessage = function(shareAppMessage: BodyMenuShareAppMessage){
+                    shareAppMessage.title = '发送给朋友';
+                    shareAppMessage.desc = '从三维太空中一堆飞行的物体里，不断点击中"X"目标过关, 你可以拖动改变视角。';
+                    shareAppMessage.link = 'http://game.doogga.com/game/findX/';
+                    shareAppMessage.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
+                    shareAppMessage.trigger = function (res) {
+                        // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+                        console.log('用户点击发送给朋友');
+                    }    
+                    shareAppMessage.success = function (res) {
+                        console.log('已分享');
+                    };
+                    shareAppMessage.fail = function (res) {
+                        console.log('已取消');
+                    };
+                    shareAppMessage.cancel = function (res) {
+                        console.log(JSON.stringify(res));
+                    };
+                };   
+///-------------------------------------------
+            });
+        }
+//////////////////////////////////////////
+
     }
 
     public get dataDriver() :aw.FindXDataDriver {
