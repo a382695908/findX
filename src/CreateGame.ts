@@ -73,6 +73,21 @@ class CreateGame extends CreateBaseEnv{
 
         this._dtDriver = new aw.FindXDataDriver();
         this._uiReady = false;
+//////////////////////////////////////////
+// 微信接口
+        let bodyConfig: BodyConfig = new BodyConfig();
+        bodyConfig.appId = "wx74751108b881f39c";
+        bodyConfig.debug = true;
+        /// ... 其他的配置属性赋值
+        /// 通过config接口注入权限验证配置
+        if(wx) {
+              wx.config(bodyConfig);
+              wx.ready(function() {
+              /// 在这里调用微信相关功能的 API
+               });
+        }
+//////////////////////////////////////////
+
     }
 
     public get dataDriver() :aw.FindXDataDriver {

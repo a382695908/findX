@@ -26,8 +26,8 @@
         let ui = document.getElementById("mask");
         if ( ui ) {
             document.body.style.backgroundColor = "#000000";
-            console.log("remove:");
-            console.log(ui);
+            //console.log("remove:");
+            //console.log(ui);
             document.body.removeChild(ui);
             console.log("Remove loading mask ok.");
 
@@ -38,8 +38,8 @@
                     document.getElementById("egret3D").style["pointer-events"] = "none";
                 }
                 else{
-                    console.log("remove:");
-                    console.log(cvses[idx]);
+                    //console.log("remove:");
+                    //console.log(cvses[idx]);
                     cvses[idx].parentNode.removeChild(cvses[idx]);
                 }
             }
