@@ -85,11 +85,14 @@ class CreateGame extends CreateBaseEnv{
             wx.ready(function() {
             /// 在这里调用微信相关功能的 API
 ///-------------------------------------------
+                //alert('1');
                 wx.onMenuShareAppMessage = function(shareAppMessage: BodyMenuShareAppMessage){
-                    shareAppMessage.title = '发送给朋友';
-                    shareAppMessage.desc = '从三维太空中一堆飞行的物体里，不断点击中"X"目标过关, 你可以拖动改变视角。';
+                    //alert('xxx');
+                    shareAppMessage.title = '发送给朋友-找X';
+                    shareAppMessage.desc = '通过不断点击太空中一堆飞行物里"X"目标过关, 可以拖动改变视角。';
                     shareAppMessage.link = 'http://game.doogga.com/game/findX/';
                     shareAppMessage.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
+
                     shareAppMessage.trigger = function (res) {
                         // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
                         console.log('用户点击发送给朋友');
@@ -106,6 +109,12 @@ class CreateGame extends CreateBaseEnv{
                 };   
 ///-------------------------------------------
             });
+            wx.error(function() {
+                //alert("初始化微信接口失败。");
+            });
+        }
+        else{
+            //alert("未找到微信接口。");
         }
 //////////////////////////////////////////
 
