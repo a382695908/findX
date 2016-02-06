@@ -11,7 +11,8 @@
 cd `dirname $0`
 
 if [ $# -eq 0 ];then
-	tsc --listFiles --noEmitOnError --removeComments --outDir ./bin-debug/
+	#tsc --listFiles --noEmitOnError --removeComments --outDir ./bin-debug/
+	tsc --listFiles --removeComments --outDir ./bin-debug/
 	if [ -d ./bin-debug/src ];then
     	cp -f ./bin-debug/src/* ./bin-debug/
     	cd bin-debug && rm -rf src && cd ..
