@@ -4,7 +4,8 @@
 
 var wx_tkn_url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx74751108b881f39c&secret=69440fcc8885e85ac4c285eff34782e7';
 var wx_tkt_url_base='https://api.weixin.qq.com/cgi-bin/ticket/getticket?';
-var my_url="http://game.doogga.com/findX/";
+var my_url="http://h53d.doogga.com/";
+var port = 9000;
 
 var https = require('https');
 var express=require("express");
@@ -51,4 +52,4 @@ app.get("/",function(req, res) {
 });
 
 app.use(express.static('.'));
-app.listen(8080);
+app.listen(port);

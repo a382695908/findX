@@ -76,7 +76,7 @@ class CreateGame extends CreateBaseEnv{
 //////////////////////////////////////////
 // 微信接口
         let bodyConfig: BodyConfig = new BodyConfig();
-        bodyConfig.debug = true;
+        bodyConfig.debug = false;
         bodyConfig.appId = "wx74751108b881f39c";
         bodyConfig.timestamp = document.wx_ts;
         bodyConfig.nonceStr = document.wx_str;
@@ -94,7 +94,7 @@ class CreateGame extends CreateBaseEnv{
                     //alert('xxx');
                     shareAppMessage.title = '发送给朋友-找X';
                     shareAppMessage.desc = '通过不断点击太空中一堆飞行物里"X"目标过关, 可以拖动改变视角。';
-                    shareAppMessage.link = 'http://game.doogga.com/game/findX/';
+                    shareAppMessage.link = 'http://h53d.doogga.com/game/findX/';
                     shareAppMessage.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
 
                     shareAppMessage.trigger = function (res) {
