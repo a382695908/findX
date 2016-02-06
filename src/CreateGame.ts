@@ -76,7 +76,7 @@ class CreateGame extends CreateBaseEnv{
 //////////////////////////////////////////
 // 微信接口
         let bodyConfig: BodyConfig = new BodyConfig();
-        bodyConfig.debug = true;
+        bodyConfig.debug = false;
         bodyConfig.appId = "wx74751108b881f39c";
         bodyConfig.timestamp = document.wx_ts;
         bodyConfig.nonceStr = document.wx_str;
