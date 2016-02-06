@@ -78,6 +78,10 @@ class CreateGame extends CreateBaseEnv{
         let bodyConfig: BodyConfig = new BodyConfig();
         bodyConfig.appId = "wx74751108b881f39c";
         bodyConfig.debug = true;
+        bodyConfig.timestamp = new Date().getTime();
+        bodyConfig.nonceStr = "";
+        bodyConfig.signature = "";
+        bodyConfig.jsApiList = ['onMenuShareAppMessage', 'onMenuShareTimeline'];
         /// ... 其他的配置属性赋值
         /// 通过config接口注入权限验证配置
         if(wx) {
