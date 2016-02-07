@@ -2,10 +2,12 @@
    *  通过 node ./webserver.js 启动本服务
 */
 
-var wx_tkn_url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx74751108b881f39c&secret=69440fcc8885e85ac4c285eff34782e7';
-var wx_tkt_url_base='https://api.weixin.qq.com/cgi-bin/ticket/getticket?';
-var my_url="http://h53d.doogga.com/";
+var appid='wxe62c6539ac7d4fdd';
+var secret='65f845807ed35d21e8e7155fb3e1cc90';
+var my_url='http://h53d.doogga.com/';
 var port = 9000;
+var wx_tkn_url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='+appid+'&secret='+secret;
+var wx_tkt_url_base='https://api.weixin.qq.com/cgi-bin/ticket/getticket?';
 
 var https = require('https');
 var express=require("express");
@@ -41,7 +43,7 @@ app.get("/",function(req, res) {
           				var shaObj = new jsSHA('SHA-1', 'TEXT');
 						shaObj.update( str );
           				var sign = shaObj.getHash('HEX');
-						var tpl_var = {'wx_ts': ts, 'wx_str': noncestr, 'wx_sig': sign };
+						var tpl_var = {'wx_debug': false, 'wx_appid': appid, 'wx_ts': ts, 'wx_str': noncestr, 'wx_sig': sign };
 						console.log( "template var:");
 						console.log( tpl_var );
     					res.render("index", tpl_var);  
@@ -52,4 +54,7 @@ app.get("/",function(req, res) {
 });
 
 app.use(express.static('.'));
+
+console.log("host: " + my_url );
+console.log("port: " + port );
 app.listen(port);
