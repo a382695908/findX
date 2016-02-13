@@ -93,7 +93,8 @@ class CreateGame extends CreateBaseEnv{
                 let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
                 console.log('weixin menu share time line');
                 timelineMsg.title = '发送给朋友-找X';
-                timelineMsg.link = 'http://h53d.doogga.com/game/findX/';
+            	//timelineMsg.type = 'link';
+                timelineMsg.link = 'http://h53d.doogga.com/';
                 timelineMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
                 timelineMsg.trigger = function (res) { console.log('用户点击发送给朋友'); }    
                 timelineMsg.success = function (res) { console.log('已分享'); };
@@ -104,7 +105,8 @@ class CreateGame extends CreateBaseEnv{
                 let qqMsg: BodyMenuShareQQ = new BodyMenuShareQQ();
                 console.log('weixin menu share');
                 qqMsg.title = '发送给朋友-找X';
-                qqMsg.link = 'http://h53d.doogga.com/game/findX/';
+            	qqMsg.type = 'link';
+                qqMsg.link = 'http://h53d.doogga.com/';
                 qqMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
 				//qqMsg.type = "";
 				//qqMsg.dataUrl = "";
@@ -123,10 +125,10 @@ class CreateGame extends CreateBaseEnv{
 			let appMsg: BodyMenuShareAppMessage = new BodyMenuShareAppMessage();
             console.log('weixin menu share app');
             appMsg.title = '发送给朋友-找X';
-            appMsg.desc = '猴年大吉,恭喜发财.';
-            appMsg.link = 'http://h53d.doogga.com/game/findX/';
-            appMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
             appMsg.type = 'link';
+            appMsg.desc = '猴年大吉,恭喜发财.';
+            appMsg.link = 'http://h53d.doogga.com/';
+            appMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
             appMsg.dataUrl = '';
             appMsg.success = function (res) { console.log('已分享'); };
             appMsg.fail = function (res) { console.log('已取消'); };
