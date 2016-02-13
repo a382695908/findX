@@ -90,39 +90,25 @@ class CreateGame extends CreateBaseEnv{
             /// 在这里调用微信相关功能的 API
 ///-------------------------------------------
                 console.log('weixin ready');
-                let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
-                console.log('weixin menu share time line');
-                timelineMsg.title = '发送给朋友-找X';
-            	//timelineMsg.type = 'link';
-                timelineMsg.link = 'http://h53d.doogga.com/';
-                timelineMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
-                timelineMsg.trigger = function (res) { console.log('用户点击发送给朋友'); }    
-                timelineMsg.success = function (res) { console.log('已分享'); };
-                timelineMsg.fail = function (res) { console.log('已取消'); };
-                timelineMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
-                wx.onMenuShareTimeline(timelineMsg);
-
-                let qqMsg: BodyMenuShareQQ = new BodyMenuShareQQ();
-                console.log('weixin menu share');
-                qqMsg.title = '发送给朋友-找X';
-            	qqMsg.type = 'link';
-                qqMsg.link = 'http://h53d.doogga.com/';
-                qqMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
-				//qqMsg.type = "";
-				//qqMsg.dataUrl = "";
-				//qqMsg.complete = function(){};
-                qqMsg.trigger = function (res) { console.log('用户点击发送给朋友'); }    
-                qqMsg.success = function (res) { console.log('已分享'); };
-                qqMsg.fail = function (res) { console.log('已取消'); };
-                qqMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
-                wx.onMenuShareQQ(qqMsg);
 ///-------------------------------------------
             });
             wx.error(function() {
                 console.log("初始化微信接口失败。");
             });
+            let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
+            console.log('weixin menu share time line');
+            timelineMsg.title = '发送给朋友-找X';
+            //timelineMsg.type = 'link';
+            //timelineMsg.desc = '猴年大吉,恭喜发财.';
+            timelineMsg.link = 'http://h53d.doogga.com/';
+            timelineMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
+            timelineMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
+            timelineMsg.success = function (res) { console.log('已分享.'); };
+            timelineMsg.fail = function (res) { console.log('已取消.'); };
+            timelineMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
+            wx.onMenuShareTimeline(timelineMsg);
 
-			let appMsg: BodyMenuShareAppMessage = new BodyMenuShareAppMessage();
+            let appMsg: BodyMenuShareAppMessage = new BodyMenuShareAppMessage();
             console.log('weixin menu share app');
             appMsg.title = '发送给朋友-找X';
             appMsg.type = 'link';
@@ -130,11 +116,27 @@ class CreateGame extends CreateBaseEnv{
             appMsg.link = 'http://h53d.doogga.com/';
             appMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
             appMsg.dataUrl = '';
-            appMsg.success = function (res) { console.log('已分享'); };
-            appMsg.fail = function (res) { console.log('已取消'); };
-            appMsg.trigger = function (res) { console.log('用户点击发送给朋友'); }    
+            appMsg.success = function (res) { console.log('已分享.'); };
+            appMsg.fail = function (res) { console.log('已取消.'); };
+            appMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
             appMsg.cancel = function (res) { console.log(JSON.stringify(res));};
             wx.onMenuShareAppMessage(appMsg);
+
+            let qqMsg: BodyMenuShareQQ = new BodyMenuShareQQ();
+            console.log('weixin menu share');
+            qqMsg.title = '发送给朋友-找X';
+            qqMsg.type = 'link';
+            qqMsg.desc = '猴年大吉,恭喜发财.';
+            qqMsg.link = 'http://h53d.doogga.com/';
+            qqMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
+            qqMsg.type = "link";
+            //qqMsg.dataUrl = "";
+            //qqMsg.complete = function(){};
+            qqMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
+            qqMsg.success = function (res) { console.log('已分享.'); };
+            qqMsg.fail = function (res) { console.log('已取消.'); };
+            qqMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
+            wx.onMenuShareQQ(qqMsg);
         }
         else{
             console.log("未找到微信接口。");

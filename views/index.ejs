@@ -49,6 +49,37 @@
         document.wx_str = '<%=wx_str%>';
         document.wx_sig = '<%=wx_sig%>';
         egret.runEgret();
+
+        function shareFriend() {
+            console.log('xxxxxx');
+            WeixinJSBridge.invoke('sendAppMessage', {
+                "appid": "wxe62c6539ac7d4fdd",
+                "img_url": 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png',
+                "img_width": "200",
+                "img_height": "200",
+                "link": 'http://h53d.doogga.com/',
+                "desc": "猴年大吉,恭喜发财.",
+                "title": "发送给朋友-找X"
+            }, function(res) {
+                //_report('send_msg', res.err_msg);  // 这是回调函数，必须注释掉
+            })
+        }
+        document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+            // 发送给好友
+            WeixinJSBridge.on('menu:share:appmessage', function(argv){
+                shareFriend();
+            });
+            // 分享到朋友圈
+            //WeixinJSBridge.on('menu:share:timeline', function(argv){
+            //    shareTimeline();
+            //});
+            //// 分享到微博
+            //WeixinJSBridge.on('menu:share:weibo', function(argv){
+            //    shareWeibo();
+            //});
+        }, false);
+
+
     </script>
 	<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_5949997'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/stat.php%3Fid%3D5949997' type='text/javascript'%3E%3C/script%3E"));</script>
 </body>
