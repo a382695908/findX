@@ -2,6 +2,14 @@
    *  通过 node ./webserver.js 启动本服务
 */
 
+function getClientIp(req) {
+    return req.headers['x-forwarded-for'] ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+	req.connection.socket.remoteAddress;
+};
+
+
 var appid='wxe62c6539ac7d4fdd';
 var secret='65f845807ed35d21e8e7155fb3e1cc90';
 var my_url='http://h53d.doogga.com/';
@@ -18,7 +26,9 @@ var wx_debug = true;
 var app=express();
 app.set("view engine","ejs"); 
 
-app.get("/",function(req, res) {
+app.get("/", function(req, res) {
+	var ip = getClientIp( req );
+	console.log("req from client IP:" + ip );
 	//console.log('1');
 	https.get(wx_tkn_url, function access_token_callback(tk_rs){
 		//console.log('2');
