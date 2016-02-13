@@ -81,7 +81,7 @@ class CreateGame extends CreateBaseEnv{
         bodyConfig.timestamp = document.wx_ts;
         bodyConfig.nonceStr = document.wx_str;
         bodyConfig.signature = document.wx_sig;
-        bodyConfig.jsApiList = ['onMenuShareAppMessage', 'onMenuShareTimeline'];
+        bodyConfig.jsApiList = ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ'];
         /// ... 其他的配置属性赋值
         /// 通过config接口注入权限验证配置
         if(wx) {
@@ -89,36 +89,53 @@ class CreateGame extends CreateBaseEnv{
             wx.ready(function() {
             /// 在这里调用微信相关功能的 API
 ///-------------------------------------------
-                //alert('1');
-                wx.onMenuShareAppMessage = function(shareAppMessage: BodyMenuShareAppMessage){
-                    //alert('xxx');
-                    shareAppMessage.title = '发送给朋友-找X';
-                    shareAppMessage.desc = '通过不断点击太空中一堆飞行物里"X"目标过关, 可以拖动改变视角。';
-                    shareAppMessage.link = 'http://h53d.doogga.com/game/findX/';
-                    shareAppMessage.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
+                console.log('weixin ready');
+                let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
+                console.log('weixin menu share time line');
+                timelineMsg.title = '发送给朋友-找X';
+                timelineMsg.link = 'http://h53d.doogga.com/game/findX/';
+                timelineMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
+                timelineMsg.trigger = function (res) { console.log('用户点击发送给朋友'); }    
+                timelineMsg.success = function (res) { console.log('已分享'); };
+                timelineMsg.fail = function (res) { console.log('已取消'); };
+                timelineMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
+                wx.onMenuShareTimeline(timelineMsg);
 
-                    shareAppMessage.trigger = function (res) {
-                        // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
-                        console.log('用户点击发送给朋友');
-                    }    
-                    shareAppMessage.success = function (res) {
-                        console.log('已分享');
-                    };
-                    shareAppMessage.fail = function (res) {
-                        console.log('已取消');
-                    };
-                    shareAppMessage.cancel = function (res) {
-                        console.log(JSON.stringify(res));
-                    };
-                };   
+                let qqMsg: BodyMenuShareQQ = new BodyMenuShareQQ();
+                console.log('weixin menu share');
+                qqMsg.title = '发送给朋友-找X';
+                qqMsg.link = 'http://h53d.doogga.com/game/findX/';
+                qqMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
+				//qqMsg.type = "";
+				//qqMsg.dataUrl = "";
+				//qqMsg.complete = function(){};
+                qqMsg.trigger = function (res) { console.log('用户点击发送给朋友'); }    
+                qqMsg.success = function (res) { console.log('已分享'); };
+                qqMsg.fail = function (res) { console.log('已取消'); };
+                qqMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
+                wx.onMenuShareQQ(qqMsg);
 ///-------------------------------------------
             });
             wx.error(function() {
-                //alert("初始化微信接口失败。");
+                console.log("初始化微信接口失败。");
             });
+
+			let appMsg: BodyMenuShareAppMessage = new BodyMenuShareAppMessage();
+            console.log('weixin menu share app');
+            appMsg.title = '发送给朋友-找X';
+            appMsg.desc = '猴年大吉,恭喜发财.';
+            appMsg.link = 'http://h53d.doogga.com/game/findX/';
+            appMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
+            appMsg.type = 'link';
+            appMsg.dataUrl = '';
+            appMsg.success = function (res) { console.log('已分享'); };
+            appMsg.fail = function (res) { console.log('已取消'); };
+            appMsg.trigger = function (res) { console.log('用户点击发送给朋友'); }    
+            appMsg.cancel = function (res) { console.log(JSON.stringify(res));};
+            wx.onMenuShareAppMessage(appMsg);
         }
         else{
-            //alert("未找到微信接口。");
+            console.log("未找到微信接口。");
         }
 //////////////////////////////////////////
 
