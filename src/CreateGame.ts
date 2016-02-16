@@ -74,7 +74,7 @@ class CreateGame extends CreateBaseEnv{
         this._dtDriver = new aw.FindXDataDriver();
         this._uiReady = false;
 //////////////////////////////////////////
-// 微信接口
+// 微信接口 begin
         let bodyConfig: BodyConfig = new BodyConfig();
         bodyConfig.debug = document.wx_debug;
         bodyConfig.appId = document.wx_appid;
@@ -139,6 +139,7 @@ class CreateGame extends CreateBaseEnv{
         else{
             console.log("未找到微信接口。");
         }
+// 微信接口 end
 //////////////////////////////////////////
 
     }
