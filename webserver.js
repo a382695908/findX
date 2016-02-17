@@ -9,11 +9,17 @@ function getClientIp(req) {
 	req.connection.socket.remoteAddress;
 };
 
+// huithink config --- 因域名不再阿里服务器，不能部署到阿里云, 被拦截禁止访问
+//var appid='wx85052b16beec339e';
+//var secret='4f5aa5a9c6e318e4477ae9e388cd009e';
+//var base_url='http://game.huithink.com';
 
+// doogga config --- 因公众号未认证不能分享
 var appid='wxe62c6539ac7d4fdd';
 var secret='65f845807ed35d21e8e7155fb3e1cc90';
 var base_url='http://h53d.doogga.com';
 //var base_url='http://dev.doogga.com';
+
 var port = 9000;
 var wx_tkn_url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='+appid+'&secret='+secret;
 var wx_tkt_url_base='https://api.weixin.qq.com/cgi-bin/ticket/getticket?';
@@ -21,8 +27,8 @@ var wx_tkt_url_base='https://api.weixin.qq.com/cgi-bin/ticket/getticket?';
 var https = require('https');
 var express=require("express");
 var jsSHA = require("jssha");
-//var wx_debug = true;
-var wx_debug = false;
+var wx_debug = true;
+//var wx_debug = false;
 
 var app=express();
 app.set("view engine","ejs"); 
