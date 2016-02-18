@@ -97,8 +97,8 @@ if ( enable_weixin ) {
         wx_appid='wx85052b16beec339e';
         wx_secret='4f5aa5a9c6e318e4477ae9e388cd009e';
         wx_base_url='http://findx.huithink.com';
-        wx_link ='http://h53d.doogga.com/';
-        wx_img ='http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
+        wx_link ='http://findx.huithink.com/';
+        wx_img ='http://findx.huithink.com/resource/findx.jpg';
         wx_title='找X';
         wx_desc ='猴年大吉,恭喜发财.';
         break;
