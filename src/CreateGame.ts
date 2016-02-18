@@ -92,7 +92,7 @@ class CreateGame extends CreateBaseEnv{
                 console.log('weixin ready');
                 let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
                 console.log('weixin menu share time line');
-                timelineMsg.title = '发送给朋友-' + document.wx_title;
+                timelineMsg.title = document.wx_title + "快来试试你的手机能玩微信3D游戏不?";
                 timelineMsg.link = document.wx_link;
                 timelineMsg.imgUrl = document.wx_img;
                 //timelineMsg.type = 'link';
@@ -105,7 +105,7 @@ class CreateGame extends CreateBaseEnv{
 
                 let appMsg: BodyMenuShareAppMessage = new BodyMenuShareAppMessage();
                 console.log('weixin menu share app');
-                appMsg.title = '发送给朋友-' + document.wx_title;
+                appMsg.title = document.wx_title;
                 appMsg.link = document.wx_link;
                 appMsg.imgUrl = document.wx_img;
                 appMsg.desc = document.wx_desc;
@@ -119,7 +119,7 @@ class CreateGame extends CreateBaseEnv{
 
                 let qqMsg: BodyMenuShareQQ = new BodyMenuShareQQ();
                 console.log('weixin menu share');
-                qqMsg.title = '发送给朋友-' + document.wx_title;
+                qqMsg.title = document.wx_title;
                 qqMsg.link = document.wx_link;
                 qqMsg.imgUrl = document.wx_img;
                 qqMsg.desc = document.wx_desc;
