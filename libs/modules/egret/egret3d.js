@@ -126,7 +126,7 @@ var egret3d;
                 gl = this.canvas.getContext("webgl");
             console.log("this.context3D ==>", this.context3D);
             if (!gl)
-                alert("you drivers not suport webgl");
+                alert("你的手机不支持页面3D，快快去升级设备吧.");
             return gl;
         };
         /**

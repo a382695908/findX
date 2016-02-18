@@ -100,7 +100,7 @@ if ( enable_weixin ) {
         wx_link ='http://findx.huithink.com/';
         wx_img ='http://findx.huithink.com/resource/findx.jpg';
         wx_title='找X';
-        wx_desc ='猴年大吉,恭喜发财.';
+        wx_desc ='猴年大吉,恭喜发财. 快来看看你的手机是否支持微信3D游戏...';
         break;
     default: // any other
         wx_appid='wxe62c6539ac7d4fdd';
