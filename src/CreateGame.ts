@@ -75,20 +75,20 @@ class CreateGame extends CreateBaseEnv{
         this._uiReady = false;
 //////////////////////////////////////////
 // 微信接口 begin
-        let bodyConfig: BodyConfig = new BodyConfig();
-        bodyConfig.debug = document.wx_debug;
-        bodyConfig.appId = document.wx_appid;
-        bodyConfig.timestamp = document.wx_ts;
-        bodyConfig.nonceStr = document.wx_str;
-        bodyConfig.signature = document.wx_sig;
-        bodyConfig.jsApiList = ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareQZone', 'onMenuShareWeibo'];
         /// ... 其他的配置属性赋值
         /// 通过config接口注入权限验证配置
-        if(wx) {
+        if(typeof(wx) != 'undefined' && wx && typeof(document.wx_appid) != 'undefined') {
+        	let bodyConfig: BodyConfig = new BodyConfig();
+        	bodyConfig.debug = document.wx_debug;
+        	bodyConfig.appId = document.wx_appid;
+        	bodyConfig.timestamp = document.wx_ts;
+        	bodyConfig.nonceStr = document.wx_str;
+        	bodyConfig.signature = document.wx_sig;
+        	bodyConfig.jsApiList = ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareQZone', 'onMenuShareWeibo'];
             wx.config(bodyConfig);
             wx.ready(function() {
-            /// 在这里调用微信相关功能的 API
 ///-------------------------------------------
+            /// 在这里调用微信相关功能的 API
                 console.log('weixin ready');
                 let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
                 console.log('weixin menu share time line');

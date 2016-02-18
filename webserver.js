@@ -16,13 +16,14 @@ function getLocalIp(os)
     case 'linux':
         netcards = os.networkInterfaces().eth0;
         break;
-    case 'mac':
+    case 'darwin':
         netcards = os.networkInterfaces().en0;
         break;
     case 'windows':
         netcards = null;
         break;
     default:
+        netcards = null;
         break;
     }
     var IPv4 = "unknown";
@@ -172,5 +173,5 @@ else{
 }
 
 app.use(express.static('.'));
-console.log("Listen on host: " + host + ", port:" + port);
-app.listen(port, host);
+console.log("Listen on host: " + ip + ", port:" + port);
+app.listen(port, ip);

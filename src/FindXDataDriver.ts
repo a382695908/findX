@@ -40,7 +40,7 @@ namespace aw {
 
         private urlLoader: egret.URLLoader = null;
         private urlReq: egret.URLRequest = null;
-        private url: string = 'http://h53d.doogga.com/saveStage/';
+        private url: string = '/saveStage/?';
         private needSave: boolean = null;
 
         constructor( startTime: Date = null ) {
@@ -55,9 +55,7 @@ namespace aw {
             this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
 
             this.urlLoader = new egret.URLLoader();
-            this.urlReq = new egret.URLRequest(this.url);
-            //this.urlReq.method = egret.URLRequestMethod.POST;
-            this.urlReq.method = egret.URLRequestMethod.GET;
+			this.urlLoader.dataFormat = egret.URLLoaderDataFormat.TEXT;
             this.needSave = true;
         }
         public StartGame( startTime: Date = null ){
@@ -167,7 +165,7 @@ namespace aw {
                 this._readyTips= `目标:${this._XObjCnt}个${this._charsFind}\n点触继续...`;
 
                 if ( this.needSave ) {
-                    this.onPlayerStageSave();
+                    this.onPlayerStageSave(true);
                 }
 
                 return;
@@ -177,20 +175,33 @@ namespace aw {
                 this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
 
                 if ( this.needSave ) {
-                    this.onPlayerStageSave();
+                    this.onPlayerStageSave(false);
                 }
 
                 return;
             }
         }
 
-        private onPlayerStageSave(){
-            if (this.urlLoader && this.urlReq){
+        private onPlayerStageSave(win: boolean){
+            //if (this.urlLoader && this.urlReq){
+            if ( this.urlLoader ){
                 this.needSave = ! this.needSave;
                 this.urlLoader.addEventListener(egret.Event.COMPLETE, this.onSaveStageOk, this);
-
-                this.urlReq.data = new egret.URLVariables("testyyyyyyyyyy=okxxxxxxxxxx");
+                let rest_cnt = this._XObjCnt - this._pickedXCnt;
+				if ( win ) {
+                	//this.urlReq.data = new egret.URLVariables("win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=0" );
+                	this.url = this.url + "win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=0";
+				}
+				else {
+                	//this.urlReq.data = new egret.URLVariables("win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=" + rest_cnt);
+                	this.url = this.url + "win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=" + rest_cnt;
+				}
+            	this.urlReq = new egret.URLRequest(this.url);
+            	this.urlReq.method = egret.URLRequestMethod.POST;
+            	//this.urlReq.method = egret.URLRequestMethod.GET;
+                console.log("send data to server:");
                 this.urlLoader.load( this.urlReq );
+                console.log( this.urlReq.data.toString() );
             }
             else{
                 console.log("this.urlLoader is null or this.urlReq is null");
