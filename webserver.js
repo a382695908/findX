@@ -160,7 +160,6 @@ else{
     	console.log( req.body );
     	console.log( req.params );
         res.send( req.params );
-        res.send( req.request );
     });
     app.get("/saveStage/", function(req, res) {
     	var ip = getClientIp( req );
@@ -169,7 +168,6 @@ else{
     	console.log( req.body );
     	console.log( req.params );
         res.send( req.params );
-        res.send( req.request );
     });
 }
 
