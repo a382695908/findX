@@ -40,7 +40,7 @@ namespace aw {
 
         private urlLoader: egret.URLLoader = null;
         private urlReq: egret.URLRequest = null;
-        private url: string = "";
+        private url: string = 'http://h53d.doogga.com/saveStage/';
 
         constructor( startTime: Date = null ) {
             super( startTime );
@@ -54,8 +54,9 @@ namespace aw {
             this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
 
             this.urlLoader = new egret.URLLoader();
-            this.urlReq = new egret.URLRequest();
-            this.urlReq.method = egret.URLRequestMethod.POST;
+            this.urlReq = new egret.URLRequest(this.url);
+            //this.urlReq.method = egret.URLRequestMethod.POST;
+            this.urlReq.method = egret.URLRequestMethod.GET;
         }
         public StartGame( startTime: Date = null ){
 			console.log("Single total stage count:" + this._stageCtr.length);
@@ -178,17 +179,27 @@ namespace aw {
         }
 
         private onPlayerStageSave(){
-            this.urlLoader.addEventListener(egret.Event.COMPLETE, this.onSaveStageOk, this);
+            if (this.urlLoader && this.urlReq){
+                this.urlLoader.addEventListener(egret.Event.COMPLETE, this.onSaveStageOk, this);
 
-            this.urlReq.data = new egret.URLVariables("test=ok");
-            this.urlLoader.load( urlReq );
+                this.urlReq.data = new egret.URLVariables("testyyyyyyyyyy=okxxxxxxxxxx");
+                this.urlLoader.load( this.urlReq );
+            }
+            else{
+                console.log("this.urlLoader is null or this.urlReq is null");
+            }
         }
 
         private onSaveStageOk(e: egret.Event ){
             //this.urlLoader.removeEventListener(egret.Event.COMPLETE, this.onSaveStageOk);
-
-            var data:egret.URLVariables = this.urlLoader.data;
-            console.log( data.toString() );
+            if (this.urlLoader){
+                var data:egret.URLVariables = this.urlLoader.data;
+                console.log("save to server return:");
+                console.log( data.toString() );
+            }
+            else{
+                console.log("this.urlLoader is null");
+            }
         }
 
 
