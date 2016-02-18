@@ -75,8 +75,8 @@ var app=express();
 
 if ( enable_weixin ) {
     console.log("ENABLED WEIXIN.");
-    //var wx_debug = false;
     var wx_debug = true;
+    wx_debug = false;
     var jsSHA = require("jssha");
 
     var wx_appid='wxe62c6539ac7d4fdd';
