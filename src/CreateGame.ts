@@ -97,11 +97,11 @@ class CreateGame extends CreateBaseEnv{
             });
             let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
             console.log('weixin menu share time line');
-            timelineMsg.title = '发送给朋友-找X';
+            timelineMsg.title = '发送给朋友-' + document.wx_title;
+            timelineMsg.link = document.wx_link;
+            timelineMsg.imgUrl = document.wx_img;
             //timelineMsg.type = 'link';
             //timelineMsg.desc = '猴年大吉,恭喜发财.';
-            timelineMsg.link = 'http://h53d.doogga.com/';
-            timelineMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
             timelineMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
             timelineMsg.success = function (res) { console.log('已分享.'); };
             timelineMsg.fail = function (res) { console.log('已取消.'); };
@@ -110,11 +110,11 @@ class CreateGame extends CreateBaseEnv{
 
             let appMsg: BodyMenuShareAppMessage = new BodyMenuShareAppMessage();
             console.log('weixin menu share app');
-            appMsg.title = '发送给朋友-找X';
+            appMsg.title = '发送给朋友-' + document.wx_title;
+            appMsg.link = document.wx_link;
+            appMsg.imgUrl = document.wx_img;
+            appMsg.desc = document.wx_desc;
             appMsg.type = 'link';
-            appMsg.desc = '猴年大吉,恭喜发财.';
-            appMsg.link = 'http://h53d.doogga.com/';
-            appMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
             appMsg.dataUrl = '';
             appMsg.success = function (res) { console.log('已分享.'); };
             appMsg.fail = function (res) { console.log('已取消.'); };
@@ -124,12 +124,11 @@ class CreateGame extends CreateBaseEnv{
 
             let qqMsg: BodyMenuShareQQ = new BodyMenuShareQQ();
             console.log('weixin menu share');
-            qqMsg.title = '发送给朋友-找X';
+            qqMsg.title = '发送给朋友-' + document.wx_title;
+            qqMsg.link = document.wx_link;
+            qqMsg.imgUrl = document.wx_img;
+            qqMsg.desc = document.wx_desc;
             qqMsg.type = 'link';
-            qqMsg.desc = '猴年大吉,恭喜发财.';
-            qqMsg.link = 'http://h53d.doogga.com/';
-            qqMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
-            qqMsg.type = "link";
             //qqMsg.dataUrl = "";
             //qqMsg.complete = function(){};
             qqMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
