@@ -564,7 +564,7 @@ class CreateGame extends CreateBaseEnv{
 		case aw.GameDataState.IN_PAUSE:
             this.updateInteractiveTips( this._dtDriver.pauseTips );
             break;
-		case aw.GameDataState.USER_WIN:
+		case aw.GameDataState.USER_WIN: //过关
             this.updateInteractiveTips( this._dtDriver.winTips );
             //console.log("dead box cnt:" + this._deadBox["cnt"] + "; picked X cnt:" + this._dtDriver.pickedXCnt);
             if (this._deadBox["cnt"] === this._dtDriver.pickedXCnt ){
@@ -574,7 +574,7 @@ class CreateGame extends CreateBaseEnv{
                 this.UpdateBoxView();   // 更新盒子飞行
             }
 			break;
-		case aw.GameDataState.TIME_OVER:
+		case aw.GameDataState.TIME_OVER: // 未过关 -- 超时
             this.updateInteractiveTips( this._dtDriver.failedTips );
 			break;
 		case aw.GameDataState.NEVER_START:

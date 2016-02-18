@@ -38,6 +38,10 @@ namespace aw {
             {"ttCnt": 24, "xoCnt": 3, "tmLMT": 60, "mvSPD":  4, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["吉", "古", "舌", "杏", "志"] },
         ];
 
+        private urlLoader: egret.URLLoader = null;
+        private urlReq: egret.URLRequest = null;
+        private url: string = "";
+
         constructor( startTime: Date = null ) {
             super( startTime );
             this._pickedXCnt = 0;
@@ -48,6 +52,10 @@ namespace aw {
             this._winTips = ` :) 过关\n点触继续${this.stage}关... `;
             let rest_cnt = this._XObjCnt - this._pickedXCnt;
             this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
+
+            this.urlLoader = new egret.URLLoader();
+            this.urlReq = new egret.URLRequest();
+            this.urlReq.method = egret.URLRequestMethod.POST;
         }
         public StartGame( startTime: Date = null ){
 			console.log("Single total stage count:" + this._stageCtr.length);
@@ -154,13 +162,35 @@ namespace aw {
         	    this.StageUp();
                 this._winTips  = ` :) 过关\n点触继续${this.stage}关... `;
                 this._readyTips= `目标:${this._XObjCnt}个${this._charsFind}\n点触继续...`;
+
+                this.onPlayerStageSave();
+
                 return;
             }
             if ( this._driverState == GameDataState.TIME_OVER ){
                 let rest_cnt = this._XObjCnt - this._pickedXCnt;
                 this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
+
+                this.onPlayerStageSave();
+
+                return;
             }
         }
+
+        private onPlayerStageSave(){
+            this.urlLoader.addEventListener(egret.Event.COMPLETE, this.onSaveStageOk, this);
+
+            this.urlReq.data = new egret.URLVariables("test=ok");
+            this.urlLoader.load( urlReq );
+        }
+
+        private onSaveStageOk(e: egret.Event ){
+            //this.urlLoader.removeEventListener(egret.Event.COMPLETE, this.onSaveStageOk);
+
+            var data:egret.URLVariables = this.urlLoader.data;
+            console.log( data.toString() );
+        }
+
 
         protected StageUp(): number {
             super.StageUp();
