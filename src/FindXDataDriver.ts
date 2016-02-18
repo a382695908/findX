@@ -41,6 +41,7 @@ namespace aw {
         private urlLoader: egret.URLLoader = null;
         private urlReq: egret.URLRequest = null;
         private url: string = 'http://h53d.doogga.com/saveStage/';
+        private needSave: bool = null;
 
         constructor( startTime: Date = null ) {
             super( startTime );
@@ -57,6 +58,7 @@ namespace aw {
             this.urlReq = new egret.URLRequest(this.url);
             //this.urlReq.method = egret.URLRequestMethod.POST;
             this.urlReq.method = egret.URLRequestMethod.GET;
+            this.needSave = true;
         }
         public StartGame( startTime: Date = null ){
 			console.log("Single total stage count:" + this._stageCtr.length);
@@ -164,7 +166,9 @@ namespace aw {
                 this._winTips  = ` :) 过关\n点触继续${this.stage}关... `;
                 this._readyTips= `目标:${this._XObjCnt}个${this._charsFind}\n点触继续...`;
 
-                this.onPlayerStageSave();
+                if ( this.needSave ) {
+                    this.onPlayerStageSave();
+                }
 
                 return;
             }
@@ -172,7 +176,9 @@ namespace aw {
                 let rest_cnt = this._XObjCnt - this._pickedXCnt;
                 this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
 
-                this.onPlayerStageSave();
+                if ( this.needSave ) {
+                    this.onPlayerStageSave();
+                }
 
                 return;
             }
@@ -180,6 +186,7 @@ namespace aw {
 
         private onPlayerStageSave(){
             if (this.urlLoader && this.urlReq){
+                this.needSave = ! this.needSave;
                 this.urlLoader.addEventListener(egret.Event.COMPLETE, this.onSaveStageOk, this);
 
                 this.urlReq.data = new egret.URLVariables("testyyyyyyyyyy=okxxxxxxxxxx");
