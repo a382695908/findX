@@ -155,7 +155,6 @@ else{
     console.log("DISABLED WEIXIN.");
     app.post("/saveStage/", function(req, res) {
     	var ip = getClientIp( req );
-        //wx_link ='http://h53d.doogga.com/';
     	console.log("req from client IP:" + ip );
     	console.log("post data:" );
     	console.log( req.body );
@@ -165,7 +164,6 @@ else{
     });
     app.get("/saveStage/", function(req, res) {
     	var ip = getClientIp( req );
-        //wx_link ='http://h53d.doogga.com/';
     	console.log("req from client IP:" + ip );
     	console.log("post data:" );
     	console.log( req.body );
