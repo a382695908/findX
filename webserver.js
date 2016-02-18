@@ -90,8 +90,8 @@ if ( enable_weixin ) {
         wx_base_url='http://h53d.doogga.com';
         wx_link ='http://h53d.doogga.com/';
         wx_img  ='http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
-        wx_title='找X';
-        wx_desc ='猴年大吉,恭喜发财. 快来看看你的手机能不能玩微信3D游戏?';
+        wx_title='大家来 - 找X';
+        wx_desc ='猴年大吉,恭喜发财. 快来试试你的手机能玩微信3D游戏不?';
         break;
     case '10.10.123.207':  // huithink server
         wx_appid='wx85052b16beec339e';
@@ -99,8 +99,8 @@ if ( enable_weixin ) {
         wx_base_url='http://findx.huithink.com';
         wx_link ='http://findx.huithink.com/';
         wx_img ='http://findx.huithink.com/resource/findx.jpg';
-        wx_title='找X';
-        wx_desc ='猴年大吉,恭喜发财. 快来看看你的手机能不能玩微信3D游戏?';
+        wx_title='大家来 - 找X';
+        wx_desc ='猴年大吉,恭喜发财. 快来试试你的手机能玩微信3D游戏不?';
         break;
     default: // any other
         wx_appid='wxe62c6539ac7d4fdd';
@@ -108,8 +108,8 @@ if ( enable_weixin ) {
         wx_base_url='http://dev.h53d.io';
         wx_link ='http://h53d.doogga.com/';
         wx_img ='http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
-        wx_title='找X';
-        wx_desc ='猴年大吉,恭喜发财. 快来看看你的手机能不能玩微信3D游戏?';
+        wx_title='大家来 - 找X';
+        wx_desc ='猴年大吉,恭喜发财. 快来试试你的手机能玩微信3D游戏不?';
         break;
     }
     var wx_tkn_url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='+wx_appid+'&secret='+wx_secret;

@@ -81,7 +81,7 @@ class CreateGame extends CreateBaseEnv{
         bodyConfig.timestamp = document.wx_ts;
         bodyConfig.nonceStr = document.wx_str;
         bodyConfig.signature = document.wx_sig;
-        bodyConfig.jsApiList = ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ'];
+        bodyConfig.jsApiList = ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareQZone', 'onMenuShareWeibo'];
         /// ... 其他的配置属性赋值
         /// 通过config接口注入权限验证配置
         if(wx) {
@@ -92,14 +92,14 @@ class CreateGame extends CreateBaseEnv{
                 console.log('weixin ready');
                 let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
                 console.log('weixin menu share time line');
-                timelineMsg.title = document.wx_title + "快来试试你的手机能玩微信3D游戏不?";
+                timelineMsg.title = document.wx_title + " - 快来试试你的手机能玩微信3D游戏不?";
                 timelineMsg.link = document.wx_link;
                 timelineMsg.imgUrl = document.wx_img;
                 //timelineMsg.type = 'link';
                 //timelineMsg.desc = '猴年大吉,恭喜发财.';
                 timelineMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
-                timelineMsg.success = function (res) { console.log('已分享.'); };
-                timelineMsg.fail = function (res) { console.log('已取消.'); };
+                timelineMsg.success = function (res) { console.log('已分享到朋友圈.'); };
+                timelineMsg.fail = function (res) { console.log('已取消分享到朋友圈.'); };
                 timelineMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
                 wx.onMenuShareTimeline(timelineMsg);
 
@@ -111,8 +111,8 @@ class CreateGame extends CreateBaseEnv{
                 appMsg.desc = document.wx_desc;
                 appMsg.type = 'link';
                 appMsg.dataUrl = '';
-                appMsg.success = function (res) { console.log('已分享.'); };
-                appMsg.fail = function (res) { console.log('已取消.'); };
+                appMsg.success = function (res) { console.log('已分享给朋友.'); };
+                appMsg.fail = function (res) { console.log('已取消分析给朋友.'); };
                 appMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
                 appMsg.cancel = function (res) { console.log(JSON.stringify(res));};
                 wx.onMenuShareAppMessage(appMsg);
@@ -127,10 +127,35 @@ class CreateGame extends CreateBaseEnv{
                 //qqMsg.dataUrl = "";
                 //qqMsg.complete = function(){};
                 qqMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
-                qqMsg.success = function (res) { console.log('已分享.'); };
-                qqMsg.fail = function (res) { console.log('已取消.'); };
+                qqMsg.success = function (res) { console.log('已分享到QQ.'); };
+                qqMsg.fail = function (res) { console.log('已取消分享到QQ.'); };
                 qqMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
                 wx.onMenuShareQQ(qqMsg);
+
+                //wx.onMenuShareQZone({
+                //    title: document.wx_title, // 分享标题
+                //    link: document.wx_link, // 分享链接
+                //    imgUrl: document.wx_img, // 分享图标
+                //    desc: document.wx_desc, // 分享描述
+                //    //type = 'link';
+                //    success: function () { 
+                //        console.log('用户点击发送给QQ空间.');
+                //    },
+                //    cancel: function () { 
+                //        console.log('用户取消发送给QQ空间.');
+                //    }
+                //});
+
+                let qzoneMsg: BodyMenuShareWeibo = new BodyMenuShareWeibo();
+                qzoneMsg.title = document.wx_title; // 分享标题
+                qzoneMsg.link = document.wx_link; // 分享链接
+                qzoneMsg.imgUrl = document.wx_img; // 分享图标
+                qzoneMsg.desc = document.wx_desc; // 分享描述
+                //type = 'link';
+                qzoneMsg.complete=function (res) { console.log('用户点击发送给腾讯微博.'); };
+                qzoneMsg.success=function (res) { console.log('用户点击发送给腾讯微博.'); };
+                qzoneMsg.cancel=function (res) { console.log('用户取消发送给腾讯微博.'); }
+                wx.onMenuShareWeibo( qzoneMsg );
 ///-------------------------------------------
             });
             wx.error(function() {
