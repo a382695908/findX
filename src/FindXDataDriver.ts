@@ -41,7 +41,7 @@ namespace aw {
         private urlLoader: egret.URLLoader = null;
         private urlReq: egret.URLRequest = null;
         private url: string = 'http://h53d.doogga.com/saveStage/';
-        private needSave: bool = null;
+        private needSave: boolean = null;
 
         constructor( startTime: Date = null ) {
             super( startTime );
