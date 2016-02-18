@@ -91,7 +91,7 @@ if ( enable_weixin ) {
         wx_link ='http://h53d.doogga.com/';
         wx_img  ='http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
         wx_title='找X';
-        wx_desc ='猴年大吉,恭喜发财.';
+        wx_desc ='猴年大吉,恭喜发财. 快来看看你的手机是否支持微信3D游戏...';
         break;
     case '10.10.123.207':  // huithink server
         wx_appid='wx85052b16beec339e';
@@ -109,7 +109,7 @@ if ( enable_weixin ) {
         wx_link ='http://h53d.doogga.com/';
         wx_img ='http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
         wx_title='找X';
-        wx_desc ='猴年大吉,恭喜发财.';
+        wx_desc ='猴年大吉,恭喜发财. 快来看看你的手机是否支持微信3D游戏...';
         break;
     }
     var wx_tkn_url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='+wx_appid+'&secret='+wx_secret;
