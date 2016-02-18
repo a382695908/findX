@@ -38,6 +38,11 @@ namespace aw {
             {"ttCnt": 24, "xoCnt": 3, "tmLMT": 60, "mvSPD":  4, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["吉", "古", "舌", "杏", "志"] },
         ];
 
+        private urlLoader: egret.URLLoader = null;
+        private urlReq: egret.URLRequest = null;
+        private url: string = 'http://h53d.doogga.com/saveStage/';
+        private needSave: boolean = null;
+
         constructor( startTime: Date = null ) {
             super( startTime );
             this._pickedXCnt = 0;
@@ -48,6 +53,12 @@ namespace aw {
             this._winTips = ` :) 过关\n点触继续${this.stage}关... `;
             let rest_cnt = this._XObjCnt - this._pickedXCnt;
             this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
+
+            this.urlLoader = new egret.URLLoader();
+            this.urlReq = new egret.URLRequest(this.url);
+            //this.urlReq.method = egret.URLRequestMethod.POST;
+            this.urlReq.method = egret.URLRequestMethod.GET;
+            this.needSave = true;
         }
         public StartGame( startTime: Date = null ){
 			console.log("Single total stage count:" + this._stageCtr.length);
@@ -154,13 +165,50 @@ namespace aw {
         	    this.StageUp();
                 this._winTips  = ` :) 过关\n点触继续${this.stage}关... `;
                 this._readyTips= `目标:${this._XObjCnt}个${this._charsFind}\n点触继续...`;
+
+                if ( this.needSave ) {
+                    this.onPlayerStageSave();
+                }
+
                 return;
             }
             if ( this._driverState == GameDataState.TIME_OVER ){
                 let rest_cnt = this._XObjCnt - this._pickedXCnt;
                 this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
+
+                if ( this.needSave ) {
+                    this.onPlayerStageSave();
+                }
+
+                return;
             }
         }
+
+        private onPlayerStageSave(){
+            if (this.urlLoader && this.urlReq){
+                this.needSave = ! this.needSave;
+                this.urlLoader.addEventListener(egret.Event.COMPLETE, this.onSaveStageOk, this);
+
+                this.urlReq.data = new egret.URLVariables("testyyyyyyyyyy=okxxxxxxxxxx");
+                this.urlLoader.load( this.urlReq );
+            }
+            else{
+                console.log("this.urlLoader is null or this.urlReq is null");
+            }
+        }
+
+        private onSaveStageOk(e: egret.Event ){
+            //this.urlLoader.removeEventListener(egret.Event.COMPLETE, this.onSaveStageOk);
+            if (this.urlLoader){
+                var data:egret.URLVariables = this.urlLoader.data;
+                console.log("save to server return:");
+                console.log( data.toString() );
+            }
+            else{
+                console.log("this.urlLoader is null");
+            }
+        }
+
 
         protected StageUp(): number {
             super.StageUp();

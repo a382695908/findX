@@ -81,7 +81,7 @@ class CreateGame extends CreateBaseEnv{
         bodyConfig.timestamp = document.wx_ts;
         bodyConfig.nonceStr = document.wx_str;
         bodyConfig.signature = document.wx_sig;
-        bodyConfig.jsApiList = ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ'];
+        bodyConfig.jsApiList = ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareQZone', 'onMenuShareWeibo'];
         /// ... 其他的配置属性赋值
         /// 通过config接口注入权限验证配置
         if(wx) {
@@ -92,49 +92,75 @@ class CreateGame extends CreateBaseEnv{
                 console.log('weixin ready');
                 let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
                 console.log('weixin menu share time line');
-                timelineMsg.title = '发送给朋友-找X';
-            	//timelineMsg.type = 'link';
-                timelineMsg.link = 'http://h53d.doogga.com/';
-                timelineMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
-                timelineMsg.trigger = function (res) { console.log('用户点击发送给朋友'); }    
-                timelineMsg.success = function (res) { console.log('已分享'); };
-                timelineMsg.fail = function (res) { console.log('已取消'); };
+                timelineMsg.title = document.wx_title + " - 快来试试你的手机能玩微信3D游戏不?";
+                timelineMsg.link = document.wx_link;
+                timelineMsg.imgUrl = document.wx_img;
+                //timelineMsg.type = 'link';
+                //timelineMsg.desc = '猴年大吉,恭喜发财.';
+                timelineMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
+                timelineMsg.success = function (res) { console.log('已分享到朋友圈.'); };
+                timelineMsg.fail = function (res) { console.log('已取消分享到朋友圈.'); };
                 timelineMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
                 wx.onMenuShareTimeline(timelineMsg);
 
+                let appMsg: BodyMenuShareAppMessage = new BodyMenuShareAppMessage();
+                console.log('weixin menu share app');
+                appMsg.title = document.wx_title;
+                appMsg.link = document.wx_link;
+                appMsg.imgUrl = document.wx_img;
+                appMsg.desc = document.wx_desc;
+                appMsg.type = 'link';
+                appMsg.dataUrl = '';
+                appMsg.success = function (res) { console.log('已分享给朋友.'); };
+                appMsg.fail = function (res) { console.log('已取消分析给朋友.'); };
+                appMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
+                appMsg.cancel = function (res) { console.log(JSON.stringify(res));};
+                wx.onMenuShareAppMessage(appMsg);
+
                 let qqMsg: BodyMenuShareQQ = new BodyMenuShareQQ();
                 console.log('weixin menu share');
-                qqMsg.title = '发送给朋友-找X';
-            	qqMsg.type = 'link';
-                qqMsg.link = 'http://h53d.doogga.com/';
-                qqMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
-				//qqMsg.type = "";
-				//qqMsg.dataUrl = "";
-				//qqMsg.complete = function(){};
-                qqMsg.trigger = function (res) { console.log('用户点击发送给朋友'); }    
-                qqMsg.success = function (res) { console.log('已分享'); };
-                qqMsg.fail = function (res) { console.log('已取消'); };
+                qqMsg.title = document.wx_title;
+                qqMsg.link = document.wx_link;
+                qqMsg.imgUrl = document.wx_img;
+                qqMsg.desc = document.wx_desc;
+                qqMsg.type = 'link';
+                //qqMsg.dataUrl = "";
+                //qqMsg.complete = function(){};
+                qqMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
+                qqMsg.success = function (res) { console.log('已分享到QQ.'); };
+                qqMsg.fail = function (res) { console.log('已取消分享到QQ.'); };
                 qqMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
                 wx.onMenuShareQQ(qqMsg);
+
+                //wx.onMenuShareQZone({
+                //    title: document.wx_title, // 分享标题
+                //    link: document.wx_link, // 分享链接
+                //    imgUrl: document.wx_img, // 分享图标
+                //    desc: document.wx_desc, // 分享描述
+                //    //type = 'link';
+                //    success: function () { 
+                //        console.log('用户点击发送给QQ空间.');
+                //    },
+                //    cancel: function () { 
+                //        console.log('用户取消发送给QQ空间.');
+                //    }
+                //});
+
+                let qzoneMsg: BodyMenuShareWeibo = new BodyMenuShareWeibo();
+                qzoneMsg.title = document.wx_title; // 分享标题
+                qzoneMsg.link = document.wx_link; // 分享链接
+                qzoneMsg.imgUrl = document.wx_img; // 分享图标
+                qzoneMsg.desc = document.wx_desc; // 分享描述
+                //type = 'link';
+                qzoneMsg.complete=function (res) { console.log('用户点击发送给腾讯微博.'); };
+                qzoneMsg.success=function (res) { console.log('用户点击发送给腾讯微博.'); };
+                qzoneMsg.cancel=function (res) { console.log('用户取消发送给腾讯微博.'); }
+                wx.onMenuShareWeibo( qzoneMsg );
 ///-------------------------------------------
             });
             wx.error(function() {
                 console.log("初始化微信接口失败。");
             });
-
-			let appMsg: BodyMenuShareAppMessage = new BodyMenuShareAppMessage();
-            console.log('weixin menu share app');
-            appMsg.title = '发送给朋友-找X';
-            appMsg.type = 'link';
-            appMsg.desc = '猴年大吉,恭喜发财.';
-            appMsg.link = 'http://h53d.doogga.com/';
-            appMsg.imgUrl = 'http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png';
-            appMsg.dataUrl = '';
-            appMsg.success = function (res) { console.log('已分享'); };
-            appMsg.fail = function (res) { console.log('已取消'); };
-            appMsg.trigger = function (res) { console.log('用户点击发送给朋友'); }    
-            appMsg.cancel = function (res) { console.log(JSON.stringify(res));};
-            wx.onMenuShareAppMessage(appMsg);
         }
         else{
             console.log("未找到微信接口。");
@@ -539,7 +565,7 @@ class CreateGame extends CreateBaseEnv{
 		case aw.GameDataState.IN_PAUSE:
             this.updateInteractiveTips( this._dtDriver.pauseTips );
             break;
-		case aw.GameDataState.USER_WIN:
+		case aw.GameDataState.USER_WIN: //过关
             this.updateInteractiveTips( this._dtDriver.winTips );
             //console.log("dead box cnt:" + this._deadBox["cnt"] + "; picked X cnt:" + this._dtDriver.pickedXCnt);
             if (this._deadBox["cnt"] === this._dtDriver.pickedXCnt ){
@@ -549,7 +575,7 @@ class CreateGame extends CreateBaseEnv{
                 this.UpdateBoxView();   // 更新盒子飞行
             }
 			break;
-		case aw.GameDataState.TIME_OVER:
+		case aw.GameDataState.TIME_OVER: // 未过关 -- 超时
             this.updateInteractiveTips( this._dtDriver.failedTips );
 			break;
 		case aw.GameDataState.NEVER_START:
