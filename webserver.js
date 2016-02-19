@@ -2,6 +2,25 @@
    *  通过 node ./webserver.js 启动本服务
 */
 
+Date.prototype.format = function(fmt)   
+{ //author: meizz   
+  var o = {   
+    "M+" : this.getMonth()+1,                 //月份   
+    "d+" : this.getDate(),                    //日   
+    "h+" : this.getHours(),                   //小时   
+    "m+" : this.getMinutes(),                 //分   
+    "s+" : this.getSeconds(),                 //秒   
+    "q+" : Math.floor((this.getMonth()+3)/3), //季度   
+    "S"  : this.getMilliseconds()             //毫秒   
+  };   
+  if(/(y+)/.test(fmt))   
+    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));   
+  for(var k in o)   
+    if(new RegExp("("+ k +")").test(fmt))   
+  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
+  return fmt;   
+} 
+
 function getClientIp(req) {
     return req.headers['x-forwarded-for'] ||
     req.connection.remoteAddress ||
@@ -39,6 +58,12 @@ function getLocalIp(os)
     return IPv4;
 }
 
+function file_log(fs, txt){
+    fs.appendFile("./findx.log", txt, function (err) {
+        if (err) throw err ;
+    }) ;
+}
+
 
 // config
 var host ='localhost';
@@ -50,9 +75,11 @@ var enable_weixin = false;
 var https = require('https');
 var express=require("express");
 var os = require('os');  
+var fs = require('fs');  
+var qs = require('querystring');
 
-var ip = getLocalIp(os);
-switch( ip ){
+var sip = getLocalIp(os);
+switch( sip ){
 case '10.1.16.170':    // my dev
     enable_weixin = false;
     break;
@@ -67,7 +94,7 @@ default:
     break;
 }
 //enable_weixin = true;
-//ip='10.10.123.207';
+//sip='10.10.123.207';
 
 
 // frame work code
@@ -84,7 +111,7 @@ if ( enable_weixin ) {
     var wx_secret='65f845807ed35d21e8e7155fb3e1cc90';
     var wx_base_url='http://findx.h53d.io';
 
-    switch( ip ){
+    switch( sip ){
     case '10.144.212.27':  // my aliyun
         wx_appid='wxe62c6539ac7d4fdd';
         wx_secret='65f845807ed35d21e8e7155fb3e1cc90';
@@ -118,8 +145,8 @@ if ( enable_weixin ) {
     
     app.set("view engine","ejs"); 
     app.get("/", function(req, res) {
-    	var ip = getClientIp( req );
-    	console.log("req from client IP:" + ip );
+    	var cip = getClientIp( req );
+    	console.log("req from client IP:" + cip );
         var full_url = wx_base_url + req.url;
     	console.log('Full URL:' + full_url);
     	https.get(wx_tkn_url, function access_token_callback(tk_rs){
@@ -155,23 +182,23 @@ if ( enable_weixin ) {
 else{
     console.log("DISABLED WEIXIN.");
     app.post("/saveStage/", function(req, res) {
-    	var ip = getClientIp( req );
-    	console.log("req from client IP:" + ip );
-    	console.log("post data:" );
-    	console.log( req.body );
-    	console.log( req.params );
-        res.send( req.params );
-    });
-    app.get("/saveStage/", function(req, res) {
-    	var ip = getClientIp( req );
-    	console.log("req from client IP:" + ip );
-    	console.log("post data:" );
-    	console.log( req.body );
-    	console.log( req.params );
-        res.send( req.params );
+    	var cip = getClientIp( req );
+    	console.log("req from client IP:" + cip );
+        var data = '';
+        req.on('data', function(chunk){
+            data = chunk;
+        });
+        req.on('end', function(){
+            var params = qs.parse(data.toString('utf-8'));
+            var pStr = JSON.stringify(params);
+            var now_time = new Date();
+    	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
+            file_log(fs, log);
+            res.send( params );
+        });
     });
 }
 
 app.use(express.static('.'));
-console.log("Listen on host: " + ip + ", port:" + port);
-app.listen(port, ip);
+console.log("Listen on host: " + sip + ", port:" + port);
+app.listen(port, sip);

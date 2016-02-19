@@ -1,3 +1,4 @@
+*.log
 debug/
 bin-debug/
 debug/*

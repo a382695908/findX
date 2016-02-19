@@ -40,8 +40,8 @@ namespace aw {
 
         private urlLoader: egret.URLLoader = null;
         private urlReq: egret.URLRequest = null;
-        private url: string = '/saveStage/?';
-        private needSave: boolean = null;
+        private url: string = '/saveStage/';
+        private _needSave: boolean = null;
 
         constructor( startTime: Date = null ) {
             super( startTime );
@@ -56,7 +56,8 @@ namespace aw {
 
             this.urlLoader = new egret.URLLoader();
 			this.urlLoader.dataFormat = egret.URLLoaderDataFormat.TEXT;
-            this.needSave = true;
+            this.urlReq = new egret.URLRequest(this.url);
+            this._needSave = true;
         }
         public StartGame( startTime: Date = null ){
 			console.log("Single total stage count:" + this._stageCtr.length);
@@ -71,6 +72,7 @@ namespace aw {
             this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
 
             this.UpdateStageCtrData();
+            this._needSave = true;
         }
 
         public set totalObjCnt(v: number) {
@@ -152,6 +154,13 @@ namespace aw {
             return this._pickedXCnt;
         }
 
+        public set needSave(b: boolean) {
+            this._needSave = b;
+        }
+        public get needSave(): boolean {
+            return this._needSave;
+        }
+
         public Update( ){
             if ( this._startTime == null ) {
          	    this._driverState = GameDataState.READY_GO;
@@ -164,7 +173,7 @@ namespace aw {
                 this._winTips  = ` :) 过关\n点触继续${this.stage}关... `;
                 this._readyTips= `目标:${this._XObjCnt}个${this._charsFind}\n点触继续...`;
 
-                if ( this.needSave ) {
+                if ( this._needSave ) {
                     this.onPlayerStageSave(true);
                 }
 
@@ -174,7 +183,7 @@ namespace aw {
                 let rest_cnt = this._XObjCnt - this._pickedXCnt;
                 this._failedTips = ` :(， 差${rest_cnt}个过关!\n点触再来... `;
 
-                if ( this.needSave ) {
+                if ( this._needSave ) {
                     this.onPlayerStageSave(false);
                 }
 
@@ -182,26 +191,23 @@ namespace aw {
             }
         }
 
+        // 保存关卡玩的结果数据
         private onPlayerStageSave(win: boolean){
-            //if (this.urlLoader && this.urlReq){
-            if ( this.urlLoader ){
-                this.needSave = ! this.needSave;
+            if (this.urlLoader && this.urlReq){
+                this._needSave = ! this._needSave;
                 this.urlLoader.addEventListener(egret.Event.COMPLETE, this.onSaveStageOk, this);
                 let rest_cnt = this._XObjCnt - this._pickedXCnt;
+                let data = "";
 				if ( win ) {
-                	//this.urlReq.data = new egret.URLVariables("win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=0" );
-                	this.url = this.url + "win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=0";
+                	data = "win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=0";
 				}
 				else {
-                	//this.urlReq.data = new egret.URLVariables("win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=" + rest_cnt);
-                	this.url = this.url + "win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=" + rest_cnt;
+                	data = "win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=" + rest_cnt;
 				}
-            	this.urlReq = new egret.URLRequest(this.url);
+                this.urlReq.data = new egret.URLVariables( data );
             	this.urlReq.method = egret.URLRequestMethod.POST;
-            	//this.urlReq.method = egret.URLRequestMethod.GET;
-                console.log("send data to server:");
+                console.log("send data [" + this.urlReq.data.toString() + "] to server:" + this.url);
                 this.urlLoader.load( this.urlReq );
-                console.log( this.urlReq.data.toString() );
             }
             else{
                 console.log("this.urlLoader is null or this.urlReq is null");
@@ -209,7 +215,7 @@ namespace aw {
         }
 
         private onSaveStageOk(e: egret.Event ){
-            //this.urlLoader.removeEventListener(egret.Event.COMPLETE, this.onSaveStageOk);
+            this.urlLoader.removeEventListener(egret.Event.COMPLETE, this.onSaveStageOk, this);
             if (this.urlLoader){
                 var data:egret.URLVariables = this.urlLoader.data;
                 console.log("save to server return:");
