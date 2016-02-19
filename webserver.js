@@ -181,24 +181,26 @@ if ( enable_weixin ) {
 }
 else{
     console.log("DISABLED WEIXIN.");
-    app.post("/saveStage/", function(req, res) {
-    	var cip = getClientIp( req );
-    	console.log("req from client IP:" + cip );
-        var data = '';
-        req.on('data', function(chunk){
-            data = chunk;
-        });
-        req.on('end', function(){
-            var params = qs.parse(data.toString('utf-8'));
-            var pStr = JSON.stringify(params);
-            var now_time = new Date();
-    	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
-            file_log(fs, log);
-            res.send( params );
-        });
-    });
 }
 
+app.post("/saveStage/", function(req, res) {
+	var cip = getClientIp( req );
+	console.log("req from client IP:" + cip );
+    var data = '';
+    req.on('data', function(chunk){
+        data = chunk;
+    });
+    req.on('end', function(){
+        var params = qs.parse(data.toString('utf-8'));
+        var pStr = JSON.stringify(params);
+        var now_time = new Date();
+	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
+        file_log(fs, log);
+        res.send( params );
+    });
+});
+
 app.use(express.static('.'));
+sip="127.0.0.1"
 console.log("Listen on host: " + sip + ", port:" + port);
 app.listen(port, sip);
