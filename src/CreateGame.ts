@@ -73,100 +73,6 @@ class CreateGame extends CreateBaseEnv{
 
         this._dtDriver = new aw.FindXDataDriver();
         this._uiReady = false;
-//////////////////////////////////////////
-// 微信接口 begin
-        /// ... 其他的配置属性赋值
-        /// 通过config接口注入权限验证配置
-        if(typeof(wx) != 'undefined' && wx && typeof(document.wx_appid) != 'undefined') {
-        	let bodyConfig: BodyConfig = new BodyConfig();
-        	bodyConfig.debug = document.wx_debug;
-        	bodyConfig.appId = document.wx_appid;
-        	bodyConfig.timestamp = document.wx_ts;
-        	bodyConfig.nonceStr = document.wx_str;
-        	bodyConfig.signature = document.wx_sig;
-        	bodyConfig.jsApiList = ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareQZone', 'onMenuShareWeibo'];
-            wx.config(bodyConfig);
-            wx.ready(function() {
-///-------------------------------------------
-            /// 在这里调用微信相关功能的 API
-                console.log('weixin ready');
-                let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
-                console.log('weixin menu share time line');
-                timelineMsg.title = document.wx_title + " - 快来试试你的手机能玩微信3D游戏不?";
-                timelineMsg.link = document.wx_link;
-                timelineMsg.imgUrl = document.wx_img;
-                //timelineMsg.type = 'link';
-                //timelineMsg.desc = '猴年大吉,恭喜发财.';
-                timelineMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
-                timelineMsg.success = function (res) { console.log('已分享到朋友圈.'); };
-                timelineMsg.fail = function (res) { console.log('已取消分享到朋友圈.'); };
-                timelineMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
-                wx.onMenuShareTimeline(timelineMsg);
-
-                let appMsg: BodyMenuShareAppMessage = new BodyMenuShareAppMessage();
-                console.log('weixin menu share app');
-                appMsg.title = document.wx_title;
-                appMsg.link = document.wx_link;
-                appMsg.imgUrl = document.wx_img;
-                appMsg.desc = document.wx_desc;
-                appMsg.type = 'link';
-                appMsg.dataUrl = '';
-                appMsg.success = function (res) { console.log('已分享给朋友.'); };
-                appMsg.fail = function (res) { console.log('已取消分析给朋友.'); };
-                appMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
-                appMsg.cancel = function (res) { console.log(JSON.stringify(res));};
-                wx.onMenuShareAppMessage(appMsg);
-
-                let qqMsg: BodyMenuShareQQ = new BodyMenuShareQQ();
-                console.log('weixin menu share');
-                qqMsg.title = document.wx_title;
-                qqMsg.link = document.wx_link;
-                qqMsg.imgUrl = document.wx_img;
-                qqMsg.desc = document.wx_desc;
-                qqMsg.type = 'link';
-                //qqMsg.dataUrl = "";
-                //qqMsg.complete = function(){};
-                qqMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
-                qqMsg.success = function (res) { console.log('已分享到QQ.'); };
-                qqMsg.fail = function (res) { console.log('已取消分享到QQ.'); };
-                qqMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
-                wx.onMenuShareQQ(qqMsg);
-
-                //wx.onMenuShareQZone({
-                //    title: document.wx_title, // 分享标题
-                //    link: document.wx_link, // 分享链接
-                //    imgUrl: document.wx_img, // 分享图标
-                //    desc: document.wx_desc, // 分享描述
-                //    //type = 'link';
-                //    success: function () { 
-                //        console.log('用户点击发送给QQ空间.');
-                //    },
-                //    cancel: function () { 
-                //        console.log('用户取消发送给QQ空间.');
-                //    }
-                //});
-
-                let qzoneMsg: BodyMenuShareWeibo = new BodyMenuShareWeibo();
-                qzoneMsg.title = document.wx_title; // 分享标题
-                qzoneMsg.link = document.wx_link; // 分享链接
-                qzoneMsg.imgUrl = document.wx_img; // 分享图标
-                qzoneMsg.desc = document.wx_desc; // 分享描述
-                //type = 'link';
-                qzoneMsg.complete=function (res) { console.log('用户点击发送给腾讯微博.'); };
-                qzoneMsg.success=function (res) { console.log('用户点击发送给腾讯微博.'); };
-                qzoneMsg.cancel=function (res) { console.log('用户取消发送给腾讯微博.'); }
-                wx.onMenuShareWeibo( qzoneMsg );
-///-------------------------------------------
-            });
-            wx.error(function() {
-                console.log("初始化微信接口失败。");
-            });
-        }
-        else{
-            console.log("未找到微信接口。");
-        }
-// 微信接口 end
-//////////////////////////////////////////
 
     }
 
@@ -590,6 +496,100 @@ class CreateGame extends CreateBaseEnv{
 
 class Main extends egret.DisplayObjectContainer {
     public constructor() {
+//////////////////////////////////////////
+// 微信接口 begin
+        /// ... 其他的配置属性赋值
+        /// 通过config接口注入权限验证配置
+        if(typeof(wx) != 'undefined' && wx && typeof(document.wx_appid) != 'undefined') {
+        	let bodyConfig: BodyConfig = new BodyConfig();
+        	bodyConfig.debug = document.wx_debug;
+        	bodyConfig.appId = document.wx_appid;
+        	bodyConfig.timestamp = document.wx_ts;
+        	bodyConfig.nonceStr = document.wx_str;
+        	bodyConfig.signature = document.wx_sig;
+        	bodyConfig.jsApiList = ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareQZone', 'onMenuShareWeibo'];
+            wx.config(bodyConfig);
+            wx.ready(function() {
+///-------------------------------------------
+            /// 在这里调用微信相关功能的 API
+                console.log('weixin ready');
+                let timelineMsg: BodyMenuShareTimeline = new BodyMenuShareTimeline();
+                console.log('weixin menu share time line');
+                timelineMsg.title = document.wx_title + " - 快来试试你的手机能玩微信3D游戏不?";
+                timelineMsg.link = document.wx_link;
+                timelineMsg.imgUrl = document.wx_img;
+                //timelineMsg.type = 'link';
+                //timelineMsg.desc = '猴年大吉,恭喜发财.';
+                timelineMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
+                timelineMsg.success = function (res) { console.log('已分享到朋友圈.'); };
+                timelineMsg.fail = function (res) { console.log('已取消分享到朋友圈.'); };
+                timelineMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
+                wx.onMenuShareTimeline(timelineMsg);
+
+                let appMsg: BodyMenuShareAppMessage = new BodyMenuShareAppMessage();
+                console.log('weixin menu share app');
+                appMsg.title = document.wx_title;
+                appMsg.link = document.wx_link;
+                appMsg.imgUrl = document.wx_img;
+                appMsg.desc = document.wx_desc;
+                appMsg.type = 'link';
+                appMsg.dataUrl = '';
+                appMsg.success = function (res) { console.log('已分享给朋友.'); };
+                appMsg.fail = function (res) { console.log('已取消分析给朋友.'); };
+                appMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
+                appMsg.cancel = function (res) { console.log(JSON.stringify(res));};
+                wx.onMenuShareAppMessage(appMsg);
+
+                let qqMsg: BodyMenuShareQQ = new BodyMenuShareQQ();
+                console.log('weixin menu share');
+                qqMsg.title = document.wx_title;
+                qqMsg.link = document.wx_link;
+                qqMsg.imgUrl = document.wx_img;
+                qqMsg.desc = document.wx_desc;
+                qqMsg.type = 'link';
+                //qqMsg.dataUrl = "";
+                //qqMsg.complete = function(){};
+                qqMsg.trigger = function (res) { console.log('用户点击发送给朋友.'); }    
+                qqMsg.success = function (res) { console.log('已分享到QQ.'); };
+                qqMsg.fail = function (res) { console.log('已取消分享到QQ.'); };
+                qqMsg.cancel = function (res) { console.log(JSON.stringify(res)); };
+                wx.onMenuShareQQ(qqMsg);
+
+                //wx.onMenuShareQZone({
+                //    title: document.wx_title, // 分享标题
+                //    link: document.wx_link, // 分享链接
+                //    imgUrl: document.wx_img, // 分享图标
+                //    desc: document.wx_desc, // 分享描述
+                //    //type = 'link';
+                //    success: function () { 
+                //        console.log('用户点击发送给QQ空间.');
+                //    },
+                //    cancel: function () { 
+                //        console.log('用户取消发送给QQ空间.');
+                //    }
+                //});
+
+                let qzoneMsg: BodyMenuShareWeibo = new BodyMenuShareWeibo();
+                qzoneMsg.title = document.wx_title; // 分享标题
+                qzoneMsg.link = document.wx_link; // 分享链接
+                qzoneMsg.imgUrl = document.wx_img; // 分享图标
+                qzoneMsg.desc = document.wx_desc; // 分享描述
+                //type = 'link';
+                qzoneMsg.complete=function (res) { console.log('用户点击发送给腾讯微博.'); };
+                qzoneMsg.success=function (res) { console.log('用户点击发送给腾讯微博.'); };
+                qzoneMsg.cancel=function (res) { console.log('用户取消发送给腾讯微博.'); }
+                wx.onMenuShareWeibo( qzoneMsg );
+///-------------------------------------------
+            });
+            wx.error(function() {
+                console.log("初始化微信接口失败。");
+            });
+        }
+        else{
+            console.log("未找到微信接口。");
+        }
+// 微信接口 end
+//////////////////////////////////////////
         super();
         new CreateGame();
     }

@@ -66,8 +66,8 @@ function file_log(fs, txt){
 
 
 // config
-var host ='localhost';
-var port = 9000;
+var lsip = "localhost";
+var lsport = 9000;
 var enable_weixin = false;
 
 
@@ -82,6 +82,7 @@ var sip = getLocalIp(os);
 switch( sip ){
 case '10.1.16.170':    // my dev
     enable_weixin = false;
+    lsip = ip;
     break;
 case '10.144.212.27':  // my aliyun
     enable_weixin = false;
@@ -90,6 +91,7 @@ case '10.10.123.207':  // huithink server
     enable_weixin = true;
     break;
 default:
+    lsip = ip;
     enable_weixin = false;
     break;
 }
@@ -99,6 +101,7 @@ default:
 
 // frame work code
 var app=express();
+app.enable('trust proxy');
 
 
 if ( enable_weixin ) {
@@ -201,6 +204,5 @@ app.post("/saveStage/", function(req, res) {
 });
 
 app.use(express.static('.'));
-sip="127.0.0.1"
-console.log("Listen on host: " + sip + ", port:" + port);
-app.listen(port, sip);
+console.log("Listen on host: " + sip + ", port:" + lsport);
+app.listen(lsport, lsip);
