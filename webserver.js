@@ -92,6 +92,10 @@ case '10.10.123.207':  // huithink server
     enable_weixin = true;
     lsip = "localhost";
     break;
+case '172.17.0.168':  // egret-3d server
+    enable_weixin = true;
+    lsip = "localhost";
+    break;
 default:
     lsip = ip;
     enable_weixin = false;
