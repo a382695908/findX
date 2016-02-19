@@ -199,10 +199,10 @@ namespace aw {
                 let rest_cnt = this._XObjCnt - this._pickedXCnt;
                 let data = "";
 				if ( win ) {
-                	data = "win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=0";
+                	data = "win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10-0.1) + "&restCnt=0";
 				}
 				else {
-                	data = "win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10) + "&restCnt=" + rest_cnt;
+                	data = "win=" + win + "&stage=" + this.stage + "&useTime=" + (this.lostSeconds10/10-0.1) + "&restCnt=" + rest_cnt;
 				}
                 this.urlReq.data = new egret.URLVariables( data );
             	this.urlReq.method = egret.URLRequestMethod.POST;

@@ -86,9 +86,11 @@ case '10.1.16.170':    // my dev
     break;
 case '10.144.212.27':  // my aliyun
     enable_weixin = false;
+    lsip = "localhost";
     break;
 case '10.10.123.207':  // huithink server
     enable_weixin = true;
+    lsip = "localhost";
     break;
 default:
     lsip = ip;
@@ -149,7 +151,7 @@ if ( enable_weixin ) {
     app.set("view engine","ejs"); 
     app.get("/", function(req, res) {
     	var cip = getClientIp( req );
-    	console.log("req from client IP:" + cip );
+    	console.log("GET req from client IP:" + cip );
         var full_url = wx_base_url + req.url;
     	console.log('Full URL:' + full_url);
     	https.get(wx_tkn_url, function access_token_callback(tk_rs){
@@ -188,7 +190,7 @@ else{
 
 app.post("/saveStage/", function(req, res) {
 	var cip = getClientIp( req );
-	console.log("req from client IP:" + cip );
+	console.log("POST req from client IP:" + cip );
     var data = '';
     req.on('data', function(chunk){
         data = chunk;
@@ -204,5 +206,5 @@ app.post("/saveStage/", function(req, res) {
 });
 
 app.use(express.static('.'));
-console.log("Listen on host: " + sip + ", port:" + lsport);
+console.log("Listen on host: " + lsip + ", port:" + lsport);
 app.listen(lsport, lsip);
