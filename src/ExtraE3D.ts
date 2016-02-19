@@ -457,7 +457,8 @@
             this.texture = aw.PercenterTexture.texture;
         }
     }
-    export function regWeixin(wx_debug:boolean, wx_appid:string, wx_ts:number, wx_str:string, wx_sig:string, wx_title:string, wx_desc:string, wx_link:string, wx_img:string) {
+    export function regWeixin(wx_debug:boolean, wx_appid:string, wx_ts:number, wx_str:string, 
+								wx_sig:string, wx_title:string, wx_desc:string, wx_link:string, wx_img:string) {
         console.log("Reg weixin here."); 
         /// 通过config接口注入权限验证配置
         if(typeof(wx) != 'undefined' && wx && typeof(wx_appid) != 'undefined') {
