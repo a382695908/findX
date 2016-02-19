@@ -45,15 +45,16 @@
          data-log-filter="" data-show-fps-style="x:0,y:0,size:30,textColor:0x00c200,bgAlpha:0.9">
     </div>
     <script>
-        document.wx_debug = <%=wx_debug%>;
-        document.wx_appid = '<%=wx_appid%>';
-        document.wx_ts = <%=wx_ts%>;
-        document.wx_str = '<%=wx_str%>';
-        document.wx_sig = '<%=wx_sig%>';
-        document.wx_title = '<%=wx_title%>';
-        document.wx_desc = '<%=wx_desc%>';
-        document.wx_link = '<%=wx_link%>';
-        document.wx_img = '<%=wx_img%>';
+        var wx_debug = <%=wx_debug%>;
+        var wx_appid = '<%=wx_appid%>';
+        var wx_ts = <%=wx_ts%>;
+        var wx_str = '<%=wx_str%>';
+        var wx_sig = '<%=wx_sig%>';
+        var wx_title = '<%=wx_title%>';
+        var wx_desc = '<%=wx_desc%>';
+        var wx_link = '<%=wx_link%>';
+        var wx_img = '<%=wx_img%>';
+        aw.regWeixin(wx_debug, wx_appid, wx_ts, wx_str, wx_sig, wx_title, wx_desc, wx_link, wx_img);
         egret.runEgret();
     </script>
 	<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_5949997'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/stat.php%3Fid%3D5949997' type='text/javascript'%3E%3C/script%3E"));</script>
