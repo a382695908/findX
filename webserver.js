@@ -82,7 +82,7 @@ var sip = getLocalIp(os);
 switch( sip ){
 case '10.1.16.170':    // my dev
     enable_weixin = false;
-    lsip = ip;
+    lsip = sip;
     break;
 case '10.144.212.27':  // my aliyun
     enable_weixin = false;
@@ -97,7 +97,7 @@ case '172.17.0.168':  // egret-3d server
     lsip = "localhost";
     break;
 default:
-    lsip = ip;
+    lsip = sip;
     enable_weixin = false;
     break;
 }
