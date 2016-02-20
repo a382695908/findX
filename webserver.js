@@ -70,6 +70,8 @@ var lsip = "localhost";
 var lsport = 9000;
 var enable_weixin = false;
 
+var enable_nest = false;
+
 
 //base lib
 var https = require('https');
@@ -100,6 +102,7 @@ case '172.17.0.168':  // egret-3d server
 default:
     lsip = sip;
     enable_weixin = false;
+	enable_nest = true;
     break;
 }
 //enable_weixin = true;
@@ -109,7 +112,6 @@ default:
 // frame work code
 var app=express();
 app.enable('trust proxy');
-
 
 if ( enable_weixin ) {
     console.log("ENABLED WEIXIN.");
@@ -188,6 +190,14 @@ if ( enable_weixin ) {
     	});
     });
     
+}
+else if ( enable_nest ){
+    console.log("ENABLED NEST.");
+    app.set("view engine","ejs"); 
+    app.get("/", function(req, res) {
+    	var tpl_var = {'nt_debug': true, 'nt_appid': 89901, 'nt_version': 2 };
+    	res.render("index_nest", tpl_var);  
+	});
 }
 else{
     console.log("DISABLED WEIXIN.");
