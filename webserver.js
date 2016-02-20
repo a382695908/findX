@@ -83,10 +83,15 @@ var qs = require('querystring');
 
 var sip = getLocalIp(os);
 switch( sip ){
+case '192.168.1.5':    // my home
+    enable_weixin = false;
+	enable_nest = true;
+    lsip = "localhost";
+    break;
 case '10.1.16.170':    // my dev
     enable_weixin = false;
 	enable_nest = true;
-    lsip = sip;
+    lsip = "localhost";
     break;
 case '10.144.212.27':  // my aliyun
     enable_weixin = false;
