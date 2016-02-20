@@ -550,4 +550,8 @@
             console.log("未找到微信接口。");
         }
     }
+
+    export function regNest(nt_debug: boolean, nt_appid: number, nt_version:number): boolean {
+		return true;
+	}
 }

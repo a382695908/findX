@@ -75,6 +75,7 @@ var enable_weixin = false;
 var https = require('https');
 var express=require("express");
 var os = require('os');  
+var path = require('path');  
 var fs = require('fs');  
 var qs = require('querystring');
 
@@ -190,6 +191,11 @@ if ( enable_weixin ) {
 }
 else{
     console.log("DISABLED WEIXIN.");
+    app.get("/", function(req, res) {
+    	var cip = getClientIp( req );
+    	console.log("GET req from client IP:" + cip );
+		res.sendFile('index.html', { root: path.join(__dirname, '.') });
+	});
 }
 
 app.post("/saveStage/", function(req, res) {
