@@ -85,10 +85,12 @@ var sip = getLocalIp(os);
 switch( sip ){
 case '10.1.16.170':    // my dev
     enable_weixin = false;
+	enable_nest = true;
     lsip = sip;
     break;
 case '10.144.212.27':  // my aliyun
     enable_weixin = false;
+	enable_nest = true;
     lsip = "localhost";
     break;
 case '10.10.123.207':  // huithink server
@@ -97,6 +99,7 @@ case '10.10.123.207':  // huithink server
     break;
 case '172.17.0.168':  // egret-3d server
     enable_weixin = false;
+	enable_nest = true;
     lsip = "localhost";
     break;
 default:
