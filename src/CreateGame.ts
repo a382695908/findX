@@ -495,8 +495,60 @@ class CreateGame extends CreateBaseEnv{
 } 
 
 class Main extends egret.DisplayObjectContainer {
+    public static nt_debug: boolean = false;
+    public static nt_appid: number = 0;
+    public static nt_version: number = 0;
+
+    public enable_nest: boolean = false;
+
+    public static regNest(debug: boolean, appid: number, version: number){
+            Main.nt_debug = debug;
+            Main.nt_appid = appid;
+            Main.nt_version = version;
+    }
+
     public constructor() {
         super();
-        new CreateGame();
+        if ( Main.nt_appid > 0 && Main.nt_version > 0 ){
+            this.enable_nest = true;
+        }
+        else {
+            this.enable_nest = false;
+        }
+
+        if ( this.enable_nest ) {
+            var info:any = { 'debug': Main.nt_debug, 'egretAppId': Main.nt_appid, 'version': Main.nt_version };
+            nest.core.startup(info, function (data) {
+                if(data.result == 0) {
+                    console.log("Nest初始化成功:" + data.toString() );
+                    var loginInfo = {};
+                    nest.user.checkLogin( loginInfo, function(data){
+                        if(data.token) {
+                            console.log("已登录:" + data.toString());
+                            var token = data.token;
+                            new CreateGame();
+                        }
+                        else {
+                            nest.user.login({loginType:'qq'}, function (data) {
+                                if(data.token) {
+                                    console.error("登录成功:" + data.toString() );
+                                    var token = data.token;
+                                    new CreateGame();
+                                }
+                                else {
+                                    console.error("登录失败:" + data.toString() );
+                                }
+                            })
+                        }
+                    });
+                }
+                else {
+                    console.error("Nest 初始化失败:" + data.toString() );
+                }
+            })
+        }
+        else {
+            new CreateGame();
+        }
     }
 }

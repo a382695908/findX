@@ -187,7 +187,7 @@
     }
 
     protected onLoadComplete(e: egret3d.Event3D): void {
-        setTimeout(this.removeLoadingBar, 1000);
+        setTimeout(this.removeLoadingBar, 300);
 	
 
         let sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/3/fr.jpg");
