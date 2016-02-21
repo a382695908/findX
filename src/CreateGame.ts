@@ -523,12 +523,12 @@ class Main extends egret.DisplayObjectContainer {
             nest.core.startup(info, function (data) {
                 if(data.result == 0) {
                     console.log("Nest初始化成功!" );
-                    console.log( data );
+                    console.log( data.toString() );
                     var loginInfo = {};
                     nest.user.checkLogin( loginInfo, function(data){
                         if(data.token) {
                             console.log("已登录!" );
-                            console.log( data );
+                            console.log( data.toString() );
                             var token = data.token;
                             new CreateGame();
                         }
@@ -536,7 +536,7 @@ class Main extends egret.DisplayObjectContainer {
                             nest.user.login({loginType:'qq'}, function (data) {
                                 if(data.token) {
                                     console.error("登录成功!" );
-                                    console.error( data );
+                                    console.error( data.toString() );
                                     var token = data.token;
                                     new CreateGame();
                                 }
