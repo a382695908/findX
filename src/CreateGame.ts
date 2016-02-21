@@ -518,24 +518,22 @@ class Main extends egret.DisplayObjectContainer {
 
         if ( this.enable_nest ) {
             var info:any = { 'debug': Main.nt_debug, 'egretAppId': Main.nt_appid, 'version': Main.nt_version };
-			console.log("Nest config: " + info.toString() );
             nest.core.startup(info, function (data) {
                 if(data.result == 0) {
-                    console.log("Nest初始化成功!" );
-                    console.log( data.toString() );
+                    console.log( "Nest初始化成功!" );
                     var loginInfo = {};
                     nest.user.checkLogin( loginInfo, function(data){
                         if(data.token) {
                             console.log("已登录!" );
-                            console.log( data.toString() );
+                            //console.log( data );
                             var token = data.token;
                             new CreateGame();
                         }
                         else {
                             nest.user.login({loginType:'qq'}, function (data) {
                                 if(data.token) {
-                                    console.error("登录成功!" );
-                                    console.error( data.toString() );
+                                    console.log("登录成功!" );
+                                    //console.log( data );
                                     var token = data.token;
                                     new CreateGame();
                                 }
