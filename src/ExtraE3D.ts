@@ -552,7 +552,6 @@
     }
 
     export function regNest(nt_debug: boolean, nt_appid: number, nt_version:number){
-        console.log(`Nest debug:${nt_debug}, appid:${nt_appid}, version:${nt_version}`);
         Main.regNest(nt_debug, nt_appid, nt_version); 
 	}
 }

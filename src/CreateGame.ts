@@ -518,8 +518,7 @@ class Main extends egret.DisplayObjectContainer {
 
         if ( this.enable_nest ) {
             var info:any = { 'debug': Main.nt_debug, 'egretAppId': Main.nt_appid, 'version': Main.nt_version };
-			console.log("Nest config: " );
-			console.log( info );
+			console.log("Nest config: " + info.toString() );
             nest.core.startup(info, function (data) {
                 if(data.result == 0) {
                     console.log("Nest初始化成功!" );
