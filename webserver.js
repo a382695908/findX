@@ -162,42 +162,66 @@ if ( enable_weixin ) {
     }
     var wx_tkn_url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='+wx_appid+'&secret='+wx_secret;
     var wx_tkt_url_base='https://api.weixin.qq.com/cgi-bin/ticket/getticket?';
+	var wx_get_tmstamp = 0;
+	var wx_expires_in = 0;
+	var wx_ts = 0;
+	var wx_str= "";
+	var wx_sig="";
     
     app.set("view engine","ejs"); 
     app.get("/", function(req, res) {
+        var now_time = new Date();
+    	var now_ts = parseInt(now_time.getTime() / 1000);
     	var cip = getClientIp( req );
-    	console.log("GET req from client IP:" + cip );
+    	console.log(now_time.format("[yyyy-MM-dd hh:mm:ss]") + " GET req from client IP:" + cip );
         var full_url = wx_base_url + req.url;
     	console.log('Full URL:' + full_url);
-    	https.get(wx_tkn_url, function access_token_callback(tk_rs){
-    		tk_rs.on('data', function(dt) {
-    			var str_data = dt.toString();
-    			var token = JSON.parse(str_data)['access_token'];
-    			console.log("token: " + token);
-    			https.get(wx_tkt_url_base+'access_token='+token+'&type=jsapi', function ticket_callback(tc_res){
-    					var tc_body = [];
-    					tc_res.on('data', function(dt) {
-    						var dt_tc = dt.toString();
-    						var ticket = JSON.parse( dt_tc )['ticket'];
-    						console.log("ticket: " + ticket);
-    						var noncestr = Math.random().toString(36).substr(2, 15);
-    						var ts = parseInt(new Date().getTime() / 1000) + '';
+		if (wx_str.length > 10 && wx_sig.length > 0 && (now_ts - wx_ts ) < (wx_expires_in-60) ) {
+    		var tpl_var = {'wx_debug': wx_debug, 'wx_appid': wx_appid, 'wx_ts': wx_ts, 'wx_str': wx_str, 'wx_sig': wx_sig,
+        	               'wx_title': wx_title, 'wx_desc': wx_desc, 'wx_link': wx_link, 'wx_img':wx_img };
+    		console.log( "Old template var for weixin config:");
+    		console.log( tpl_var );
+        	res.render("index", tpl_var);  
+		}
+		else {
+    		https.get(wx_tkn_url, function (tk_rs){
+    			tk_rs.on('data', function(dt) {
+    				var str_data = dt.toString();
+    				var token = JSON.parse(str_data)['access_token'];
+    				console.log("token: " + token);
+    				https.get(wx_tkt_url_base+'access_token='+token+'&type=jsapi', function ticket_callback(tc_res){
+    						var tc_body = [];
+    						tc_res.on('data', function(dt) {
+    							var dt_tc = dt.toString();
+    							console.log("Got ticket info: " + dt_tc);
+    							var ticket_obj = JSON.parse( dt_tc );
+								if ('errcode' in ticket_obj && ticket_obj['errcode'] == 0 && 'ticket' in ticket_obj && 'expires_in' in ticket_obj) {
+    								var ticket = ticket_obj['ticket'];
+									wx_expires_in = ticket_obj['expires_in'];	
+
+    								wx_str = Math.random().toString(36).substr(2, 15);
+    								wx_ts = parseInt(new Date().getTime() / 1000);// + '';
+									wx_get_tmstamp = wx_ts;	
     
-    						var str = 'jsapi_ticket=' + ticket + '&noncestr=' + noncestr + '&timestamp='+ ts +'&url=' + full_url;
-              				var shaObj = new jsSHA('SHA-1', 'TEXT');
-    						shaObj.update( str );
-              				var sign = shaObj.getHash('HEX');
-    						var tpl_var = {'wx_debug': wx_debug, 'wx_appid': wx_appid, 'wx_ts': ts, 'wx_str': noncestr, 'wx_sig': sign,
-                                           'wx_title': wx_title, 'wx_desc': wx_desc, 'wx_link': wx_link, 'wx_img':wx_img };
-    						console.log( "template var:");
-    						console.log( tpl_var );
-        					res.render("index", tpl_var);  
-    				    });
+    								var str = 'jsapi_ticket=' + ticket + '&noncestr=' + wx_str + '&timestamp='+ wx_ts +'&url=' + full_url;
+        	      					var shaObj = new jsSHA('SHA-1', 'TEXT');
+    								shaObj.update( str );
+        	      					wx_sig = shaObj.getHash('HEX');
+    								var tpl_var = {'wx_debug': wx_debug, 'wx_appid': wx_appid, 'wx_ts': wx_ts, 'wx_str': wx_str, 'wx_sig': wx_sig,
+        	                    	               'wx_title': wx_title, 'wx_desc': wx_desc, 'wx_link': wx_link, 'wx_img':wx_img };
+    								console.log( "New template var for weixin config:");
+    								console.log( tpl_var );
+        							res.render("index", tpl_var);  
+								}
+								else {
+									console.log("ERROR, get ticket with access token return with error data.");
+								}
+    					    });
+    				});
     			});
     		});
-    	});
+		}
     });
-    
 }
 else if ( enable_nest ){
     console.log("ENABLED NEST.");
@@ -217,8 +241,9 @@ else{
 }
 
 app.post("/saveStage/", function(req, res) {
+    var now_time = new Date();
 	var cip = getClientIp( req );
-	console.log("POST req from client IP:" + cip );
+	console.log(now_time.format("[yyyy-MM-dd hh:mm:ss]") + " POST req from client IP:" + cip );
     var data = '';
     req.on('data', function(chunk){
         data = chunk;
@@ -226,7 +251,6 @@ app.post("/saveStage/", function(req, res) {
     req.on('end', function(){
         var params = qs.parse(data.toString('utf-8'));
         var pStr = JSON.stringify(params);
-        var now_time = new Date();
 	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
         file_log(fs, log);
         res.send( params );
