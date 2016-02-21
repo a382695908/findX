@@ -173,7 +173,9 @@ if ( enable_weixin ) {
         var now_time = new Date();
     	var now_ts = parseInt(now_time.getTime() / 1000);
     	var cip = getClientIp( req );
-    	console.log(now_time.format("[yyyy-MM-dd hh:mm:ss]") + " GET req from client IP:" + cip );
+	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " GET req from client IP:" + cip + "\n";
+    	console.log( log );
+        file_log(fs, log);
         var full_url = wx_base_url + req.url;
     	console.log('Full URL:' + full_url);
 		if (wx_str.length > 10 && wx_sig.length > 0 && (now_ts - wx_ts ) < (wx_expires_in-60) ) {
@@ -227,22 +229,30 @@ else if ( enable_nest ){
     console.log("ENABLED NEST.");
     app.set("view engine","ejs"); 
     app.get("/", function(req, res) {
+    	var cip = getClientIp( req );
+        var now_time = new Date();
+	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " GET req from client IP:" + cip + "\n";
+    	console.log( log );
+        file_log(fs, log);
     	var tpl_var = {'nt_debug': true, 'nt_appid': 89901, 'nt_version': 2 };
     	res.render("index_nest", tpl_var);  
 	});
 }
 else{
-    console.log("DISABLED WEIXIN.");
+    console.log("NO 3ird SDK API CALL.");
     app.get("/", function(req, res) {
     	var cip = getClientIp( req );
-    	console.log("GET req from client IP:" + cip );
+        var now_time = new Date();
+	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " GET req from client IP:" + cip + "\n";
+    	console.log( log );
+        file_log(fs, log);
 		res.sendFile('index.html', { root: path.join(__dirname, '.') });
 	});
 }
 
 app.post("/saveStage/", function(req, res) {
-    var now_time = new Date();
 	var cip = getClientIp( req );
+    var now_time = new Date();
 	console.log(now_time.format("[yyyy-MM-dd hh:mm:ss]") + " POST req from client IP:" + cip );
     var data = '';
     req.on('data', function(chunk){
