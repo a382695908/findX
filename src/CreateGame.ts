@@ -511,6 +511,19 @@ class Main extends egret.DisplayObjectContainer {
             //Main.nt_id = null;
     }
 
+    public static onLoginOK(data:any): void {
+        if(data.result == 0 && data.token) {
+            console.log("登录成功!" );
+            Main.nt_token = data.token;
+            // submit token to server, server use it to get user info.
+            new CreateGame();
+        }
+        else {
+            console.error("登录失败!" );
+        }
+        console.debug( data );
+    }
+
     public constructor() {
         super();
         if ( Main.nt_appid > 0 && Main.nt_version > 0 ){
@@ -533,7 +546,7 @@ class Main extends egret.DisplayObjectContainer {
                             Main.nt_token = data.token;
                             //Main.nt_id = data.id;
                             //new CreateGame();
-                            this.onLoginOkCallBak( data );
+                            Main.onLoginOK( data );
                         }
                         else {
                             var loginInfo:nest.user.LoginInfo = {};
@@ -543,7 +556,7 @@ class Main extends egret.DisplayObjectContainer {
                                     Main.nt_token = data.token;
                                     //Main.nt_id = data.id;
                                     //new CreateGame();
-                                    this.onLoginOkCallBak( data );
+                                    Main.onLoginOK( data );
                                 }
                                 else {
                                     console.error("登录失败!" + data.toString() );
@@ -559,18 +572,6 @@ class Main extends egret.DisplayObjectContainer {
         }
         else {
             new CreateGame();
-        }
-    }
-
-    private onLoginOkCallBak(data:any): void {
-        console.debug( data );
-        if(data.result == 0 && data.token) {
-            console.log("登录成功!" );
-            Main.nt_token = data.token;
-            new CreateGame();
-        }
-        else {
-            console.error("登录失败!" + data.toString() );
         }
     }
 }
