@@ -530,25 +530,25 @@ class Main extends egret.DisplayObjectContainer {
                     nest.user.checkLogin( chckInfo, function(data){
                         if(data.token) {
                             console.log("已登录!" );
-                            this.onLoginOkCallBak( data );
-                            //Main.nt_token = data.token;
+                            Main.nt_token = data.token;
                             //Main.nt_id = data.id;
                             //new CreateGame();
+                            this.onLoginOkCallBak( data );
                         }
                         else {
                             var loginInfo:nest.user.LoginInfo = {};
-                            nest.user.login(loginInfo, this.onLoginOkCallBak.bind(this) );
-                            //nest.user.login({loginType:'qq'}, function (data) {
-                            //    if(data.token) {
-                            //        console.log("登录成功!" );
-                            //        Main.nt_token = data.token;
-                            //        //Main.nt_id = data.id;
-                            //        new CreateGame();
-                            //    }
-                            //    else {
-                            //        console.error("登录失败!" + data.toString() );
-                            //    }
-                            //})
+                            nest.user.login({loginType:'qq'}, function (data) {
+                                if(data.token) {
+                                    console.log("登录成功!" );
+                                    Main.nt_token = data.token;
+                                    //Main.nt_id = data.id;
+                                    //new CreateGame();
+                                    this.onLoginOkCallBak( data );
+                                }
+                                else {
+                                    console.error("登录失败!" + data.toString() );
+                                }
+                            })
                         }
                     });
                 }
@@ -562,7 +562,8 @@ class Main extends egret.DisplayObjectContainer {
         }
     }
 
-    private onLoginOkCallBak(data:nest.user.LoginCallbackInfo): void {
+    private onLoginOkCallBak(data:any): void {
+        console.debug( data );
         if(data.result == 0 && data.token) {
             console.log("登录成功!" );
             Main.nt_token = data.token;
