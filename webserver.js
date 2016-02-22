@@ -4,21 +4,21 @@
 
 Date.prototype.format = function(fmt)   
 { //author: meizz   
-  var o = {   
-    "M+" : this.getMonth()+1,                 //月份   
-    "d+" : this.getDate(),                    //日   
-    "h+" : this.getHours(),                   //小时   
-    "m+" : this.getMinutes(),                 //分   
-    "s+" : this.getSeconds(),                 //秒   
-    "q+" : Math.floor((this.getMonth()+3)/3), //季度   
-    "S"  : this.getMilliseconds()             //毫秒   
-  };   
-  if(/(y+)/.test(fmt))   
-    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));   
-  for(var k in o)   
-    if(new RegExp("("+ k +")").test(fmt))   
-  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
-  return fmt;   
+    var o = {   
+      "M+" : this.getMonth()+1,                 //月份   
+      "d+" : this.getDate(),                    //日   
+      "h+" : this.getHours(),                   //小时   
+      "m+" : this.getMinutes(),                 //分   
+      "s+" : this.getSeconds(),                 //秒   
+      "q+" : Math.floor((this.getMonth()+3)/3), //季度   
+      "S"  : this.getMilliseconds()             //毫秒   
+    };   
+    if(/(y+)/.test(fmt))   
+      fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));   
+    for(var k in o)   
+      if(new RegExp("("+ k +")").test(fmt))   
+    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
+    return fmt;   
 } 
 
 function getClientIp(req) {
@@ -58,6 +58,36 @@ function getLocalIp(os)
     return IPv4;
 }
 
+function post_data(url, data, fn){
+    data=data||{};
+    var content=require('querystring').stringify(data);
+    console.log("Post data to NEST server:" + content);
+    var parse_u=require('url').parse(url,true);
+    var isHttp=parse_u.protocol=='http:';
+    var options={
+        host:parse_u.hostname,
+        port:parse_u.port||(isHttp?80:443),
+        path:parse_u.path,
+        method:'POST',
+        headers:{
+            'Content-Type':'application/x-www-form-urlencoded',
+            'Content-Length':content.length
+         }
+    };
+    var req = require(isHttp?'http':'https').request(options,function(res){
+        var _data='';
+        res.on('data', function(chunk){
+            _data += chunk;
+        });
+        res.on('end', function(){
+            fn!=undefined && fn(_data);
+        });
+    });
+    req.write(content);
+    req.end();
+}
+
+
 function file_log(fs, txt){
     fs.appendFile("./findx.log", txt, function (err) {
         if (err) throw err ;
@@ -75,6 +105,7 @@ var enable_nest = false;
 
 //base lib
 var https = require('https');
+var http = require('http');
 var express=require("express");
 var os = require('os');  
 var path = require('path');  
@@ -202,7 +233,7 @@ if ( enable_weixin ) {
 									wx_expires_in = ticket_obj['expires_in'];	
 
     								wx_str = Math.random().toString(36).substr(2, 15);
-    								wx_ts = parseInt(new Date().getTime() / 1000);// + '';
+    								wx_ts = parseInt(new Date().getTime() / 1000);
 									wx_get_tmstamp = wx_ts;	
     
     								var str = 'jsapi_ticket=' + ticket + '&noncestr=' + wx_str + '&timestamp='+ wx_ts +'&url=' + full_url;
@@ -226,6 +257,15 @@ if ( enable_weixin ) {
     });
 }
 else if ( enable_nest ){
+    var crypt = require('crypto');
+    var nt_debug = true;
+    var nt_appid = 89901;
+    var nt_version = 2;
+    var nt_appkey = "gadoiHaTO1IJY6MLKwhbF";
+    var nt_token_url = "http://api.egret-labs.org/v2/user/getInfo";
+
+    var ntUserToken = "";
+
     console.log("ENABLED NEST.");
     app.set("view engine","ejs"); 
     app.get("/", function(req, res) {
@@ -234,9 +274,73 @@ else if ( enable_nest ){
 	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " GET req from client IP:" + cip + "\n";
     	console.log( log );
         file_log(fs, log);
-    	var tpl_var = {'nt_debug': true, 'nt_appid': 89901, 'nt_version': 2 };
+    	var tpl_var = {'nt_debug': nt_debug, 'nt_appid': nt_appid, 'nt_version': nt_version };
     	res.render("index_nest", tpl_var);  
 	});
+
+    app.post("/userToken/", function(req, res) {
+    	var cip = getClientIp( req );
+        var now_time = new Date();
+    	console.log(now_time.format("[yyyy-MM-dd hh:mm:ss]") + " POST user token from client IP:" + cip );
+        var data = '';
+        req.on('data', function(chunk){
+            data = chunk;
+        });
+        req.on('end', function(){
+            var params = qs.parse(data.toString('utf-8'));
+            var pStr = JSON.stringify(params);
+    	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
+            file_log(fs, log);
+            if ('token' in params && params.token.length > 0) {
+                var requestParams = {
+                    action: "user.getInfo",
+                    appId: nt_appid,
+                    serverId: 1,
+                    time: Date.now(),
+                    token: params.token
+                };
+
+                var signStr = "";
+                for (var key in requestParams) {
+                    signStr += key + "=" + requestParams[key];
+                }
+                signStr += nt_appkey;
+                requestParams.sign = crypt.createHash('md5').update(signStr).digest('hex');
+                post_data(nt_token_url, requestParams, function(data){
+                    var dataObj = JSON.parse(data.toString('utf-8'));
+                    if ('code' in dataObj && 'msg' in dataObj && 'data' in dataObj){
+                        if ( dataObj['code'] == 0 ) {
+                            console.log(dataObj['data']);
+                            // TODO write to MysqlDB
+                        }
+                        else{
+                            console.log(dataObj['code'] + ": " + dataObj['msg'] );
+                        }
+                    }
+                    else {
+                        console.log(data);
+                    }
+                });
+
+            }
+        });
+    });
+
+    app.post("/pay/findX/", function(req, res) {
+	    var cip = getClientIp( req );
+        var now_time = new Date();
+	    console.log(now_time.format("[yyyy-MM-dd hh:mm:ss]") + " POST pay data from NEST SERVER IP:" + cip );
+        var data = '';
+        req.on('data', function(chunk){
+            data = chunk;
+        });
+        req.on('end', function(){
+            var params = qs.parse(data.toString('utf-8'));
+            var pStr = JSON.stringify(params);
+	        var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
+            file_log(fs, log);
+        });
+    });
 }
 else{
     console.log("NO 3ird SDK API CALL.");

@@ -516,6 +516,13 @@ class Main extends egret.DisplayObjectContainer {
             console.log("登录成功!" );
             Main.nt_token = data.token;
             // submit token to server, server use it to get user info.
+                var urlLoader:egret.URLLoader = new egret.URLLoader();
+                var request:egret.URLRequest = new egret.URLRequest();
+                request.url = "/userToken/";
+                var commitData = `token=${data.token}`;
+                request.data = new egret.URLVariables(commitData);
+                request.method = egret.URLRequestMethod.POST;
+                urlLoader.load(request);
             new CreateGame();
         }
         else {
