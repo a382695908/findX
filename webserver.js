@@ -312,6 +312,7 @@ else if ( enable_nest ){
                         if ( dataObj['code'] == 0 ) {
                             console.log(dataObj['data']);
                             // TODO write to MysqlDB
+                            res.send( dataObj );
                         }
                         else{
                             console.log(dataObj['code'] + ": " + dataObj['msg'] );

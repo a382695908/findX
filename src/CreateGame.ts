@@ -513,7 +513,6 @@ class Main extends egret.DisplayObjectContainer {
 
     public static onLoginOK(data:any): void {
         if(data.result == 0 && data.token) {
-            console.log("登录成功!" );
             Main.nt_token = data.token;
             // submit token to server, server use it to get user info.
                 var urlLoader:egret.URLLoader = new egret.URLLoader();
@@ -523,12 +522,24 @@ class Main extends egret.DisplayObjectContainer {
                 request.data = new egret.URLVariables(commitData);
                 request.method = egret.URLRequestMethod.POST;
                 urlLoader.load(request);
-            new CreateGame();
+                urlLoader.addEventListener(egret.Event.COMPLETE, function (e:egret.Event) {
+                    var data = JSON.parse(urlLoader.data);
+                    if ('code' in data && data['code'] == 0) {
+                        if ( Main.nt_debug ){
+                            console.log("登录成功!" );
+                            console.log(data);
+                        }
+                        new CreateGame();
+                    }
+                    else {
+                        console.log("登录失败!" );
+                        console.log(data);
+                    }
+                }, this);
         }
         else {
             console.error("登录失败!" );
         }
-        console.debug( data );
     }
 
     public constructor() {
@@ -544,25 +555,27 @@ class Main extends egret.DisplayObjectContainer {
             var info:any = { 'debug': Main.nt_debug, 'egretAppId': Main.nt_appid, 'version': Main.nt_version };
             nest.core.startup(info, function (data) {
                 if(data.result == 0) {
-                    console.log( "Nest初始化成功!" );
-                    console.log( data );
+                    if ( Main.nt_debug ){
+                        console.log( "Nest初始化成功!" );
+                        console.log( data );
+                    }
                     var chckInfo = {};
                     nest.user.checkLogin( chckInfo, function(data){
                         if(data.token) {
-                            console.log("已登录!" );
                             Main.nt_token = data.token;
                             //Main.nt_id = data.id;
-                            //new CreateGame();
+                            //console.log("已登录!" );
                             Main.onLoginOK( data );
                         }
                         else {
                             var loginInfo:nest.user.LoginInfo = {};
                             nest.user.login({loginType:'qq'}, function (data) {
                                 if(data.token) {
-                                    console.log("登录成功!" );
+                                    if (Main.nt_debug){
+                                        console.log("登录成功!" );
+                                    }
                                     Main.nt_token = data.token;
                                     //Main.nt_id = data.id;
-                                    //new CreateGame();
                                     Main.onLoginOK( data );
                                 }
                                 else {
