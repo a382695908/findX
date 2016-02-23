@@ -89,13 +89,32 @@ function post_data(url, data, fn){
 
 // params 已经按nest的要求排序
 function make_nt_sign(params, nt_appkey, crypt) {
-    var signStr = "";
+    var arrayObj = [];
     for (var key in params) {
-        signStr += key + "=" + params[key];
+        arrayObj.push( [ key, params[key] ] );
+    }
+    arrayObj.sort( function(a, b){
+        if ( a[0].toString() < b[0].toString() ) {
+            return -1;
+        }
+        else if ( a[0].toString() == b[0].toString()){
+            return 0;
+        }
+        else{
+            return 1;
+        }
+    });
+    console.log( arrayObj );
+
+    var signStr = "";
+    var sortParams = {};
+    for (var idx in arrayObj) {
+        signStr += arrayObj[idx][0] + "=" + arrayObj[idx][1];
+        sortParams[arrayObj[idx][0]] = arrayObj[idx][1];
     }
     signStr += nt_appkey;
-    params.sign = crypt.createHash('md5').update(signStr).digest('hex');
-    return params.sign;
+    sortParams.sign = crypt.createHash('md5').update(signStr).digest('hex');
+    return sortParams;
 }
 
 
@@ -122,6 +141,9 @@ var os = require('os');
 var path = require('path');  
 var fs = require('fs');  
 var qs = require('querystring');
+
+var mysql = require('./libs/modules/aw/mysqlor.js');
+var mysql_conn = mysql.connect('localhost', 'findXmgr', 'DB_FINDX', 'F1ndX3@r', '3306', 'utf8'); 
 
 var sip = getLocalIp(os);
 switch( sip ){
@@ -303,15 +325,15 @@ else if ( enable_nest ){
     	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
             file_log(fs, log);
             if ('token' in params && params.token.length > 0) {
-                var requestParams = { action: "user.getInfo", appId: nt_appid,
-                                        serverId: 1, time: Date.now(), token: params.token };
-                requestParams.sign = make_nt_sign(requestParams, nt_appkey,  crypt);
-                post_data(nt_token_url, requestParams, function(data){
+                var requestParams = { appId: nt_appid, action: "user.getInfo", 
+                                        time: Date.now(), serverId: 1, token: params.token };
+                var signParams = make_nt_sign(requestParams, nt_appkey,  crypt);
+                post_data(nt_token_url, signParams, function(data){
                     var dataObj = JSON.parse(data.toString('utf-8'));
                     if ('code' in dataObj && 'msg' in dataObj && 'data' in dataObj){
                         if ( dataObj['code'] == 0 ) {
                             console.log(dataObj['data']);
-                            // TODO write to MysqlDB
+                            mysql.insert_update_data(mysql_conn, 't_user', dataObj );
                             res.send( dataObj );
                         }
                         else{
@@ -337,6 +359,9 @@ else if ( enable_nest ){
         });
         req.on('end', function(){
             var params = qs.parse(data.toString('utf-8'));
+            mysql.insert_data(mysql_conn, 't_vip_record', params );
+            mysql.update_data(mysql_conn, 't_user', params );
+
             var pStr = JSON.stringify(params);
 	        var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
             file_log(fs, log);
@@ -375,3 +400,4 @@ app.post("/saveStage/", function(req, res) {
 app.use(express.static('.'));
 console.log("Listen on host: " + lsip + ", port:" + lsport);
 app.listen(lsport, lsip);
+
