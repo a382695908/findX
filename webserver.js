@@ -87,6 +87,17 @@ function post_data(url, data, fn){
     req.end();
 }
 
+// params 已经按nest的要求排序
+function make_nt_sign(params, nt_appkey, crypt) {
+    var signStr = "";
+    for (var key in params) {
+        signStr += key + "=" + params[key];
+    }
+    signStr += nt_appkey;
+    params.sign = crypt.createHash('md5').update(signStr).digest('hex');
+    return params.sign;
+}
+
 
 function file_log(fs, txt){
     fs.appendFile("./findx.log", txt, function (err) {
@@ -292,20 +303,9 @@ else if ( enable_nest ){
     	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
             file_log(fs, log);
             if ('token' in params && params.token.length > 0) {
-                var requestParams = {
-                    action: "user.getInfo",
-                    appId: nt_appid,
-                    serverId: 1,
-                    time: Date.now(),
-                    token: params.token
-                };
-
-                var signStr = "";
-                for (var key in requestParams) {
-                    signStr += key + "=" + requestParams[key];
-                }
-                signStr += nt_appkey;
-                requestParams.sign = crypt.createHash('md5').update(signStr).digest('hex');
+                var requestParams = { action: "user.getInfo", appId: nt_appid,
+                                        serverId: 1, time: Date.now(), token: params.token };
+                requestParams.sign = make_nt_sign(requestParams, nt_appkey,  crypt);
                 post_data(nt_token_url, requestParams, function(data){
                     var dataObj = JSON.parse(data.toString('utf-8'));
                     if ('code' in dataObj && 'msg' in dataObj && 'data' in dataObj){

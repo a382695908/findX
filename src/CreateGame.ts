@@ -518,7 +518,7 @@ class Main extends egret.DisplayObjectContainer {
                 var urlLoader:egret.URLLoader = new egret.URLLoader();
                 var request:egret.URLRequest = new egret.URLRequest();
                 request.url = "/userToken/";
-                var commitData = `token=${data.token}`;
+                var commitData = `token=${data.token}&id=${data.id}`;
                 request.data = new egret.URLVariables(commitData);
                 request.method = egret.URLRequestMethod.POST;
                 urlLoader.load(request);
@@ -534,11 +534,13 @@ class Main extends egret.DisplayObjectContainer {
                     else {
                         console.log("登录失败!" );
                         console.log(data);
+                        alert("登录失败1!" );
                     }
                 }, this);
         }
         else {
             console.error("登录失败!" );
+            alert("登录失败2!" );
         }
     }
 
@@ -561,7 +563,7 @@ class Main extends egret.DisplayObjectContainer {
                     }
                     var chckInfo = {};
                     nest.user.checkLogin( chckInfo, function(data){
-                        if(data.token) {
+                        if(data.result==0 && data.token) {
                             Main.nt_token = data.token;
                             //Main.nt_id = data.id;
                             //console.log("已登录!" );
@@ -570,16 +572,17 @@ class Main extends egret.DisplayObjectContainer {
                         else {
                             var loginInfo:nest.user.LoginInfo = {};
                             nest.user.login({loginType:'qq'}, function (data) {
-                                if(data.token) {
+                                if(data.result==0 && data.token) {
                                     if (Main.nt_debug){
-                                        console.log("登录成功!" );
+                                        console.log("获取token!" );
                                     }
                                     Main.nt_token = data.token;
                                     //Main.nt_id = data.id;
                                     Main.onLoginOK( data );
                                 }
                                 else {
-                                    console.error("登录失败!" + data.toString() );
+                                    console.error("登录失败0!" + data.toString() );
+                                    alert("登录失败0!" + data.toString() );
                                 }
                             })
                         }
@@ -587,6 +590,7 @@ class Main extends egret.DisplayObjectContainer {
                 }
                 else {
                     console.error("Nest 初始化失败:" + data.toString() );
+                    alert("Nest 初始化失败:" + data.toString());
                 }
             })
         }
