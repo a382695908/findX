@@ -41,20 +41,107 @@ exports.close= function(conn){
 //     console.log('The solution is: ', rows[0]);  
 //});  
 
-
 exports.insert_data = function (conn, table,  data_obj) {
     console.log( "Insert data to table: " + table);
+    if ( conn ) {
+        var sql = "";
+        switch( table ){
+        case 't_user':
+            sql = "INSERT INTO "+table+"(user_id, channel, name, pic, sex, age, vip, stage, login_time) VALUES() ";
+            break;
+        default:
+            console.error("unknow table:" + table);
+            break;
+        }
+        if ( sql.length > "INSERT INTO t() VALUES()".length ){
+            conn.query(sql, function(err, rows, fields) { 
+                 if (err) {
+                    console.error("Execute SQL:["+sql+"] error :"+err);
+                    return;
+                 }
+            });  
+        }
+    }
+    else {
+        console.error("Mysql DB connection lost.");
+    }
 };
 
 exports.select_data = function (conn, table,  data_obj) {
     console.log( "Select data from table: " + table);
+    if ( conn ) {
+        var sql = "";
+        switch( table ){
+        case 't_user':
+            sql = "SELECT * FROM "+table+" WHERE ";
+            break;
+        default:
+            console.error("unknow table:" + table);
+            break;
+        }
+        if ( sql.length > "SELECT FROM t WHERE".length ){
+            conn.query(sql, function(err, rows, fields) { 
+                 if (err) {
+                    console.error("Execute SQL:["+sql+"] error :"+err);
+                    return;
+                 }
+            });  
+        }
+    }
+    else {
+        console.error("Mysql DB connection lost.");
+    }
 };
 
 exports.update_data = function (conn, table,  data_obj) {
     console.log( "Update data of table: " + table);
+    if ( conn ) {
+        var sql = "";
+        switch( table ){
+        case 't_user':
+            sql = "UPDATE "+table+" SET a=b ";
+            break;
+        default:
+            console.error("unknow table:" + table);
+            break;
+        }
+        if ( sql.length > "UPDATE  WHERE".length ){
+            conn.query(sql, function(err, rows, fields) { 
+                 if (err) {
+                    console.error("Execute SQL:["+sql+"] error :"+err);
+                    return;
+                 }
+            });  
+        }
+    }
+    else {
+        console.error("Mysql DB connection lost.");
+    }
 };
 
 exports.insert_update_data = function (conn, table,  data_obj) {
     console.log( "Insert data to table: " + table + " on duplicate update.");
+    if ( conn ) {
+        var sql = "";
+        switch( table ){
+        case 't_user':
+            sql = "INSERT INTO "+table+"(user_id, channel, name, pic, sex, age, vip, stage, login_time) VALUES() ON DUPLICATE UPDATE ...";
+            break;
+        default:
+            console.error("unknow table:" + table);
+            break;
+        }
+        if ( sql.length > "INSERT INTO t() VALUES() ON DUPLICATE UPDATE ...".length ){
+            conn.query(sql, function(err, rows, fields) { 
+                 if (err) {
+                    console.error("Execute SQL:["+sql+"] error :"+err);
+                    return;
+                 }
+            });  
+        }
+    }
+    else {
+        console.error("Mysql DB connection lost.");
+    }
 };
 
