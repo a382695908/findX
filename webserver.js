@@ -104,7 +104,6 @@ function make_nt_sign(params, nt_appkey, crypt) {
             return 1;
         }
     });
-    console.log( arrayObj );
 
     var signStr = "";
     var sortParams = {};
