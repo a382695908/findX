@@ -393,6 +393,8 @@ app.post("/saveStage/", function(req, res) {
 	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
         file_log(fs, log);
         res.send( params );
+        mysql.insert_data(mysql_conn, 't_stage_record', params );
+        mysql.update_data(mysql_conn, 't_user', params );
     });
 });
 
