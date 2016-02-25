@@ -1,13 +1,19 @@
+String.prototype.format= function(){
+    var args = arguments;
+    return this.replace(/\{(\d+)\}/g,function(s,i){
+        return args[i];
+    });
+}
 var mysql  = require('mysql');  //调用MySQL模块
 
 //创建一个connection
 exports.connect= function(h, u, db, pwd, port, charset){
-    //return mysql.createConnection({host: 'localhost', user: 'findXmgr', db: 'DB_FINDX', password: 'F1ndX3@r', port: '3306'}); 
-    var connection = mysql.createConnection({host: h, user: u, db: db, password: pwd, port: port, charset: charset}); 
+    //return mysql.createConnection({host: 'localhost', user: 'findXmgr', database: 'DB_FINDX', password: 'F1ndX3@r', port: '3306'}); 
+    var connection = mysql.createConnection({host: h, user: u, database: db, password: pwd, port: port, charset: charset}); 
     connection.connect(function(err){
         if(err){
               console.log('[query] - :'+err);
-            return;
+            return null;
         }
         console.log('[connection connect]  succeed!');
     });
@@ -41,13 +47,19 @@ exports.close= function(conn){
 //     console.log('The solution is: ', rows[0]);  
 //});  
 
-exports.insert_data = function (conn, table,  data_obj) {
+exports.insert_data = function (conn, table,  dobj) {
     console.log( "Insert data to table: " + table);
     if ( conn ) {
         var sql = "";
         switch( table ){
-        case 't_user':
-            sql = "INSERT INTO "+table+"(user_id, channel, name, pic, sex, age, vip, stage, login_time) VALUES() ";
+        case 't_stage_record':
+            if ( 'id' in dobj && 'stage' in dobj && 'useTime' in dobj && 'restCnt' in dobj ){
+                sql = "INSERT INTO "+table+"(user_id, channel, stage, cost_time)"
+                sql+= " VALUES('{0}', '{1}', {2}, {3})".format(dobj.id, "nest", dobj.stage, dobj.useTime*10);
+            }
+            else{
+                console.log("dobj info error:"); console.log(dobj);
+            }
             break;
         default:
             console.error("unknow table:" + table);
@@ -60,6 +72,9 @@ exports.insert_data = function (conn, table,  data_obj) {
                     return;
                  }
             });  
+        }
+        else {
+            console.error("SQL for table {0} format error:[{1}].".format(table, sql));
         }
     }
     else {
@@ -93,13 +108,19 @@ exports.select_data = function (conn, table,  data_obj) {
     }
 };
 
-exports.update_data = function (conn, table,  data_obj) {
+exports.update_data = function (conn, table,  dobj) {
     console.log( "Update data of table: " + table);
     if ( conn ) {
         var sql = "";
         switch( table ){
         case 't_user':
-            sql = "UPDATE "+table+" SET a=b ";
+            if ( 'id' in dobj && 'stage' in dobj && 'useTime' in dobj && 'restCnt' in dobj ){
+                sql = "UPDATE {0} SET stage={1} ".format(table, dobj.stage);
+                sql+= " WHERE user_id='{0}' AND channel='{1}' AND stage < {2} ".format(dobj.id, "nest", dobj.stage)
+            }
+            else{
+                console.log("dobj info error:"); console.log(dobj);
+            }
             break;
         default:
             console.error("unknow table:" + table);
@@ -113,19 +134,29 @@ exports.update_data = function (conn, table,  data_obj) {
                  }
             });  
         }
+        else {
+            console.error("SQL for table {0} format error:[{1}].".format(table, sql));
+        }
     }
     else {
         console.error("Mysql DB connection lost.");
     }
 };
 
-exports.insert_update_data = function (conn, table,  data_obj) {
+exports.insert_update_data = function (conn, table,  dobj) {
     console.log( "Insert data to table: " + table + " on duplicate update.");
     if ( conn ) {
         var sql = "";
         switch( table ){
         case 't_user':
-            sql = "INSERT INTO "+table+"(user_id, channel, name, pic, sex, age, vip, stage, login_time) VALUES() ON DUPLICATE UPDATE ...";
+            if ('data' in dobj && 'id' in dobj.data && 'name' in dobj.data && 'pic' in dobj.data && 'sex' in dobj.data && 'age' in dobj.data){
+                sql = "INSERT INTO "+table+"(user_id, channel, name, pic, sex, age, vip, stage, login_time)"
+                sql+= " VALUES('{0}', '{1}', '{2}', '{3}', '{4}', {5}, 0, 0, NOW())".format(dobj.data.id, "nest", dobj.data.name, dobj.data.pic, dobj.data.sex, dobj.data.age);
+                sql+= " ON DUPLICATE KEY UPDATE name='{0}', pic='{1}', sex='{2}', age={3}, login_cnt=login_cnt+1 ".format(dobj.data.name, dobj.data.pic, dobj.data.sex, dobj.data.age);
+            }
+            else {
+                console.log("dobj info error:"); console.log(dobj);
+            }
             break;
         default:
             console.error("unknow table:" + table);
@@ -138,6 +169,9 @@ exports.insert_update_data = function (conn, table,  data_obj) {
                     return;
                  }
             });  
+        }
+        else{
+            console.error("SQL for table {0} format error:[{1}].".format(table, sql));
         }
     }
     else {

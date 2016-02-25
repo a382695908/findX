@@ -200,9 +200,15 @@ namespace aw {
                 let data = "";
 				if ( win ) {
                 	data = "win=" + win + "&stage=" + (this.stage-1) + "&useTime=" + (this.lostSeconds10/10-0.1) + "&restCnt=0";
+                    if  ( Main.nt_user && 'id' in Main.nt_user ){
+                        data += "&id=" + Main.nt_user.id;
+                    }
 				}
 				else {
                 	data = "win=" + win + "&stage=" + this.stage + "&useTime=" + (this.lostSeconds10/10-0.1) + "&restCnt=" + rest_cnt;
+                    if  ( Main.nt_user && 'id' in Main.nt_user ){
+                        data += "&id=" + Main.nt_user.id;
+                    }
 				}
                 this.urlReq.data = new egret.URLVariables( data );
             	this.urlReq.method = egret.URLRequestMethod.POST;

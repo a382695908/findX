@@ -499,6 +499,7 @@ class Main extends egret.DisplayObjectContainer {
     public static nt_appid: number = 0;
     public static nt_version: number = 0;
     public static nt_token: string = null;
+    public static nt_user:any = null;
     //public static nt_id: string = null;
 
     public enable_nest: boolean = false;
@@ -508,6 +509,7 @@ class Main extends egret.DisplayObjectContainer {
             Main.nt_appid = appid;
             Main.nt_version = version;
             Main.nt_token = null;
+            Main.nt_user = null;
             //Main.nt_id = null;
     }
 
@@ -524,7 +526,8 @@ class Main extends egret.DisplayObjectContainer {
                 urlLoader.load(request);
                 urlLoader.addEventListener(egret.Event.COMPLETE, function (e:egret.Event) {
                     var data = JSON.parse(urlLoader.data);
-                    if ('code' in data && data['code'] == 0) {
+                    if ('code' in data && data['code'] == 0 && 'data' in data) {
+                        Main.nt_user = data.data
                         if ( Main.nt_debug ){
                             console.log("登录成功!" );
                             console.log(data);

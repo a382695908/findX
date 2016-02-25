@@ -1,6 +1,12 @@
 /**
    *  通过 node ./webserver.js 启动本服务
 */
+String.prototype.format= function(){
+    var args = arguments;
+    return this.replace(/\{(\d+)\}/g,function(s,i){
+        return args[i];
+    });
+}
 
 Date.prototype.format = function(fmt)   
 { //author: meizz   
@@ -143,6 +149,7 @@ var qs = require('querystring');
 
 var mysql = require('./libs/modules/aw/mysqlor.js');
 var mysql_conn = mysql.connect('localhost', 'findXmgr', 'DB_FINDX', 'F1ndX3@r', '3306', 'utf8'); 
+setInterval(function () { mysql_conn.query('SELECT 1'); }, 3600);
 
 var sip = getLocalIp(os);
 switch( sip ){
@@ -393,8 +400,8 @@ app.post("/saveStage/", function(req, res) {
 	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
         file_log(fs, log);
         res.send( params );
-        mysql.insert_data(mysql_conn, 't_stage_record', params );
         mysql.update_data(mysql_conn, 't_user', params );
+        mysql.insert_data(mysql_conn, 't_stage_record', params );
     });
 });
 
