@@ -401,7 +401,33 @@ app.post("/saveStage/", function(req, res) {
         file_log(fs, log);
         res.send( params );
         mysql.update_data(mysql_conn, 't_user', params );
-        mysql.insert_data(mysql_conn, 't_stage_record', params );
+        var ret = mysql.insert_data(mysql_conn, 't_stage_record', params );
+        if ( enable_nest && 'id' in params && 'stage' ){
+            var crypt = require('crypto');
+            var nt_debug = true;
+            var nt_appid = 89901;
+            var nt_version = 2;
+            var nt_appkey = "gadoiHaTO1IJY6MLKwhbF";
+            var nt_token_url = "http://api.egret-labs.org/v2/user/setAchievement";
+            var requestParams = { id: params.id, time: Date.now(), appId: nt_appid, 
+                                    serverId: 1, score: params.stage};
+            var signParams = make_nt_sign(requestParams, nt_appkey,  crypt);
+            post_data(nt_token_url, signParams, function(data){
+                var dataObj = JSON.parse(data.toString('utf-8'));
+                if ('code' in dataObj && 'msg' in dataObj && 'data' in dataObj){
+                    if ( dataObj['code'] == 0 ) {
+                        console.log("Commit data to nest serer ok");
+                    }
+                    else{
+                        console.log("Commit data to nest serer wrong, ret code:" + dataObj.code+" desc:" + dataObj.msg);
+                    }
+                }
+                else {
+                    console.log("Commit data to nest serer wrong:");
+                    console.log(data);
+                }
+            });
+        }
     });
 });
 
