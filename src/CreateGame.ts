@@ -498,16 +498,18 @@ class Main extends egret.DisplayObjectContainer {
     public static nt_debug: boolean = false;
     public static nt_appid: number = 0;
     public static nt_version: number = 0;
+    public static nt_channel: number = 0;
     public static nt_token: string = null;
     public static nt_user:any = null;
     //public static nt_id: string = null;
 
     public enable_nest: boolean = false;
 
-    public static regNest(debug: boolean, appid: number, version: number){
+    public static regNest(debug: boolean, appid: number, version: number, channel: number){
             Main.nt_debug = debug;
             Main.nt_appid = appid;
             Main.nt_version = version;
+            Main.nt_channel = channel;
             Main.nt_token = null;
             Main.nt_user = null;
             //Main.nt_id = null;
@@ -517,29 +519,29 @@ class Main extends egret.DisplayObjectContainer {
         if(data.result == 0 && data.token) {
             Main.nt_token = data.token;
             // submit token to server, server use it to get user info.
-                var urlLoader:egret.URLLoader = new egret.URLLoader();
-                var request:egret.URLRequest = new egret.URLRequest();
-                request.url = "/userToken/";
-                var commitData = `token=${data.token}&id=${data.id}`;
-                request.data = new egret.URLVariables(commitData);
-                request.method = egret.URLRequestMethod.POST;
-                urlLoader.load(request);
-                urlLoader.addEventListener(egret.Event.COMPLETE, function (e:egret.Event) {
-                    var data = JSON.parse(urlLoader.data);
-                    if ('code' in data && data['code'] == 0 && 'data' in data) {
-                        Main.nt_user = data.data
-                        if ( Main.nt_debug ){
-                            console.log("登录成功!" );
-                            console.log(data);
-                        }
-                        new CreateGame();
-                    }
-                    else {
-                        console.log("登录失败!" );
+            var urlLoader:egret.URLLoader = new egret.URLLoader();
+            var request:egret.URLRequest = new egret.URLRequest();
+            request.url = "/userToken/";
+            var commitData = `token=${data.token}&id=${data.id}&channel=${Main.nt_channel}`;
+            request.data = new egret.URLVariables(commitData);
+            request.method = egret.URLRequestMethod.POST;
+            urlLoader.load(request);
+            urlLoader.addEventListener(egret.Event.COMPLETE, function (e:egret.Event) {
+                var data = JSON.parse(urlLoader.data);
+                if ('code' in data && data['code'] == 0 && 'data' in data) {
+                    Main.nt_user = data.data
+                    if ( Main.nt_debug ){
+                        console.log("登录成功!" );
                         console.log(data);
-                        alert("登录失败1!" );
                     }
-                }, this);
+                    new CreateGame();
+                }
+                else {
+                    console.log("登录失败!" );
+                    console.log(data);
+                    alert("登录失败1!" );
+                }
+            }, this);
         }
         else {
             console.error("登录失败!" );

@@ -54,7 +54,7 @@ exports.insert_data = function (conn, table,  dobj) {
         switch( table ){
         case 't_stage_record':
             if ( 'id' in dobj && 'stage' in dobj && 'useTime' in dobj && 'restCnt' in dobj ){
-                sql = "INSERT INTO "+table+"(user_id, channel, stage, cost_time)"
+                sql = "INSERT INTO "+table+"(user_id, platform, stage, cost_time)"
                 sql+= " VALUES('{0}', '{1}', {2}, {3})".format(dobj.id, "nest", dobj.stage, dobj.useTime*10);
             }
             else{
@@ -116,7 +116,7 @@ exports.update_data = function (conn, table,  dobj) {
         case 't_user':
             if ( 'id' in dobj && 'stage' in dobj && 'useTime' in dobj && 'restCnt' in dobj ){
                 sql = "UPDATE {0} SET stage={1} ".format(table, dobj.stage);
-                sql+= " WHERE user_id='{0}' AND channel='{1}' AND stage < {2} ".format(dobj.id, "nest", dobj.stage)
+                sql+= " WHERE user_id='{0}' AND platform='{1}' AND stage < {2} ".format(dobj.id, "nest", dobj.stage)
             }
             else{
                 console.log("dobj info error:"); console.log(dobj);
@@ -150,9 +150,9 @@ exports.insert_update_data = function (conn, table,  dobj) {
         switch( table ){
         case 't_user':
             if ('data' in dobj && 'id' in dobj.data && 'name' in dobj.data && 'pic' in dobj.data && 'sex' in dobj.data && 'age' in dobj.data){
-                sql = "INSERT INTO "+table+"(user_id, channel, name, pic, sex, age, vip, stage, login_time)"
-                sql+= " VALUES('{0}', '{1}', '{2}', '{3}', '{4}', {5}, 0, 0, NOW())".format(dobj.data.id, "nest", dobj.data.name, dobj.data.pic, dobj.data.sex, dobj.data.age);
-                sql+= " ON DUPLICATE KEY UPDATE name='{0}', pic='{1}', sex='{2}', age={3}, login_cnt=login_cnt+1 ".format(dobj.data.name, dobj.data.pic, dobj.data.sex, dobj.data.age);
+                sql = "INSERT INTO "+table+"(user_id, platform, name, pic, sex, age, stage, login_time, channel)"
+                sql+= " VALUES('{0}', '{1}', '{2}', '{3}', '{4}', {5}, 0, NOW(), {6})".format(dobj.data.id, "nest", dobj.data.name, dobj.data.pic, dobj.data.sex, dobj.data.age, dobj.channel);
+                sql+= " ON DUPLICATE KEY UPDATE name='{0}', pic='{1}', sex='{2}', age={3}, channel={4}, login_cnt=login_cnt+1 ".format(dobj.data.name, dobj.data.pic, dobj.data.sex, dobj.data.age, dobj.channel);
             }
             else {
                 console.log("dobj info error:"); console.log(dobj);

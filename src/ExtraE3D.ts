@@ -551,7 +551,7 @@
         }
     }
 
-    export function regNest(nt_debug: boolean, nt_appid: number, nt_version:number){
-        Main.regNest(nt_debug, nt_appid, nt_version); 
+    export function regNest(nt_debug: boolean, nt_appid: number, nt_version:number, nt_channel: number){
+        Main.regNest(nt_debug, nt_appid, nt_version, nt_channel); 
 	}
 }

@@ -308,12 +308,16 @@ else if ( enable_nest ){
     console.log("ENABLED NEST.");
     app.set("view engine","ejs"); 
     app.get("/", function(req, res) {
+        var channel = 0;
+        if ( req.query.channelId ){
+            channel = req.query.channelId;
+        }
     	var cip = getClientIp( req );
         var now_time = new Date();
 	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " GET req from client IP:" + cip + "\n";
     	console.log( log );
         file_log(fs, log);
-    	var tpl_var = {'nt_debug': nt_debug, 'nt_appid': nt_appid, 'nt_version': nt_version };
+    	var tpl_var = {'nt_debug': nt_debug, 'nt_appid': nt_appid, 'nt_version': nt_version, 'nt_channel': channel };
     	res.render("index_nest", tpl_var);  
 	});
 
@@ -330,7 +334,7 @@ else if ( enable_nest ){
             var pStr = JSON.stringify(params);
     	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
             file_log(fs, log);
-            if ('token' in params && params.token.length > 0) {
+            if ('token' in params && 'channel' in params && params.token.length > 0) {
                 var requestParams = { appId: nt_appid, action: "user.getInfo", 
                                         time: Date.now(), serverId: 1, token: params.token };
                 var signParams = make_nt_sign(requestParams, nt_appkey,  crypt);
@@ -338,6 +342,7 @@ else if ( enable_nest ){
                     var dataObj = JSON.parse(data.toString('utf-8'));
                     if ('code' in dataObj && 'msg' in dataObj && 'data' in dataObj){
                         if ( dataObj['code'] == 0 ) {
+                            dataObj.channel = params .channel;
                             console.log(dataObj['data']);
                             mysql.insert_update_data(mysql_conn, 't_user', dataObj );
                             res.send( dataObj );
