@@ -14,6 +14,7 @@
         "libs/modules/egret/egret3d.d.ts",
         "libs/modules/egret/game.d.ts",
         "libs/modules/egret/nest.d.ts",
+        "libs/modules/egret/egretsa.d.ts",
         "libs/modules/weixin/weixinapi.d.ts",
         "src/ExtraE3D.ts",
         "src/GameDataDriver.ts",
