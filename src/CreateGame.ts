@@ -499,19 +499,22 @@ class Main extends egret.DisplayObjectContainer {
     public static nt_appid: number = 0;
     public static nt_version: number = 0;
     public static nt_channel: number = 0;
+    public static nt_statid: number = 0;
     public static nt_token: string = null;
     public static nt_user:any = null;
     //public static nt_id: string = null;
 
     public enable_nest: boolean = false;
 
-    public static regNest(debug: boolean, appid: number, version: number, channel: number){
+    public static regNest(debug: boolean, appid: number, version: number, channel: number, statid: string){
             Main.nt_debug = debug;
             Main.nt_appid = appid;
             Main.nt_version = version;
             Main.nt_channel = channel;
+            Main.nt_statid = statid;
             Main.nt_token = null;
             Main.nt_user = null;
+            esa.EgretSA.init({"gameId": Main.nt_statid,"chanId":Main.nt_channel, "debug": Main.nt_debug});
             //Main.nt_id = null;
     }
 

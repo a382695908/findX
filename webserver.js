@@ -300,6 +300,7 @@ else if ( enable_nest ){
     var nt_debug = true;
     var nt_appid = 89901;
     var nt_version = 2;
+    var nt_statid = "533355505757673D";
     var nt_appkey = "gadoiHaTO1IJY6MLKwhbF";
     var nt_token_url = "http://api.egret-labs.org/v2/user/getInfo";
 
@@ -317,7 +318,7 @@ else if ( enable_nest ){
 	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " GET req from client IP:" + cip + "\n";
     	console.log( log );
         file_log(fs, log);
-    	var tpl_var = {'nt_debug': nt_debug, 'nt_appid': nt_appid, 'nt_version': nt_version, 'nt_channel': channel };
+    	var tpl_var = {'nt_debug': nt_debug, 'nt_appid': nt_appid, 'nt_version': nt_version, 'nt_channel': channel, 'nt_statid': nt_statid };
     	res.render("index_nest", tpl_var);  
 	});
 
