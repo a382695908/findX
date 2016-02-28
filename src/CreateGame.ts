@@ -73,7 +73,7 @@ class CreateGame extends CreateBaseEnv{
 
         this._dtDriver = new aw.FindXDataDriver();
         this._uiReady = false;
-
+        esa.EgretSA.loadingSet(4, "创建E3D游戏对象");
     }
 
     public get dataDriver() :aw.FindXDataDriver {
@@ -86,6 +86,7 @@ class CreateGame extends CreateBaseEnv{
         if (this._cameraCtl) this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/1.0 );
         //this._cameraCtl.setEyesLength(3000);
         console.log("textureComplete...");
+        esa.EgretSA.loadingSet(5, "E3D资源,事件加载完毕");
     }
 
     protected Resize(w: number, h: number) {
@@ -267,17 +268,6 @@ class CreateGame extends CreateBaseEnv{
                     bi['box'].x += bi['moveX'];
                     bi['box'].y += bi['moveY'];
                     bi['box'].z += bi['moveZ'];
-                    //if ( this._camera3D.isVisibleToCamera( bi['box'] ) ) {
-                    //}
-                    //else{
-                    //    bi['moveX'] = -bi['moveX']
-                    //    bi['moveY'] = -bi['moveY']
-                    //    bi['moveZ'] = -bi['moveZ']
-                    //}
-
-                    //var v3 = bi['box'].getScreenPosition( this._camera3D );
-                    //if ( v3 ) {
-                    //}
 
                     if ( bi['box'].x < -rW || bi['box'].x > rW ){
                         bi['moveX'] = -bi['moveX']
@@ -499,7 +489,7 @@ class Main extends egret.DisplayObjectContainer {
     public static nt_appid: number = 0;
     public static nt_version: number = 0;
     public static nt_channel: number = 0;
-    public static nt_statid: number = 0;
+    public static nt_statid: string = "0";
     public static nt_token: string = null;
     public static nt_user:any = null;
     //public static nt_id: string = null;
@@ -520,6 +510,7 @@ class Main extends egret.DisplayObjectContainer {
 
     public static onLoginOK(data:any): void {
         if(data.result == 0 && data.token) {
+            esa.EgretSA.loadingSet(2, "登录NEST成功");
             Main.nt_token = data.token;
             // submit token to server, server use it to get user info.
             var urlLoader:egret.URLLoader = new egret.URLLoader();
@@ -537,6 +528,7 @@ class Main extends egret.DisplayObjectContainer {
                         console.log("登录成功!" );
                         console.log(data);
                     }
+                    esa.EgretSA.loadingSet(3, "登录findX成功");
                     new CreateGame();
                 }
                 else {
@@ -565,6 +557,7 @@ class Main extends egret.DisplayObjectContainer {
             var info:any = { 'debug': Main.nt_debug, 'egretAppId': Main.nt_appid, 'version': Main.nt_version };
             nest.core.startup(info, function (data) {
                 if(data.result == 0) {
+                    esa.EgretSA.loadingSet(1, "初始化NEST");
                     if ( Main.nt_debug ){
                         console.log( "Nest初始化成功!" );
                         console.log( data );

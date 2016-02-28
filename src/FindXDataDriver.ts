@@ -203,6 +203,7 @@ namespace aw {
                     if  ( Main.nt_user && 'id' in Main.nt_user ){
                         data += "&id=" + Main.nt_user.id;
                     }
+                    esa.EgretSA.loadingSet(5+(this.stage-1), "用户通过第" + (this.stage-1) + "关")
 				}
 				else {
                 	data = "win=" + win + "&stage=" + this.stage + "&useTime=" + (this.lostSeconds10/10-0.1) + "&restCnt=" + rest_cnt;
