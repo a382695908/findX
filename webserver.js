@@ -174,7 +174,7 @@ case '10.10.123.207':  // huithink server
     break;
 case '172.17.0.168':  // egret-3d server
     enable_weixin = false;
-	enable_nest = true;
+	enable_nest = false;
     lsip = "localhost";
     break;
 default:
