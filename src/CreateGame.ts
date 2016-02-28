@@ -511,7 +511,7 @@ class Main extends egret.DisplayObjectContainer {
             Main.nt_statid = statid;
             Main.nt_token = null;
             Main.nt_user = null;
-            esa.EgretSA.init({"gameId": Main.nt_statid,"chanId":Main.nt_channel, "debug": Main.nt_debug});
+            esa.EgretSA.init({"gameId": Main.nt_statid,"chanId":Main.nt_channel, "debug": false});
             //Main.nt_id = null;
     }
 
