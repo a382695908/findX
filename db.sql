@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `t_user` (
   `user_id` varchar(64) NOT NULL,
   `platform` varchar(16) NOT NULL COMMENT 'Nest, qq, qzone, sinaweibo...',
   `channel` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '渠道号， 0-未知',
+  `vip` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'VIP等级， 0-还不是VIP',
   `name` varchar(64) NOT NULL COMMENT '帐号名',
   `pic` varchar(128) NOT NULL DEFAULT '无' COMMENT '头像网址',
   `sex` varchar(8) NOT NULL DEFAULT '0' COMMENT '性别',

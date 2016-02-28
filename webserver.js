@@ -346,7 +346,8 @@ else if ( enable_nest ){
                             dataObj.channel = params .channel;
                             console.log(dataObj['data']);
                             mysql.insert_update_data(mysql_conn, 't_user', dataObj );
-                            res.send( dataObj );
+                            var ret = mysql.select_data(mysql_conn, 't_user', dataObj, res);
+                            //res.send( dataObj ); // todo: Sent user info, name, img, vip, stage,
                         }
                         else{
                             console.log(dataObj['code'] + ": " + dataObj['msg'] );
@@ -371,8 +372,8 @@ else if ( enable_nest ){
         });
         req.on('end', function(){
             var params = qs.parse(data.toString('utf-8'));
-            mysql.insert_data(mysql_conn, 't_vip_record', params );
-            mysql.update_data(mysql_conn, 't_user', params );
+            mysql.insert_data(mysql_conn, 't_pay_record', params );
+            //mysql.update_data(mysql_conn, 't_user', params );  //由crontab 程序定时从 t_pay_record 中同步vip 到 t_user 
 
             var pStr = JSON.stringify(params);
 	        var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";

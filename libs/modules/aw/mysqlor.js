@@ -82,13 +82,14 @@ exports.insert_data = function (conn, table,  dobj) {
     }
 };
 
-exports.select_data = function (conn, table,  data_obj) {
+exports.select_data = function (conn, table,  dobj, res) {
     console.log( "Select data from table: " + table);
     if ( conn ) {
         var sql = "";
         switch( table ){
         case 't_user':
-            sql = "SELECT * FROM "+table+" WHERE ";
+            sql = "SELECT channel, vip, name, pic, sex, age, stage, login_cnt FROM " + table;
+            sql+= " WHERE user_id='{0}' AND platform='{1}' ".format(dobj.data.id, "nest");
             break;
         default:
             console.error("unknow table:" + table);
@@ -98,13 +99,29 @@ exports.select_data = function (conn, table,  data_obj) {
             conn.query(sql, function(err, rows, fields) { 
                  if (err) {
                     console.error("Execute SQL:["+sql+"] error :"+err);
-                    return;
+                    res.send( dobj );
                  }
+                else {
+                    //console.log(" mysql.query ret:");
+                    //console.log( rows );
+                    //console.log( fields );
+                    //return rows;
+                    for(var idx in rows){
+                        dobj.data.vip = rows[idx].vip;
+                        dobj.data.stage = rows[idx].stage;
+                        dobj.data.login_cnt = rows[idx].login_cnt;
+                    }
+                    res.send( dobj ); // todo: Sent user info, name, img, vip, stage,
+                }
             });  
+        }
+        else{
+            res.send( dobj );
         }
     }
     else {
         console.error("Mysql DB connection lost.");
+        res.send( dobj );
     }
 };
 
@@ -114,8 +131,20 @@ exports.update_data = function (conn, table,  dobj) {
         var sql = "";
         switch( table ){
         case 't_user':
-            if ( 'id' in dobj && 'stage' in dobj && 'useTime' in dobj && 'restCnt' in dobj ){
-                sql = "UPDATE {0} SET stage={1} ".format(table, dobj.stage);
+            if ( 'id' in dobj && 'stage' in dobj ){
+                if ('stage' in dobj && 'vip' in dobj){
+                    sql = "UPDATE {0} SET stage={1}, vip={2} ".format(table, dobj.stage, vip=dobj.vip);
+                }
+                else if ('stage' in dobj){
+                    sql = "UPDATE {0} SET stage={1} ".format(table, dobj.stage);
+                }
+                else if ('vip' in dobj){
+                    sql = "UPDATE {0} SET vip={1} ".format(table, dobj.vip);
+                }
+                else{
+                    console.log("Unown update field for: " + table);
+                    break;
+                }
                 sql+= " WHERE user_id='{0}' AND platform='{1}' AND stage < {2} ".format(dobj.id, "nest", dobj.stage)
             }
             else{
