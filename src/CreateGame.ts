@@ -83,10 +83,17 @@ class CreateGame extends CreateBaseEnv{
     protected onView3DInitComplete(): void {
         this.textureComplete();
 
-        if (this._cameraCtl) this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/1.0 );
-        //this._cameraCtl.setEyesLength(3000);
-        console.log("textureComplete...");
-        esa.EgretSA.loadingSet(5, "E3D资源,事件加载完毕");
+        if (this._cameraCtl) {
+            if (egret.MainContext.deviceType==egret.MainContext.DEVICE_MOBILE){
+                this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/1.0 );
+            }
+            else {
+                this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/2.5 );
+            }
+            //this._cameraCtl.setEyesLength(3000);
+            console.log("textureComplete...");
+            esa.EgretSA.loadingSet(5, "E3D资源,事件加载完毕");
+        }
     }
 
     protected Resize(w: number, h: number) {
