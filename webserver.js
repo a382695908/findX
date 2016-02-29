@@ -253,7 +253,7 @@ if ( enable_weixin ) {
         	               'wx_title': wx_title, 'wx_desc': wx_desc, 'wx_link': wx_link, 'wx_img':wx_img };
     		console.log( "Old template var for weixin config:");
     		console.log( tpl_var );
-        	res.render("index", tpl_var);  
+        	res.render("index_weixin", tpl_var);  
 		}
 		else {
     		https.get(wx_tkn_url, function (tk_rs){

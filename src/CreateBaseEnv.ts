@@ -46,6 +46,8 @@
 
             let div = document.getElementsByClassName("egret-player");
 			div[0]['style']['height'] = "100%";	
+
+            // TODO: login, logut, rank, vip UI
         }
         else{
             console.warn("Loading mask was not there.");

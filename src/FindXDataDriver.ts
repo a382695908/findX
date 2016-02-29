@@ -28,14 +28,23 @@ namespace aw {
 
         private _stageCtr: any[] = [
             {"ttCnt":  4, "xoCnt": 1, "tmLMT":  5, "mvSPD":  5, "rtSPD": 1, "mfCnt": 4, "xfCnt": 4, "cP": ["X",  "入", "人"] },
-            {"ttCnt":  8, "xoCnt": 3, "tmLMT": 12, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cP": ["恭", "慕", "龚", "巷"] },
-            {"ttCnt": 10, "xoCnt": 2, "tmLMT": 20, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["喜", "嘻", "善", "熹"] },
-            {"ttCnt": 12, "xoCnt": 3, "tmLMT": 15, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cP": ["发", "犬", "友"] },
-            {"ttCnt": 14, "xoCnt": 4, "tmLMT": 30, "mvSPD":  6, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cP": ["财", "材", "贩", "赐", "则"] },
-            {"ttCnt": 16, "xoCnt": 2, "tmLMT": 40, "mvSPD":  6, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["猴", "候", "喉"] },
-            {"ttCnt": 18, "xoCnt": 4, "tmLMT": 20, "mvSPD":  4, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cP": ["年", "午", "牛"] },
-            {"ttCnt": 20, "xoCnt": 3, "tmLMT": 20, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cP": ["大", "天", "太", "夭"] },
-            {"ttCnt": 24, "xoCnt": 3, "tmLMT": 60, "mvSPD":  4, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["吉", "古", "舌", "杏", "志"] },
+            {"ttCnt":  8, "xoCnt": 3, "tmLMT": 12, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cP": ["白", "自", "日", "目"] },
+            {"ttCnt": 10, "xoCnt": 2, "tmLMT": 20, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["天", "夭"] },
+            {"ttCnt": 12, "xoCnt": 3, "tmLMT": 15, "mvSPD":  3, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cP": ["发", "大", "犬", "友"] },
+            {"ttCnt": 14, "xoCnt": 4, "tmLMT": 30, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cP": ["日", "曰", "目"] },
+            {"ttCnt": 16, "xoCnt": 2, "tmLMT": 40, "mvSPD":  6, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["籍", "藉"] },
+            {"ttCnt": 18, "xoCnt": 4, "tmLMT": 20, "mvSPD":  4, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["拔", "拨"]},
+            {"ttCnt": 20, "xoCnt": 4, "tmLMT": 12, "mvSPD":  6, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["阡", "迁", "歼", "奸"] },
+            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 32, "mvSPD":  5, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["慕", "幕", "墓", "暮", "蓦", "募"] },
+            {"ttCnt": 26, "xoCnt": 4, "tmLMT": 12, "mvSPD":  5, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["稍", "梢", "捎" ] },
+            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 25, "mvSPD":  8, "rtSPD": 6, "mfCnt": 4, "xfCnt": 4, "cP": ["魏", "巍", "翼", "冀"] },
+            {"ttCnt": 20, "xoCnt": 3, "tmLMT": 22, "mvSPD":  5, "rtSPD": 2, "mfCnt": 4, "xfCnt": 4, "cP": ["恭", "慕", "龚", "巷"] },
+            {"ttCnt": 22, "xoCnt": 3, "tmLMT": 20, "mvSPD":  3, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["喜", "嘻", "善", "熹"] },
+            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 20, "mvSPD":  4, "rtSPD": 3, "mfCnt": 4, "xfCnt": 4, "cP": ["年", "午", "牛"] },
+            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 30, "mvSPD":  4, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cP": ["吉", "古", "舌", "杏", "志"] },
+            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 40, "mvSPD":  6, "rtSPD": 4, "mfCnt": 4, "xfCnt": 4, "cP": ["猴", "候", "喉"] },
+            {"ttCnt": 24, "xoCnt": 4, "tmLMT": 30, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cP": ["财", "材", "贩", "赐", "则"] },
+            {"ttCnt": 20, "xoCnt": 4, "tmLMT": 20, "mvSPD":  6, "rtSPD": 5, "mfCnt": 4, "xfCnt": 4, "cP": ["天", "太", "夭"] },
         ];
 
         private urlLoader: egret.URLLoader = null;
