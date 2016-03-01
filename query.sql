@@ -1,0 +1,1 @@
+SELECT t_user.name, t_user.stage, t_stage_record.stage, t_stage_record.play_time, t_stage_record.cost_time FROM t_stage_record left join t_user ON t_user.user_id = t_stage_record.user_id ORDER BY t_user.name ASC, t_stage_record.play_time ASC;

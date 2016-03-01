@@ -46,12 +46,37 @@
 
             let div = document.getElementsByClassName("egret-player");
 			div[0]['style']['height'] = "100%";	
+			//div[0]['style']['height'] = "auto";
 
             // TODO: login, logut, rank, vip UI
+            //CreateBaseEnv.showMenu();
         }
         else{
             console.warn("Loading mask was not there.");
         }
+    }
+
+    static showMenu(){
+        //var menuDiv = document.getElementById("StageDelegateDiv");
+        let menuDiv = document.getElementById("menu_div");
+        if ( menuDiv == null ){
+            menuDiv = document.createElement("div");
+            menuDiv.id = "menu_div";
+            document.body.appendChild( menuDiv) ;
+            console.log("Not fond menu div , create now.");
+        }
+        else{
+            console.log("Fond menu div .");
+        }
+        menuDiv.setAttribute("align", "center");
+        menuDiv.style.margin = "0px";
+        menuDiv.style.position = "absolute";
+		menuDiv.style.left = "0px";
+		menuDiv.style.top = "0px";
+		menuDiv.style.width = "100%";
+		menuDiv.style.height = "25px";
+        menuDiv.style['z-index'] = "1";
+        menuDiv.innerHTML = "Test menu info...";
     }
 
     private progress(e: egret3d.Event3D) {
