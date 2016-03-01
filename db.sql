@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `t_user` (
   `stage` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '已经玩到的最高关卡',
   `login_cnt` int(10) unsigned NOT NULL DEFAULT 1 COMMENT '登录次数',
   `reg_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '首次进入时间',
-  `login_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '最后一次登录时间',
+  `login_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最后一次登录时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`user_id`, `platform`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

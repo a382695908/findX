@@ -155,7 +155,7 @@ var sip = getLocalIp(os);
 switch( sip ){
 case '192.168.1.5':    // my home
     enable_weixin = false;
-	enable_nest = true;
+	enable_nest = false;
     lsip = "localhost";
     break;
 case '10.1.16.170':    // my dev
@@ -406,9 +406,15 @@ app.post("/saveStage/", function(req, res) {
         var pStr = JSON.stringify(params);
 	    var log = now_time.format("[yyyy-MM-dd hh:mm:ss]") + " Client [" + cip + "] post data: " + pStr + "\n";
         file_log(fs, log);
+		if ( 'id' in params ){
+		}
+		else {
+			params['id'] = cip;
+		}
         res.send( params );
         mysql.update_data(mysql_conn, 't_user', params );
         var ret = mysql.insert_data(mysql_conn, 't_stage_record', params );
+
         if ( enable_nest && 'id' in params && 'stage' ){
             var crypt = require('crypto');
             var nt_debug = true;

@@ -103,7 +103,7 @@ var egret3d;
             if (blend2D === void 0) { blend2D = false; }
             Egret3DDrive.canvas = document.createElement("canvas");
             Egret3DDrive.canvas.style.position = "absolute";
-            Egret3DDrive.canvas.style.zIndex = "0";
+            Egret3DDrive.canvas.style.zIndex = "-1";
             Egret3DDrive.canvas.style.left = "0px";
             Egret3DDrive.canvas.style.top = "0px";
             if (document.getElementsByClassName("egret-player").length > 0) {
@@ -126,7 +126,7 @@ var egret3d;
                 gl = this.canvas.getContext("webgl");
             console.log("this.context3D ==>", this.context3D);
             if (!gl)
-                alert("你的手机不支持页面3D，快快去升级设备吧.");
+                alert("you drivers not suport webgl");
             return gl;
         };
         /**
@@ -6941,6 +6941,17 @@ var egret3d;
                 }
                 animationState.addTime(delay * this._playSpeed * 5);
             }
+            var currentFrameIndex = this._enabledSkeletonAnimationClips[this._enabledSkeletonAnimationClips.length - 1].currentFrameIndex;
+            if (currentFrameIndex < this._currentFrame) {
+                var e = new egret3d.Event3D(SkeletonAnimation.EVENT_PLAY_COMPLETE, this);
+                this.dispatchEvent(e);
+            }
+            if (this._currentFrame != currentFrameIndex) {
+                var e = new egret3d.Event3D(SkeletonAnimation.EVENT_FRAME_CHANGE, this);
+                //e.currentTarget = this;
+                this.dispatchEvent(e);
+                this._currentFrame = currentFrameIndex;
+            }
             if (this._enabledSkeletonAnimationClips.length > 1) {
                 animationState = this._enabledSkeletonAnimationClips[0];
                 currentSkeleton = animationState.poseArray[animationState.currentFrameIndex];
@@ -9443,7 +9454,6 @@ var egret3d;
             data.postPassUsageData = this.positionPassUsageData;
             data.lightPassUsageData = this.positionPassUsageData;
             data.shadowPassUsageData = this.positionPassUsageData;
-            data.diffuseTex = egret3d.CheckerboardTexture.texture;
             data.textureChange = true;
             data.textureMethodTypes = this.textureMethodTypes;
             data.drawMode = this.drawMode;
@@ -13860,7 +13870,7 @@ var egret3d;
          * @version Egret 3.0
          * @platform Web,Native
          */
-        MaterialBase.prototype.rendenDiffusePass = function (context3D, camera3D, modelMatrix, geometry, animation) {
+        MaterialBase.prototype.renderDiffusePass = function (context3D, camera3D, modelMatrix, geometry, animation) {
             if (this.outLinePass) {
                 this.outLinePass.draw(context3D, modelMatrix, camera3D, geometry, animation);
             }
@@ -13901,7 +13911,7 @@ var egret3d;
          * @version Egret 3.0
          * @platform Web,Native
          */
-        MaterialBase.prototype.rendenShadowPass = function (context3D, camera3D, modelMatrix, geometry, animation) {
+        MaterialBase.prototype.renderShadowPass = function (context3D, camera3D, modelMatrix, geometry, animation) {
             if (!this.materialData.passChange) {
                 this.shadowPass.draw(context3D, modelMatrix, camera3D, geometry, animation);
             }
@@ -13938,7 +13948,7 @@ var egret3d;
          * @version Egret 3.0
          * @platform Web,Native
          */
-        MaterialBase.prototype.rendenNormalPass = function (context3D, camera3D, modelMatrix, geometry, animation) {
+        MaterialBase.prototype.renderNormalPass = function (context3D, camera3D, modelMatrix, geometry, animation) {
             //if (this.materialData._NormalActiveState) {
             //    this.normalPass.draw(context3D, modelMatrix, camera3D,geometry, animation )
             //} else {
@@ -13974,7 +13984,7 @@ var egret3d;
          * @version Egret 3.0
          * @platform Web,Native
          */
-        MaterialBase.prototype.rendenDepthPass = function (context3D, camera3D, modelMatrix, geometry, animation) {
+        MaterialBase.prototype.renderDepthPass = function (context3D, camera3D, modelMatrix, geometry, animation) {
             //if (this.materialData._DepthActiveState) {
             //    this.depthPass.draw(context3D, modelMatrix, camera3D, geometry, animation)
             //} else {
@@ -15382,7 +15392,8 @@ var egret3d;
     * @version Egret 3.0
     * @platform Web,Native
     */
-    var SphereSky = (function () {
+    var SphereSky = (function (_super) {
+        __extends(SphereSky, _super);
         /**
         * @language zh_CN
         * constructor
@@ -15391,7 +15402,7 @@ var egret3d;
         * @platform Web,Native
         */
         function SphereSky(tex1) {
-            this.normalMatrix = new egret3d.Matrix4_4();
+            _super.call(this);
             this.px = 0;
             this.py = 0;
             this.pz = 0;
@@ -15401,7 +15412,6 @@ var egret3d;
             this.vsShader = new egret3d.GLSL.ShaderBase(null, this.usage);
             this.fsShader = new egret3d.GLSL.ShaderBase(null, this.usage);
             this.setShader("spheresky_vertex", "spheresky_fragment");
-            this.skyMatrix = new egret3d.Matrix4_4();
         }
         /**
         * @language zh_CN
@@ -15470,10 +15480,9 @@ var egret3d;
             context3D.bindVertexBuffer(this.sphereGeometry.sharedVertexBuffer);
             context3D.vertexAttribPointer(this.usage.program3D, this.usage.attribute_position.uniformIndex, 3, egret3d.Egret3DDrive.FLOAT, false, this.sphereGeometry.vertexSizeInBytes, 0);
             context3D.vertexAttribPointer(this.usage.program3D, this.usage.attribute_uv0.uniformIndex, 2, egret3d.Egret3DDrive.FLOAT, false, this.sphereGeometry.vertexSizeInBytes, 52);
-            this.skyMatrix.identity();
-            this.skyMatrix.appendTranslation(camera.x, camera.y, camera.z);
+            this.position = camera.globalPosition;
             context3D.uniformMatrix4fv(this.usage.uniform_ProjectionMatrix.uniformIndex, false, camera.viewProjectionMatrix.rawData);
-            context3D.uniformMatrix4fv(this.usage.uniform_ModelMatrix.uniformIndex, false, this.skyMatrix.rawData);
+            context3D.uniformMatrix4fv(this.usage.uniform_ModelMatrix.uniformIndex, false, this.modelMatrix.rawData);
             ///--------texture----------------
             var sampler2D;
             for (var index in this.usage.sampler2DList) {
@@ -15484,7 +15493,7 @@ var egret3d;
             context3D.drawElement(egret3d.DrawMode.TRIANGLES, this.sphereGeometry.sharedIndexBuffer, 0, this.sphereGeometry.numItems);
         };
         return SphereSky;
-    })();
+    })(egret3d.Object3D);
     egret3d.SphereSky = SphereSky;
 })(egret3d || (egret3d = {}));
 var egret3d;
@@ -15501,7 +15510,8 @@ var egret3d;
     * @platform Web,Native
     * @includeExample core/node/Sky.ts
     */
-    var Sky = (function () {
+    var Sky = (function (_super) {
+        __extends(Sky, _super);
         /**
         * @language zh_CN
         * 构建一个天空盒子对象
@@ -15510,6 +15520,7 @@ var egret3d;
         * @platform Web,Native
         */
         function Sky(skyTexture) {
+            _super.call(this);
             this.px = 0;
             this.py = 0;
             this.pz = 0;
@@ -15519,8 +15530,6 @@ var egret3d;
             this.vsShader = new egret3d.GLSL.ShaderBase(null, this.usage);
             this.fsShader = new egret3d.GLSL.ShaderBase(null, this.usage);
             this.setShader("sky_vertex", "sky_fragment");
-            this.skyMatrix = new egret3d.Matrix4_4();
-            this.modelMatrix = new egret3d.Matrix4_4();
         }
         /**
         * @language zh_CN
@@ -15584,10 +15593,9 @@ var egret3d;
             context3D.gl.cullFace(egret3d.Egret3DDrive.FRONT);
             context3D.bindVertexBuffer(this.cubeGeometry.sharedVertexBuffer);
             context3D.vertexAttribPointer(this.usage.program3D, this.usage.attribute_position.uniformIndex, 3, egret3d.Egret3DDrive.FLOAT, false, this.cubeGeometry.vertexSizeInBytes, 0);
-            this.skyMatrix.identity();
-            this.skyMatrix.appendTranslation(camera.x, camera.y, camera.z);
+            this.modelMatrix.position = camera.globalPosition;
             context3D.uniformMatrix4fv(this.usage.uniform_ProjectionMatrix.uniformIndex, false, camera.viewProjectionMatrix.rawData);
-            context3D.uniformMatrix4fv(this.usage.uniform_ModelMatrix.uniformIndex, false, this.skyMatrix.rawData);
+            context3D.uniformMatrix4fv(this.usage.uniform_ModelMatrix.uniformIndex, false, this.modelMatrix.rawData);
             ///--------texture----------------
             var sampler3D;
             for (var index in this.usage.sampler3DList) {
@@ -15598,7 +15606,7 @@ var egret3d;
             context3D.drawElement(egret3d.DrawMode.TRIANGLES, this.cubeGeometry.sharedIndexBuffer, 0, this.cubeGeometry.numItems);
         };
         return Sky;
-    })();
+    })(egret3d.Object3D);
     egret3d.Sky = Sky;
 })(egret3d || (egret3d = {}));
 var egret3d;
@@ -16191,16 +16199,16 @@ var egret3d;
         Object.defineProperty(LightBase.prototype, "intensity", {
             /**
              * @language zh_CN
-             * 得到灯光强度
-             * 影响灯光的强弱显示，值的范围0~没有上限，但是值过大会导致画面过度曝光
+             * 得到灯光强度。</p>
+             * 影响灯光的强弱显示，值的范围0~没有上限，但是值过大会导致画面过度曝光。</p>
              */
             get: function () {
                 return this._intensity;
             },
             /**
              * @language zh_CN
-             * 设置灯光强度
-             * 影响灯光的强弱显示，值的范围0~没有上限，但是值过大会导致画面过度曝光
+             * 设置灯光强度。</p>
+             * 影响灯光的强弱显示，值的范围0~没有上限，但是值过大会导致画面过度曝光。</p>
              */
             set: function (value) {
                 if (this._intensity != value) {
@@ -16214,16 +16222,16 @@ var egret3d;
         Object.defineProperty(LightBase.prototype, "halfIntensity", {
             /**
              * @language zh_CN
-             * 得到灯光强度
-             * 影响灯光的强弱显示，值的范围0~没有上限，但是值过大会导致画面过度曝光
+             * 得到背光灯光强度。</p>
+             * 影响背光灯光的强弱显示，值的范围0~没有上限，但是值过大会导致画面过度曝光。</p>
              */
             get: function () {
                 return this._halfIntensity;
             },
             /**
             * @language zh_CN
-            * 设置灯光强度
-            * 影响灯光的强弱显示，值的范围0~没有上限，但是值过大会导致画面过度曝光
+            * 设置背光灯光强度。</p>
+            * 影响背光灯光的强弱显示，值的范围0~没有上限，但是值过大会导致画面过度曝光。</p>
             */
             set: function (value) {
                 if (this._halfIntensity != value) {
@@ -16237,8 +16245,8 @@ var egret3d;
         Object.defineProperty(LightBase.prototype, "ambient", {
             /**
              * @language zh_CN
-             * 获取 灯光环境颜色
-             * 物体在未受到光的直接照射的地方 模拟间接环境光颜色，会影响背光面的颜色
+             * 获取 灯光环境颜色。</p>
+             * 物体在未受到光的直接照射的地方 模拟间接环境光颜色，会影响背光面的颜色。</p>
              * return ambient  灯光环境颜色
              */
             get: function () {
@@ -16246,8 +16254,8 @@ var egret3d;
             },
             /**
              * @language zh_CN
-             * 设置灯光环境颜色
-             * 物体在未受到光的直接照射的地方 模拟间接环境光颜色，会影响背光面的颜色
+             * 设置灯光环境颜色。</p>
+             * 物体在未受到光的直接照射的地方 模拟间接环境光颜色，会影响背光面的颜色。</p>
              */
             set: function (color) {
                 this._ambient.w = (color >> 24 & 0xff) / 255;
@@ -16262,9 +16270,9 @@ var egret3d;
         Object.defineProperty(LightBase.prototype, "diffuse", {
             /**
              * @language zh_CN
-             * 设置灯光漫反射颜色
-             * 直接影响最终灯光的颜色色值 16进制的颜色 例如 red：0xffff0000
-             * 也可以通过 diffusePower 来改变这个值的总体强弱
+             * 设置灯光漫反射颜色。</p>
+             * 直接影响最终灯光的颜色色值 16进制的颜色 例如 red：0xffff0000。</p>
+             * 也可以通过 diffusePower 来改变这个值的总体强弱。</p>
              * return diffuse
              */
             get: function () {
@@ -16272,8 +16280,8 @@ var egret3d;
             },
             /**
              * @language zh_CN
-             * 设置灯光漫反射颜色
-             * 直接影响最终灯光的颜色色值 16进制的颜色 例如 red：0xffff0000
+             * 设置灯光漫反射颜色。</p>
+             * 直接影响最终灯光的颜色色值 16进制的颜色, 例如 red：0xffff0000。</p>
              * 也可以通过 diffusePower 来改变这个值的总体强弱
              */
             set: function (color) {
@@ -16289,9 +16297,9 @@ var egret3d;
         Object.defineProperty(LightBase.prototype, "specular", {
             /**
              * @language zh_CN
-             * 在灯光方向与物体和相机成一个反光角度的时候，就会产生反光，高光，而不同的物体会有不同的颜色色值，尤其是金属
-             * 16进制的颜色 例如 red：0xffff0000
-             * 也可以通过 specularPower 来改变这个值的总体强弱
+             * 在灯光方向与物体和相机成一个反光角度的时候，就会产生反光，高光，而不同的物体会有不同的颜色色值，尤其是金属。</p>
+             * 16进制的颜色 例如 red：0xffff0000。</p>
+             * 也可以通过 specularPower 来改变这个值的总体强弱。</p>
              * return  灯光镜面高光反射颜色
              */
             get: function () {
@@ -16299,10 +16307,10 @@ var egret3d;
             },
             /**
              * @language zh_CN
-             * 设置灯光镜面高光反射颜色
-             * 在灯光方向与物体和相机成一个反光角度的时候，就会产生反光，高光，而不同的物体会有不同的颜色色值，尤其是金属
-             * 16进制的颜色 例如 red：0xffff0000
-             * 也可以通过 specularPower 来改变这个值的总体强弱
+             * 设置灯光镜面高光反射颜色。</p>
+             * 在灯光方向与物体和相机成一个反光角度的时候，就会产生反光，高光，而不同的物体会有不同的颜色色值，尤其是金属。</p>
+             * 16进制的颜色 例如 red：0xffff0000。</p>
+             * 也可以通过 specularPower 来改变这个值的总体强弱。</p>
              */
             set: function (color) {
                 this._specular.w = (color >> 24 & 0xff) / 255;
@@ -16813,7 +16821,13 @@ var egret3d;
         DefaultRender.prototype.draw = function (time, delay, context3D, collect, camera, viewPort) {
             this._renderList = collect.renderList;
             this._numEntity = this._renderList.length;
-            ///context3D.gl.clear(context3D.gl.COLOR_BUFFER_BIT | context3D.gl.DEPTH_BUFFER_BIT);
+            if (collect.rootNode._sky) {
+                collect.rootNode.sky.draw(context3D, camera);
+            }
+            else if (collect.rootNode._sphereSky) {
+                collect.rootNode._sphereSky.draw(context3D, camera);
+            }
+            context3D.clearDepth(1);
             for (this._renderIndex = 0; this._renderIndex < this._numEntity; this._renderIndex++) {
                 this._renderList[this._renderIndex].update(camera, time, delay);
                 if (!this._renderList[this._renderIndex].isVisible) {
@@ -16825,7 +16839,7 @@ var egret3d;
                 }
                 if (this._renderList[this._renderIndex].material != null) {
                     if (this._renderList[this._renderIndex].material.alpha != 0) {
-                        this._renderList[this._renderIndex].material.rendenDiffusePass(context3D, camera, this._renderList[this._renderIndex].modelMatrix, this._renderList[this._renderIndex].geometry, this._renderList[this._renderIndex].animation);
+                        this._renderList[this._renderIndex].material.renderDiffusePass(context3D, camera, this._renderList[this._renderIndex].modelMatrix, this._renderList[this._renderIndex].geometry, this._renderList[this._renderIndex].animation);
                     }
                 }
             }
@@ -16865,7 +16879,7 @@ var egret3d;
         * @version Egret 3.0
         * @platform Web,Native
         */
-        PositionRender.prototype.update = function (time, delay, context3D, collect, camera, viewPort) {
+        PositionRender.prototype.render = function (time, delay, context3D, collect, camera, viewPort) {
             this._renderList = collect.renderList;
             this._numEntity = this._renderList.length;
             for (this._renderIndex = 0; this._renderIndex < this._numEntity; this._renderIndex++) {
@@ -16920,7 +16934,7 @@ var egret3d;
                     continue;
                 }
                 if (this._renderList[this._renderIndex].material != null) {
-                    this._renderList[this._renderIndex].material.rendenNormalPass(context3D, camera, this._renderList[this._renderIndex].modelMatrix, this._renderList[this._renderIndex].geometry, this._renderList[this._renderIndex].animation);
+                    this._renderList[this._renderIndex].material.renderNormalPass(context3D, camera, this._renderList[this._renderIndex].modelMatrix, this._renderList[this._renderIndex].geometry, this._renderList[this._renderIndex].animation);
                 }
             }
         };
@@ -16967,7 +16981,7 @@ var egret3d;
                     continue;
                 }
                 if (this._renderList[this._renderIndex].material != null) {
-                    this._renderList[this._renderIndex].material.rendenDepthPass(context3D, camera, this._renderList[this._renderIndex].modelMatrix, this._renderList[this._renderIndex].geometry, this._renderList[this._renderIndex].animation);
+                    this._renderList[this._renderIndex].material.renderDepthPass(context3D, camera, this._renderList[this._renderIndex].modelMatrix, this._renderList[this._renderIndex].geometry, this._renderList[this._renderIndex].animation);
                 }
             }
         };
@@ -17019,7 +17033,7 @@ var egret3d;
                         if (!this._renderList[this._renderIndex].isVisible) {
                             continue;
                         }
-                        this._renderList[this._renderIndex].material.rendenShadowPass(context3D, ShadowRender.shadowCamera3D, this._renderList[this._renderIndex].modelMatrix, this._renderList[this._renderIndex].geometry, this._renderList[this._renderIndex].animation);
+                        this._renderList[this._renderIndex].material.renderShadowPass(context3D, ShadowRender.shadowCamera3D, this._renderList[this._renderIndex].modelMatrix, this._renderList[this._renderIndex].geometry, this._renderList[this._renderIndex].animation);
                     }
                 }
             }
@@ -17120,7 +17134,7 @@ var egret3d;
             this.renderList = new Array();
             this.mousePickList = new Array();
             this._nodes = new Array();
-            this._rootNode = root;
+            this.rootNode = root;
         }
         /**
         * @language zh_CN
@@ -17477,7 +17491,7 @@ var egret3d;
             this.renderList.length = 0;
             this.mousePickList.length = 0;
             this.clearLayerList();
-            this.applyRender(this._rootNode, camera);
+            this.applyRender(this.rootNode, camera);
             for (var i = 0; i < this._tags.length; ++i) {
                 this._tags[i].clearDepth = true;
                 for (var j = 0; j < this._tags[i].layers.length; ++j) {
@@ -17542,6 +17556,64 @@ var egret3d;
             _super.call(this);
             this.collect = new egret3d.EntityCollect(this);
         }
+        Object.defineProperty(Scene3D.prototype, "sky", {
+            /**
+            * @language zh_CN
+            * 返回天空盒子
+            * 设置天空盒子，天空盒子的类型有 cubesky 和 spheresky 两种类型，其中 spheresky 是属于360天空全景照片使用
+            * @returns {Sky}
+            * @version Egret 3.0
+            * @platform Web,Native
+            */
+            get: function () {
+                return this._sky;
+            },
+            /**
+          * @language zh_CN
+          * 设置天空盒子
+          * 设置天空盒子，天空盒子的类型有 cubesky 和 spheresky 两种类型，其中 spheresky 是属于360天空全景照片使用
+          * @param value {Sky} 天空盒子
+          * @version Egret 3.0
+          * @platform Web,Native
+          */
+            set: function (value) {
+                this._sky = value;
+                if (this._sky) {
+                    this.addChild(this._sky);
+                    this._sky.isVisible = false;
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Scene3D.prototype, "sphereSky", {
+            /**
+            * @language zh_CN
+            * 设置天空球
+            * 设置天空盒子，天空盒子的类型有 cubesky 和 spheresky 两种类型，其中 spheresky 是属于360天空全景照片使用
+            * @param value {SphereSky} 天空球
+            * @version Egret 3.0
+            * @platform Web,Native
+            */
+            get: function () {
+                return this._sphereSky;
+            },
+            /**
+            * @language zh_CN
+            * 设置天空球
+            * 设置天空盒子，天空盒子的类型有 cubesky 和 spheresky 两种类型，其中 spheresky 是属于360天空全景照片使用
+            * @param value {SphereSky} 天空球
+            * @version Egret 3.0
+            * @platform Web,Native
+            */
+            set: function (value) {
+                this._sphereSky = value;
+                if (this._sphereSky) {
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
         return Scene3D;
     })(egret3d.Object3D);
     egret3d.Scene3D = Scene3D;
@@ -21999,8 +22071,9 @@ var egret3d;
         LookAtController.prototype.mouseMove = function () {
             if (this._mouseDown) {
                 this._rotaAngle.y += egret3d.Input.instance.mouseOffsetX;
-                //this._rotaAngle.x += Input.instance.mouseOffsetY;
+                this._rotaAngle.x += egret3d.Input.instance.mouseOffsetY;
                 this._rotaAngle.y %= 360;
+                this._rotaAngle.x %= 360;
             }
         };
         Object.defineProperty(LookAtController.prototype, "lookAtPosition", {
@@ -22027,14 +22100,6 @@ var egret3d;
                 if (this._lookAtObject)
                     this._lookAtObject = null;
                 this._lookAtPosition.copyFrom(val.add(this.lookAtOffset));
-                this.notifyUpdate();
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(LookAtController.prototype, "eyesPosition", {
-            set: function (val) {
-                this._eyesPos.copyFrom(val);
                 this.notifyUpdate();
             },
             enumerable: true,
@@ -25444,13 +25509,13 @@ var egret3d;
                 return this._sky;
             },
             /**
-            * @language zh_CN
-            * 设置天空盒子
-            * 设置天空盒子，天空盒子的类型有 cubesky 和 spheresky 两种类型，其中 spheresky 是属于360天空全景照片使用
-            * @param value {Sky} 天空盒子
-            * @version Egret 3.0
-            * @platform Web,Native
-            */
+           * @language zh_CN
+           * 设置天空盒子
+           * 设置天空盒子，天空盒子的类型有 cubesky 和 spheresky 两种类型，其中 spheresky 是属于360天空全景照片使用
+           * @param value {Sky} 天空盒子
+           * @version Egret 3.0
+           * @platform Web,Native
+           */
             set: function (value) {
                 this._sky = value;
             },
@@ -25494,8 +25559,9 @@ var egret3d;
         */
         View3D.prototype.delHUD = function (hud) {
             var index = this._hudList.indexOf(hud);
-            if (index >= 0)
+            if (index >= 0 && index < this._hudList.length) {
                 this._hudList.splice(index, 1);
+            }
         };
         View3D.prototype.hasHUD = function (hud) {
             return this._hudList.indexOf(hud) >= 0;
@@ -25521,7 +25587,9 @@ var egret3d;
         */
         View3D.prototype.delWireframe = function (wireframe) {
             var index = this._wireframeList.indexOf(wireframe);
-            this._wireframeList.splice(index, 1);
+            if (index >= 0 && index < this._wireframeList.length) {
+                this._wireframeList.splice(index, 1);
+            }
         };
         Object.defineProperty(View3D.prototype, "backImageTexture", {
             /**
@@ -25769,7 +25837,6 @@ var egret3d;
                         this._sphereSky.draw(this._context3D, this.camera3D);
                     }
                     egret3d.RttManager.drawToTexture(time, delay, this._sourceFrameBuffer.texture.texture, this._context3D, this._render, this._scene.collect, this._camera, this.viewPort);
-                    this._context3D.clearDepth(1);
                     var next = this._sourceFrameBuffer;
                     for (var i = 0; i < this._postList.length; i++) {
                         this._postList[i].drawToTarget(this._sourceFrameBuffer, next, this._context3D, this._viewPort);
@@ -25990,12 +26057,12 @@ var egret3d;
             this._context3D.viewPort(this.leftViewPort.x, this.leftViewPort.y, this.leftViewPort.width, this.leftViewPort.height);
             this._camera.tap(egret3d.CameraType.VR, egret3d.VRType.left);
             this._context3D.setRenderToTexture(this._leftFrameBuffer.texture.texture, true, 0);
-            if (this._sky) {
-                this._sky.draw(this._context3D, this.camera3D);
-            }
-            if (this._sphereSky) {
-                this._sphereSky.draw(this._context3D, this.camera3D);
-            }
+            //if (this._sky) {
+            //    this._sky.draw(this._context3D, this.camera3D);
+            //}
+            //if (this._sphereSky) {
+            //    this._sphereSky.draw(this._context3D, this.camera3D);
+            //}
             this._context3D.clearDepth(1);
             this._render.draw(time, delay, this._context3D, this._scene.collect, this._camera, this._viewPort);
             this._context3D.setRenderToBackBuffer();
@@ -26004,12 +26071,12 @@ var egret3d;
             this._context3D.viewPort(this.rightViewPort.x, this.rightViewPort.y, this.rightViewPort.width, this.rightViewPort.height);
             this._camera.tap(egret3d.CameraType.VR, egret3d.VRType.right);
             this._context3D.setRenderToTexture(this._rightFrameBuffer.texture.texture, true, 0);
-            if (this._sky) {
-                this._sky.draw(this._context3D, this.camera3D);
-            }
-            if (this._sphereSky) {
-                this._sphereSky.draw(this._context3D, this.camera3D);
-            }
+            //if (this._sky) {
+            //    this._sky.draw(this._context3D, this.camera3D);
+            //}
+            //if (this._sphereSky) {
+            //    this._sphereSky.draw(this._context3D, this.camera3D);
+            //}
             this._context3D.clearDepth(1);
             this._render.draw(time, delay, this._context3D, this._scene.collect, this._camera, this._viewPort);
             this._context3D.setRenderToBackBuffer();
@@ -26263,20 +26330,20 @@ var egret3d;
             this._initAngle = new egret3d.Vector3D();
             this._oldPosition1 = null;
             this._oldPosition2 = null;
-            window.onmousewheel = function (e) { return _this.mouseWheel(e); };
-            window.onmousedown = function (e) { return _this.mouseStart(e); };
-            window.onmouseup = function (e) { return _this.mouseEnd(e); };
-            window.onmousemove = function (e) { return _this.mouseMove(e); };
-            window.onkeydown = function (e) { return _this.keyDown(e); };
-            window.onkeyup = function (e) { return _this.keyUp(e); };
+            window.addEventListener("mousewheel", function (e) { return _this.mouseWheel(e); });
+            window.addEventListener("mousedown", function (e) { return _this.mouseStart(e); });
+            window.addEventListener("mouseup", function (e) { return _this.mouseEnd(e); });
+            window.addEventListener("mousemove", function (e) { return _this.mouseMove(e); });
+            window.addEventListener("keydown", function (e) { return _this.keyDown(e); });
+            window.addEventListener("keyup", function (e) { return _this.keyUp(e); });
             if (this.canGame()) {
                 window.addEventListener("gamepadconnected", function (e) { return _this.ongamepadconnected(e); });
                 window.addEventListener("gamepaddisconnected", function (e) { return _this.ongamepaddisconnected(e); });
             }
-            window.ontouchstart = function (e) { return _this.touchStart(e); };
-            window.ontouchend = function (e) { return _this.touchEnd(e); };
-            window.ontouchmove = function (e) { return _this.touchMove(e); };
-            window.ontouchcancel = function (e) { return _this.touchEnd(e); };
+            window.addEventListener("touchstart", function (e) { return _this.touchStart(e); });
+            window.addEventListener("touchend", function (e) { return _this.touchEnd(e); });
+            window.addEventListener("touchmove", function (e) { return _this.touchMove(e); });
+            window.addEventListener("touchcancel", function (e) { return _this.touchEnd(e); });
             window.addEventListener("deviceorientation", function (e) { return _this.ondeviceorientation(e); });
             window.addEventListener("devicemotion", function (e) { return _this.detectShake(e); });
         }
@@ -26764,9 +26831,8 @@ var egret3d;
 var egret3d;
 (function (egret3d) {
     /**
-     * @private
      * @language zh_CN
-     * @class egret3d.OrientationController
+     * @class egret3D.OrientationControler
      * @classdesc
      * 陀螺仪控制器
      */
@@ -26794,8 +26860,12 @@ var egret3d;
             this.q = new egret3d.Quaternion();
             this.q1 = new egret3d.Quaternion();
             this.outQ = new egret3d.Quaternion();
-            this.front = new egret3d.Vector3D(0, 0, 200);
-            this.test = new egret3d.Vector3D();
+            this.fix = new egret3d.Vector3D();
+            this.fixinterpolate = new egret3d.Vector3D();
+            this.fixAxis = new egret3d.Vector3D();
+            this.caheFixAxis = new egret3d.Vector3D();
+            this.steps = 1;
+            this.interpolate = true;
             if (this.openDebug) {
                 this.accDiv = document.createElement("div");
                 this.accGravityDiv = document.createElement("div");
@@ -26840,8 +26910,8 @@ var egret3d;
         * @language zh_CN
         */
         OrientationController.prototype.orientationchangeHandler = function () {
-            //if (window.orientation != undefined)
-            //  this.screenOrientation = <number>window.orientation ;
+            if (window.orientation != undefined)
+                this.screenOrientation = window.orientation;
             //.this.state = window.orientation;
         };
         /**
@@ -26894,8 +26964,8 @@ var egret3d;
             // this returns 90 if width is greater then height 
             // and window orientation is undefined OR 0
             // if (!window.orientation && window.innerWidth > window.innerHeight)
-            //   return 90;<number>window.orientation ||
-            return 0;
+            //   return 90;
+            return window.orientation || 0;
         };
         /**
         * @language zh_CN
@@ -26909,6 +26979,8 @@ var egret3d;
             var _x = beta ? beta * this.degtorad : 0; // beta value
             var _y = gamma ? gamma * this.degtorad : 0; // gamma value
             var _z = alpha ? alpha * this.degtorad : 0; // alpha value
+            _x = Math.floor(_x * 100) / 100;
+            _y = Math.floor(_y * 100) / 100;
             var orient = -this.getOrientation() * this.degtorad; // this.getOrientation()) * this.degtorad ; // O
             this.state = this.getOrientation();
             var cX = Math.cos(_x / 2);
@@ -26927,10 +26999,10 @@ var egret3d;
             this.q.z = cX * cY * sZ + sX * sY * cZ;
             var zee = new egret3d.Vector3D(0, 0, 1);
             var q0 = new egret3d.Quaternion();
-            q0.fromAxisAngle(zee, orient / egret3d.Matrix3DUtils.DEGREES_TO_RADIANS);
+            q0.fromAxisAngle(zee, orient);
             this.q.multiply(this.q, q0); // camera looks out the back of the device, not the top
             zee.setTo(-1, 0, 0);
-            q0.fromAxisAngle(zee, 90 * this.degtorad / egret3d.Matrix3DUtils.DEGREES_TO_RADIANS);
+            q0.fromAxisAngle(zee, 90 * this.degtorad);
             this.q.multiply(this.q, q0);
             return this.q;
         };
@@ -26939,12 +27011,62 @@ var egret3d;
         * 数据更新
         * @param camera3D 当前相机
         */
-        OrientationController.prototype.update = function (camera3D) {
-            this.getQuaternion(this.orientation.x, this.orientation.y, this.orientation.z);
+        OrientationController.prototype.update = function (view3D) {
+            this.getBaseQuaternion(this.orientation.x, this.orientation.y, this.orientation.z);
             this.q.toEulerAngles(this.fixOritation);
-            camera3D.rotationX = -this.fixOritation.x + this.offsetRotation.x;
-            camera3D.rotationZ = -this.fixOritation.y + this.offsetRotation.z;
-            camera3D.rotationY = -this.fixOritation.z + this.offsetRotation.y;
+            if (this.interpolate) {
+                this.fixinterpolate.x = (this.fixOritation.x - this.fix.x);
+                this.fixinterpolate.y = (this.fixOritation.y - this.fix.y);
+                this.fixinterpolate.z = (this.fixOritation.z - this.fix.z);
+                this.caheFixAxis.x = this.fixOritation.x / Math.abs(this.fixOritation.x);
+                this.caheFixAxis.y = this.fixOritation.y / Math.abs(this.fixOritation.y);
+                this.caheFixAxis.z = this.fixOritation.z / Math.abs(this.fixOritation.z);
+                if (this.fixAxis.x == this.caheFixAxis.x && this.fixAxis.y == this.caheFixAxis.y && this.fixAxis.z == this.caheFixAxis.z) {
+                    this.fix.x += this.fixinterpolate.x / (this.steps + 0.01);
+                    this.fix.y += this.fixinterpolate.y / (this.steps + 0.01);
+                    this.fix.z += this.fixinterpolate.z / (this.steps + 0.01);
+                }
+                else {
+                    this.fix.x = this.fixOritation.x;
+                    this.fix.y = this.fixOritation.y;
+                    this.fix.z = this.fixOritation.z;
+                    this.fixAxis.x = this.caheFixAxis.x;
+                    this.fixAxis.y = this.caheFixAxis.y;
+                    this.fixAxis.z = this.caheFixAxis.z;
+                }
+                view3D.camera3D.rotationX = -this.fix.x;
+                view3D.camera3D.rotationY = -this.fix.y;
+                view3D.camera3D.rotationZ = this.fix.z;
+            }
+            else {
+                view3D.camera3D.rotationX = -this.fixOritation.x;
+                view3D.camera3D.rotationY = -this.fixOritation.y;
+                view3D.camera3D.rotationZ = this.fixOritation.z;
+            }
+            view3D.scene.rotationX = -90;
+        };
+        OrientationController.prototype.getBaseQuaternion = function (alpha, beta, gamma) {
+            var _x = beta ? beta * this.degtorad : 0; // beta value
+            var _y = gamma ? gamma * this.degtorad : 0; // gamma value
+            var _z = alpha ? alpha * this.degtorad : 0; // alpha value
+            var cX = Math.cos(_x / 2);
+            var cY = Math.cos(_y / 2);
+            var cZ = Math.cos(_z / 2);
+            var sX = Math.sin(_x / 2);
+            var sY = Math.sin(_y / 2);
+            var sZ = Math.sin(_z / 2);
+            //
+            // ZXY quaternion construction.
+            //
+            var w = cX * cY * cZ - sX * sY * sZ;
+            var x = sX * cY * cZ - cX * sY * sZ;
+            var y = cX * sY * cZ + sX * cY * sZ;
+            var z = cX * cY * sZ + sX * sY * cZ;
+            this.q.w = w;
+            this.q.x = x;
+            this.q.y = y;
+            this.q.z = z;
+            return this.q;
         };
         return OrientationController;
     })();

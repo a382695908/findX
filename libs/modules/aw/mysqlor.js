@@ -74,7 +74,7 @@ exports.insert_data = function (conn, table,  dobj) {
             });  
         }
         else {
-            console.error("SQL for table {0} format error:[{1}].".format(table, sql));
+            console.error("SQL for table {0} sql error:[{1}].".format(table, sql));
         }
     }
     else {
@@ -164,7 +164,7 @@ exports.update_data = function (conn, table,  dobj) {
             });  
         }
         else {
-            console.error("SQL for table {0} format error:[{1}].".format(table, sql));
+            console.error("SQL for table {0} sql error:[{1}].".format(table, sql));
         }
     }
     else {
@@ -200,7 +200,7 @@ exports.insert_update_data = function (conn, table,  dobj) {
             });  
         }
         else{
-            console.error("SQL for table {0} format error:[{1}].".format(table, sql));
+            console.error("SQL for table {0} sql error:[{1}].".format(table, sql));
         }
     }
     else {

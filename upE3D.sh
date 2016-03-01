@@ -12,11 +12,11 @@ cd `dirname $0`
 
 if [ $# -eq 1 ];then
     if [ $1 = "o" ] || [ $1 = "official" ];then
-        echo -e "Copy from official egret github"
+        echo -e "Copy from official egret [~/workspace/egret/egret-3d/Egret3D] github"
         cp ~/workspace/egret/egret-3d/Egret3D/egret3d.js ./libs/modules/egret/
         cp ~/workspace/egret/egret-3d/Egret3D/egret3d.d.ts ./libs/modules/egret/
     elif [ $1 = "m" ] || [ $1 = "my" ] || [ $1 = "mine" ];then
-        echo -e "Copy from my egret github"
+        echo -e "Copy from my egret [~/workspace/git/github/egret-3d/Egret3D] github"
         cp ~/workspace/git/github/egret-3d/Egret3D/egret3d.js ./libs/modules/egret/
         cp ~/workspace/git/github/egret-3d/Egret3D/egret3d.d.ts ./libs/modules/egret/
     else
