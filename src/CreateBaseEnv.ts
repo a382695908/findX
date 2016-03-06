@@ -207,6 +207,9 @@
         egret3d.AssetsManager.getInstance().addEventListener(egret3d.Event3D.EVENT_LOAD_COMPLETE,(e: egret3d.Event3D) => this.onLoadComplete(e));
         egret3d.AssetsManager.getInstance().startLoad();
 
+        var button = new eui.Button();
+        button.skinName = "resource/skins/ButtonSkin.exml";
+        this.addChild(button);
     }
 
 
