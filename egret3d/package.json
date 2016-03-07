@@ -1,0 +1,16 @@
+{
+	"name": "egret",
+	"version": "3.0.3",
+	"modules": [
+		{
+			"name": "egret3d",
+			"description": "egret3d",
+			"files": [
+				"egret3d.d.ts",
+				"egret3d.js",
+				"egret3d.min.js"
+			],
+			"root": "src"
+		}
+	]
+}

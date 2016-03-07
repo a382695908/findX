@@ -4,11 +4,18 @@ var game_file_list = [
     //----auto game_file_list start----
 	"libs/modules/egret/egret.js",
 	"libs/modules/egret/egret.native.js",
-	"bin-debug/CharTexture.js",
+	"libs/modules/eui/eui.js",
+	"libs/modules/game/game.js",
+	"libs/modules/game/game.native.js",
+	"libs/modules/res/res.js",
+	"libs/modules/egret3d/egret3d.js",
+	"libs/modules/egretsa/egretsa.js",
+	"libs/modules/nest/nest.js",
 	"bin-debug/CreateBaseEnv.js",
 	"bin-debug/CreateGame.js",
+	"bin-debug/ExtraE3D.js",
 	"bin-debug/GameDataDriver.js",
-	"bin-debug/FindXDataDriver.js"
+	"bin-debug/FindXDataDriver.js",
 	//----auto game_file_list end----
 ];
 
@@ -37,10 +44,10 @@ egret_native.egretStart = function () {
         //以下为自动修改，请勿修改
         //----auto option start----
 		entryClassName: "Main",
-		frameRate: 30,
+		frameRate: 60,
 		scaleMode: "showAll",
-		contentWidth: 640,
-		contentHeight: 960,
+		contentWidth: 480,
+		contentHeight: 800,
 		showPaintRect: false,
 		showFPS: false,
 		fpsStyles: "x:0,y:0,size:30,textColor:0x00c200,bgAlpha:0.9",

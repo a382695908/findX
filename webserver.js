@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
    *  通过 node ./webserver.js 启动本服务
 */

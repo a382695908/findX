@@ -202,11 +202,20 @@ var egret;
                 var audio = new Audio(url);
                 audio.addEventListener("canplaythrough", onAudioLoaded);
                 audio.addEventListener("error", onAudioError);
+                var ua = navigator.userAgent.toLowerCase();
+                if (ua.indexOf("firefox") >= 0) {
+                    audio.autoplay = !0;
+                    audio.muted = true;
+                }
                 audio.load();
                 this.originAudio = audio;
                 HtmlSound.$recycle(this.url, audio);
                 function onAudioLoaded() {
                     removeListeners();
+                    if (ua.indexOf("firefox") >= 0) {
+                        audio.pause();
+                        audio.muted = false;
+                    }
                     self.loaded = true;
                     self.dispatchEventWith(egret.Event.COMPLETE);
                 }
@@ -240,6 +249,7 @@ var egret;
                 channel.$loops = loops;
                 channel.$startTime = startTime;
                 channel.$play();
+                egret.sys.$pushSoundChannel(channel);
                 return channel;
             };
             /**
@@ -415,6 +425,10 @@ var egret;
             p.stop = function () {
                 if (!this.audio)
                     return;
+                if (!this.isStopped) {
+                    egret.sys.$popSoundChannel(this);
+                }
+                this.isStopped = true;
                 var audio = this.audio;
                 audio.pause();
                 audio.removeEventListener("ended", this.onPlayEnd);
@@ -549,6 +563,7 @@ var egret;
                 channel.$type = this.type;
                 channel.$startTime = startTime;
                 channel.$play();
+                egret.sys.$pushSoundChannel(channel);
                 return channel;
             };
             /**
@@ -705,6 +720,10 @@ var egret;
                 else {
                     QZAppExternal.stopBackSound();
                 }
+                if (!this.isStopped) {
+                    egret.sys.$popSoundChannel(this);
+                }
+                this.isStopped = true;
             };
             d(p, "volume"
                 /**
@@ -799,7 +818,7 @@ var egret;
                     WebAudioDecode.isDecoding = false;
                     WebAudioDecode.decodeAudios();
                 }, function () {
-                    alert("sound decode error: " + decodeInfo["url"] + "！");
+                    alert("sound decode error: " + decodeInfo["url"] + "！\nsee http://edn.egret.com/cn/docs/page/156");
                     if (decodeInfo["fail"]) {
                         decodeInfo["fail"]();
                     }
@@ -893,6 +912,7 @@ var egret;
                 channel.$audioBuffer = this.audioBuffer;
                 channel.$startTime = startTime;
                 channel.$play();
+                egret.sys.$pushSoundChannel(channel);
                 return channel;
             };
             /**
@@ -1059,6 +1079,9 @@ var egret;
                     this.bufferSource.disconnect();
                     this.bufferSource = null;
                     this.$audioBuffer = null;
+                }
+                if (!this.isStopped) {
+                    egret.sys.$popSoundChannel(this);
                 }
                 this.isStopped = true;
             };
@@ -1610,13 +1633,13 @@ var egret;
                     if (!this._xhr) {
                         return null;
                     }
-                    if (this._xhr.response) {
+                    if (this._xhr.response != undefined) {
                         return this._xhr.response;
                     }
                     if (this._xhr.responseXML) {
                         return this._xhr.responseXML;
                     }
-                    if (this._xhr.responseText) {
+                    if (this._xhr.responseText != undefined) {
                         return this._xhr.responseText;
                     }
                     return null;
@@ -2105,7 +2128,7 @@ var egret;
                 this.inputDiv.style.top = y * scaleY + "px";
                 if (this.$textfield.multiline) {
                     this.inputDiv.style.top = (y) * scaleY + "px";
-                    this.inputElement.style.top = (-this.$textfield.lineSpacing / 2) + "px";
+                    this.inputElement.style.top = (-this.$textfield.lineSpacing / 2) * scaleY + "px";
                 }
                 else {
                     this.inputDiv.style.top = y * scaleY + "px";

@@ -209,7 +209,7 @@
 
         var button = new eui.Button();
         button.skinName = "resource/skins/ButtonSkin.exml";
-        this.addChild(button);
+        //this.addChild(button);
     }
 
 
