@@ -5,7 +5,7 @@
 	"publish": {
 		"web": 0,
 		"native": 1,
-		"path": "bin-release"
+		"path": "bin-debug"
 	},
 	"egret_version": "3.0.3",
 	"modules": [
