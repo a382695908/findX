@@ -148,7 +148,7 @@ var path = require('path');
 var fs = require('fs');  
 var qs = require('querystring');
 
-var mysql = require('./libs/modules/aw/mysqlor.js');
+var mysql = require('./libs/mysqlor.js');
 var mysql_conn = mysql.connect('localhost', 'findXmgr', 'DB_FINDX', 'F1ndX3@r', '3306', 'utf8'); 
 setInterval(function () { mysql_conn.query('SELECT 1'); }, 3600);
 
