@@ -92,7 +92,6 @@ class FindX extends E3DBaseEnv{
                 console.log("run on non-mobile device...");
                 this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/2.5 );
             }
-            //this._cameraCtl.setEyesLength(3000);
             esa.EgretSA.loadingSet(5, "E3D资源,事件加载完毕");
         }
         console.log("on View3D init completed.");
@@ -114,7 +113,6 @@ class FindX extends E3DBaseEnv{
                 console.log("run on non-mobile device...");
                 this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/2.5 );
             }
-            //this._cameraCtl.setEyesLength(3000);
             esa.EgretSA.loadingSet(5, "E3D资源,事件加载完毕");
         }
     } 
