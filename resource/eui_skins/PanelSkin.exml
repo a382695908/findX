@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<e:Skin class="skins.PanelSkin" minHeight="230" minWidth="450" xmlns:e="http://ns.egret.com/eui">
-    <e:Image left="0" right="0" bottom="0"  top="0" source="border_png" scale9Grid="2,2,12,12" />
-    <e:Group id="moveArea" left="0" right="0" top="0" height="45">
-        <e:Image left="0" right="0" bottom="0"  top="0" source="header_png"/>
-        <e:Label id="titleDisplay" size="20" fontFamily="Tahoma" textColor="0xFFFFFF"
-                 wordWrap="false" left="15" right="5" verticalCenter="0"/>
-    </e:Group>
-    <e:Button id="closeButton" label="close" bottom="5" horizontalCenter="0"/>
+<e:Skin class="skins.PanelSkin" minHeight="230" minWidth="450" xmlns:e="http://ns.egret.com/eui" width="598" height="74">
+	<e:Component x="125" y="52"/>
+	<e:RadioButton label="红色" y="26" left="19"/>
+	<e:RadioButton left="109" y="27" label="红色" x="10"/>
+	<e:RadioButton label="红色" left="200" y="26" x="20"/>
 </e:Skin>

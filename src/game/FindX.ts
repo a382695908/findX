@@ -1,4 +1,4 @@
-class CreateGame extends CreateBaseEnv{
+class FindX extends E3DBaseEnv{
     protected _dtDriver: aw.FindXDataDriver = null;
     private _uiReady: boolean = false;
 
@@ -81,6 +81,7 @@ class CreateGame extends CreateBaseEnv{
     }
 
     protected onView3DInitComplete(): void {
+        console.log("on View3D init completed.");
         this.textureComplete();
 
         if (this._cameraCtl) {
@@ -108,8 +109,8 @@ class CreateGame extends CreateBaseEnv{
 
     private textureComplete() {
 		// 全局的鼠标/触摸事件 --- 用于进度控制操作
-        egret3d.Input.instance.addListenerKeyClick( (e:Event, self:CreateGame ) => this.interactiveOpt(e, this ) );
-        egret3d.Input.instance.addTouchStartCallback( (e:Event, self:CreateGame ) => this.interactiveOpt(e, this ) );
+        egret3d.Input.instance.addListenerKeyClick( (e:Event, self:FindX ) => this.interactiveOpt(e, this ) );
+        egret3d.Input.instance.addTouchStartCallback( (e:Event, self:FindX ) => this.interactiveOpt(e, this ) );
 
 		//环境光 
         this._lightGroup = new egret3d.LightGroup();
@@ -415,7 +416,7 @@ class CreateGame extends CreateBaseEnv{
     }
 
     // 点触改变状态
-    public interactiveOpt(e:Event, self:CreateGame ) {
+    public interactiveOpt(e:Event, self:FindX ) {
 		if ( `${e}` == '256' || (typeof e === "object" && 'touches' in e)) {
 			switch ( self._dtDriver.dataState ){ // 操作并根据数据驱动的状态控制游戏进度选折
 			case aw.GameDataState.READY_GO:
@@ -491,119 +492,3 @@ class CreateGame extends CreateBaseEnv{
     }
 } 
 
-class Main extends egret.DisplayObjectContainer {
-    public static nt_debug: boolean = false;
-    public static nt_appid: number = 0;
-    public static nt_version: number = 0;
-    public static nt_channel: number = 0;
-    public static nt_statid: string = "0";
-    public static nt_token: string = null;
-    public static nt_user:any = null;
-    //public static nt_id: string = null;
-
-    public enable_nest: boolean = false;
-
-    public static regNest(debug: boolean, appid: number, version: number, channel: number, statid: string){
-            Main.nt_debug = debug;
-            Main.nt_appid = appid;
-            Main.nt_version = version;
-            Main.nt_channel = channel;
-            Main.nt_statid = statid;
-            Main.nt_token = null;
-            Main.nt_user = null;
-            esa.EgretSA.init({"gameId": Main.nt_statid,"chanId":Main.nt_channel, "debug": false});
-            //Main.nt_id = null;
-    }
-
-    public static onLoginOK(data:any): void {
-        if(data.result == 0 && data.token) {
-            esa.EgretSA.loadingSet(2, "登录NEST成功");
-            Main.nt_token = data.token;
-            // submit token to server, server use it to get user info.
-            var urlLoader:egret.URLLoader = new egret.URLLoader();
-            var request:egret.URLRequest = new egret.URLRequest();
-            request.url = "/userToken/";
-            var commitData = `token=${data.token}&id=${data.id}&channel=${Main.nt_channel}`;
-            request.data = new egret.URLVariables(commitData);
-            request.method = egret.URLRequestMethod.POST;
-            urlLoader.load(request);
-            urlLoader.addEventListener(egret.Event.COMPLETE, function (e:egret.Event) {
-                var data = JSON.parse(urlLoader.data);
-                if ('code' in data && data['code'] == 0 && 'data' in data) {
-                    Main.nt_user = data.data
-                    if ( Main.nt_debug ){
-                        console.log("登录成功!" );
-                        console.log(data);
-                    }
-                    esa.EgretSA.loadingSet(3, "登录findX成功");
-                    new CreateGame();
-                }
-                else {
-                    console.log("登录失败!" );
-                    console.log(data);
-                    alert("登录失败1!" );
-                }
-            }, this);
-        }
-        else {
-            console.error("登录失败!" );
-            alert("登录失败2!" );
-        }
-    }
-
-    public constructor() {
-        super();
-        if ( Main.nt_appid > 0 && Main.nt_version > 0 ){
-            this.enable_nest = true;
-        }
-        else {
-            this.enable_nest = false;
-        }
-
-        if ( this.enable_nest ) {
-            var info:any = { 'debug': Main.nt_debug, 'egretAppId': Main.nt_appid, 'version': Main.nt_version };
-            nest.core.startup(info, function (data) {
-                if(data.result == 0) {
-                    esa.EgretSA.loadingSet(1, "初始化NEST");
-                    if ( Main.nt_debug ){
-                        console.log( "Nest初始化成功!" );
-                        console.log( data );
-                    }
-                    var chckInfo = {};
-                    nest.user.checkLogin( chckInfo, function(data){
-                        if(data.result==0 && data.token) {
-                            Main.nt_token = data.token;
-                            //Main.nt_id = data.id;
-                            //console.log("已登录!" );
-                            Main.onLoginOK( data );
-                        }
-                        else {
-                            var loginInfo:nest.user.LoginInfo = {};
-                            nest.user.login({loginType:'qq'}, function (data) {
-                                if(data.result==0 && data.token) {
-                                    if (Main.nt_debug){
-                                        console.log("获取token!" );
-                                    }
-                                    Main.nt_token = data.token;
-                                    //Main.nt_id = data.id;
-                                    Main.onLoginOK( data );
-                                }
-                                else {
-                                    console.error("登录失败0!" + data.toString() );
-                                    alert("登录失败0!" + data.toString() );
-                                }
-                            })
-                        }
-                    });
-                }
-                else {
-                    console.error("Nest 初始化失败:" + data.toString() );
-                    alert("Nest 初始化失败:" + data.toString());
-                }
-            })
-        }
-        else {
-            new CreateGame();
-        }
-    }
-}

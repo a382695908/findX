@@ -125,6 +125,11 @@
 				"isFolder":false,
 				"key":"tracklight_png",
 				"name":"tracklight_png"
+			},
+			{
+				"isFolder":false,
+				"key":"logo_png",
+				"name":"logo_png"
 			}]
 		}
 	},
