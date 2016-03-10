@@ -22,8 +22,10 @@ class E3DBaseEnv extends EUIBaseEnv{
     protected onResize(x: number,y: number,width: number,height: number) {
         super.onResize(x,y,width,height);
         this._view3D.resize(0,0,document.body.clientWidth,document.body.clientHeight);
+        this.Resize(document.body.clientWidth,document.body.clientHeight);
     }
-	
+    protected Resize(w: number,h: number): void{ };
+    
     protected onInit3D(): void {
         //创建View3D对象;
         this._camera3D = new egret3d.Camera3D(egret3d.CameraType.perspective);
@@ -50,7 +52,6 @@ class E3DBaseEnv extends EUIBaseEnv{
         alert("11111");
     }
     protected onView3DInitComplete(): void {
-        console.log('XXXXX');
     }
 
     public start3D() {
