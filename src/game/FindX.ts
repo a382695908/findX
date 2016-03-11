@@ -85,12 +85,12 @@ class FindX extends E3DBaseEnv{
 
         if (this._cameraCtl) {
             if (egret.MainContext.deviceType==egret.MainContext.DEVICE_MOBILE){
-                this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/1.0 );
+                //this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/1.0 );
                 console.log("run on mobile device...");
             }
             else {
                 console.log("run on non-mobile device...");
-                this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/2.5 );
+                //this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/2.5 );
             }
             esa.EgretSA.loadingSet(5, "E3D资源,事件加载完毕");
         }
@@ -106,12 +106,12 @@ class FindX extends E3DBaseEnv{
 		if (this._hudInter) this._hudInter.x = (this._width/2 - this._hudInter.width/2);
         if (this._cameraCtl) {
             if (egret.MainContext.deviceType==egret.MainContext.DEVICE_MOBILE){
-                this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/1.0 );
+                //this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/1.0 );
                 console.log("run on mobile device...");
             }
             else {
                 console.log("run on non-mobile device...");
-                this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/2.5 );
+                //this._cameraCtl.setEyesLength( (this._depth+this._width+this._height)/2.5 );
             }
             esa.EgretSA.loadingSet(5, "E3D资源,事件加载完毕");
         }

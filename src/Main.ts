@@ -105,6 +105,7 @@ class Main extends eui.UILayer {
     private createScene(){
         var loadingView: LoadingPanel = <LoadingPanel>window["loadPanel"];
         loadingView.parent.removeChild(loadingView);
+		
 
         if(this.isThemeLoadEnd && this.isResourceLoadEnd){
             

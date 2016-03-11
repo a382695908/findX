@@ -5,8 +5,8 @@ class E3DBaseEnv extends EUIBaseEnv{
     protected _view3D: egret3d.View3D = null;
     protected _viewPort: egret3d.Rectangle = null;
     protected _camera3D: egret3d.Camera3D = null;
-    //protected _cameraCtl: egret3d.HoverController= null;
-    protected _cameraCtl: egret3d.LookAtController = null;
+    protected _cameraCtl: CameraHoverController= null;
+    //protected _cameraCtl: egret3d.LookAtController = null;
 
     protected _boxTexture : egret3d.SkyTexture;
     protected _starTexture: egret3d.TextureBase = null;
@@ -55,16 +55,18 @@ class E3DBaseEnv extends EUIBaseEnv{
     }
 
     public start3D() {
-        //this._cameraCtl = new egret3d.HoverController(this._view3D.camera3D,null,45,45,200,8,85);
-        ////this._cameraCtl.useEventDis(this.rect);
-        //this._cameraCtl.lookAtPosition = new egret3d.Vector3D(0,10,0);
-        //this._cameraCtl.minDistance = 80;
-        //this._cameraCtl.maxDistance = 524;
-        ////window.addEventListener("touchstart",(e) => this.touchStart(e));
+        //window.addEventListener("touchstart",(e) => this.touchStart(e));
 
-        this._cameraCtl = new egret3d.LookAtController(this._view3D.camera3D, new egret3d.Object3D());
-        this._cameraCtl.lookAtPosition = new egret3d.Vector3D(0, 0, 0);
-        this._cameraCtl.setEyesLength(3000);
+        this._cameraCtl = new CameraHoverController(this._view3D.camera3D,null,45,45,200,8,85);
+        this._cameraCtl.useEventDis(this.rect);
+        this._cameraCtl.lookAtPosition = new egret3d.Vector3D(0,10,0);
+        this._cameraCtl.minDistance = 80;
+        this._cameraCtl.maxDistance = 524;
+
+        //this._cameraCtl = new egret3d.LookAtController(this._view3D.camera3D, new egret3d.Object3D());
+        //this._cameraCtl.useEventDis(this.rect);
+        //this._cameraCtl.lookAtPosition = new egret3d.Vector3D(0, 0, 0);
+        //this._cameraCtl.setEyesLength(3000);
 
         let sky_f: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/3/fr.jpg");
         let sky_b: egret3d.TextureBase = egret3d.AssetsManager.getInstance().findTexture("sky/3/bk.jpg");
