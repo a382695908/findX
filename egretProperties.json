@@ -1,0 +1,41 @@
+{
+	"native": {
+		"path_ignore": []
+	},
+	"publish": {
+		"web": 0,
+		"native": 1,
+		"path": "bin-release"
+	},
+	"egret_version": "3.0.3",
+	"modules": [
+		{
+			"name": "egret"
+		},
+		{
+			"name": "eui"
+		},
+		{
+			"name": "game"
+		},
+		{
+			"name": "res"
+		},
+		{
+			"name": "egret3d",
+			"path": "./egret3d"
+		},
+		{
+			"name": "egretsa",
+			"path": "./egretsa"
+		},
+		{
+			"name": "nest",
+			"path": "./nest"
+		},
+		{
+			"name": "weixin",
+			"path": "./weixin"
+		}
+	]
+}

@@ -1,0 +1,5 @@
+*.log
+debug/
+bin-debug/
+debug/*
+bin-debug/*

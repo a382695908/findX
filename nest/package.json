@@ -1,0 +1,16 @@
+{
+	"name": "egret",
+	"version": "3.0.3",
+	"modules": [
+		{
+			"name": "nest",
+			"description": "nest",
+			"files": [
+				"nest.min.js",
+				"nest.js",
+				"nest.d.ts"
+			],
+			"root": "src"
+		}
+	]
+}

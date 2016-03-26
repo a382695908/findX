@@ -1,0 +1,16 @@
+{
+	"name": "egret",
+	"version": "3.0.3",
+	"modules": [
+		{
+			"name": "weixin",
+			"description": "weixin",
+			"files": [
+				"weixinapi.d.ts",
+				"weixinapi.js",
+				"weixinapi.min.js"
+			],
+			"root": "src"
+		}
+	]
+}
