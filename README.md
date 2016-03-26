@@ -4,7 +4,7 @@
 # 概述 #
 
 使用egret-3d写的简单小游戏，可以作为学习egret-3d的demo。
-由于egret-3d本身不完善，因此对引擎代码有少量定制化修改[见我的egret-3d分支(https://github.com/aceway/egret-3d)]和扩展(见src/game/ExtraE3D.ts)
+由于egret-3d本身不完善，因此对引擎代码有少量定制化修改[见我的egret-3d分支](https://github.com/aceway/egret-3d)和扩展(见src/game/ExtraE3D.ts)
 
 ### 功能 ###
 
