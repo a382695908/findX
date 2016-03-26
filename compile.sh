@@ -14,7 +14,7 @@ if [ $# -eq 0 ];then
 	#tsc --listFiles --noEmitOnError --removeComments --outDir ./bin-debug/
 	tsc --listFiles --removeComments --outDir ./bin-debug/
 	if [ -d ./bin-debug/src ];then
-    	cp -f ./bin-debug/src/* ./bin-debug/
+    	cp -rf ./bin-debug/src/* ./bin-debug/
     	cd bin-debug && rm -rf src && cd ..
 	else
 		: #echo "Not found ./bin-debug/src"
@@ -24,7 +24,7 @@ elif [ $# -eq 1 ];then
 	#tsc --watch --diagnostics --listFiles --noEmitOnError --removeComments --outDir ./bin-debug/
 	tsc --diagnostics --listFiles --noEmitOnError --removeComments --outDir ./bin-debug/
 	if [ -d ./bin-debug/src ];then
-    	cp -f ./bin-debug/src/* ./bin-debug/
+    	cp -rf ./bin-debug/src/* ./bin-debug/
     	cd bin-debug && rm -rf src && cd ..
 	else
 		: #echo "Not found ./bin-debug/src"

@@ -40,7 +40,7 @@ class E3DBaseEnv extends EUIBaseEnv{
         egret3d.Debug.instance.trace("open debug...");
         
         window.onerror = function(message,url,line) {
-            egret3d.Debug.instance.trace(message.type);
+            //egret3d.Debug.instance.trace(message.type);
         }
 
         window.onwaiting = function(e) {
