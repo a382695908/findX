@@ -14,6 +14,8 @@
 
 ---
 ##
+![](http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png)
+##
 ![](http://img.open.egret.com/game/gamePic/179/89901/pub_0_publicity.png)
 ##
 ![](http://img.open.egret.com/game/gamePic/179/89901/pub_1_publicity.png)
