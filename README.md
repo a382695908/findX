@@ -12,7 +12,6 @@
 * 在3D空间中捕获带有特殊字的飞行物(本来想做个3D的消消乐)。
 * 支持PC中浏览器操作; 移动设备手机上操作，[早期版本](http://findx.huithink.com/)(未使用eui)支持，[最新版本](http://game.doogga.com/findX/)由于整合了eui，由于eui和egret-3d对触摸事件的处理不容导致不能玩。
 ---
-![](http://img.open.egret.com/game/gameIcon/179/89901/icon_200.png)
 ![](http://img.open.egret.com/game/gamePic/179/89901/pub_0_publicity.png)
 ![](http://img.open.egret.com/game/gamePic/179/89901/pub_1_publicity.png)
 ---
