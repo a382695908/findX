@@ -2,8 +2,8 @@
 ########################################################################
 #    File Name: up.sh
 # 
-#       Author: Shootao Shanghai,Inc.
-#         Mail: aceway@shootao.com
+#       Author: aceway
+#         Mail: aceway@qq.com
 # Created Time: 2016年01月06日 星期三 18时51分47秒
 #  Description: ...
 # 
